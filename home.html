@@ -1,25 +1,23 @@
 <html>
 <head>
   <title>head</title>
-  <script type="text/javascript" scr="js/cirrus.js"></script> 
+  <script type="text/javascript" src="js/cirrus.js"></script> 
   <script>
-    
-    // xxxxxxxxxxxxxxxxxxxx App Code xxxxxxxxxxxxxxxxxxxxxxxxx
-    var usersController = {
-        index: function(){alert("hola")}
-    }
-
-    // xxxxxxxxxxxxxxx Setting Up the application xxxxxxxxxxxx
     // custom routes controller#action
     Router.addRoutes({
         "/users/:some_param/action":  "users#index"
     });
 
+    // xxxxxxxxxxxxxxxxxxxx App Code xxxxxxxxxxxxxxxxxxxxxxxxx
+    var usersController = {
+        index: function(){alert("hola")}
+    }
+
     // Add Controllers and actionsz
     TheApp.extend({
       users: usersController
     })
-  </script> 
+  </script>
 </head>
 
 
