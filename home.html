@@ -10,13 +10,15 @@
 
     // xxxxxxxxxxxxxxxxxxxx App Code xxxxxxxxxxxxxxxxxxxxxxxxx
     var usersController = {
-        index: function(){alert("hola")}
+      index: function(){alert("hola"); return({cris: "hola"})}
     }
 
     // Add Controllers and actionsz
     TheApp.extend({
       users: usersController
     })
+
+    Response(Request("/users/23/action"));
   </script>
 </head>
 

@@ -21,20 +21,21 @@
             });
         },
         pointRequest: function(url){
-          url = url.replace("/", "\\/")
           keys = Object.keys(this.routes);
             keys_count = keys.length
             for(i=0; i < keys_count; i++){
-              rutaRegExp = new RegExp((keys[i] + "\$"),"g")
+              rutaRegExp = new RegExp((keys[i].replace(/\//g, "\\/") + "\$"))
               match = url.match(rutaRegExp)
+
               if (match){
                 x = this.routes[keys[i]]; // Keys from the match object
                 custom_route = Object.keys(x)[0];
 
                 // extract URL params and Add it to global params
                 var requestParams = custom_route.match(/:(\w+)/g);
-                var requestVars = url.match(rutaRegx);
-                var requestParams.forEach(function(param){params[param]=requestVars[requestParams.indexOf(param)]});
+                var requestVars = url.match(rutaRegExp)
+                requestVars.shift();
+                requestParams.forEach(function(param){params[param.replace(":", "")]=requestVars[requestParams.indexOf(param)]});
 
                 // if match returns ["/paht/:variable", "controller#method"]
                 return([custom_route, x[custom_route]]);
@@ -61,10 +62,12 @@
              path: request[1], 
              protocol: request[2], 
              url: request[1].split("?")[0], 
-             encodeParams: request[1].split("?")[0] };
+             encodeParams: request[1].split("?")[1] };
 
       // set the global params added to the URL
-      parse_params(decodeURIComponent(req.encodeParams.split("&")));
+      if (typeof(req.encodeParams) != "undefined") {
+        parse_params(decodeURIComponent(req.encodeParams).split("&"));
+      }
       return(req);
     };
 
