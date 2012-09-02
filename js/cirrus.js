@@ -1,41 +1,41 @@
 // xxxxxxxxxx URI params into a object xxxxxxxxxxxxxxxxxxx
-    var params = {}
-    function parse_params(array){
-      array.forEach(function(variable){
-          subarray = variable.split("=");
+    var params = {};
+    function parse_params(array) {
+      array.forEach(function (variable) {
+          var subarray = variable.split("=");
           params[subarray[0]] = subarray[1];
       });
-      return(params);
+      return (params);
     };
 
 // xxxxxxxxxxxxxxxx System Router xxxxxxxxxxxxxxxxxxxxxxxx
     var Router = {
         routes: {},
-        addRoutes: function(rutes) {
+        addRoutes: function (rutes) {
             keys = Object.keys(rutes);
             var _this = this;
             keys.forEach(function(key){
-                basic = {}
-                basic[key] = rutes[key]
+                basic = {};
+                basic[key] = rutes[key];
                 _this.routes[key.replace(/:\w+/g, "(\\w+)")] = basic;
             });
         },
-        pointRequest: function(url){
+        pointRequest: function (url) {
           keys = Object.keys(this.routes);
             keys_count = keys.length
             for(i=0; i < keys_count; i++){
-              rutaRegExp = new RegExp((keys[i].replace(/\//g, "\\/") + "\$"))
-              match = url.match(rutaRegExp)
+              var rutaRegExp = new RegExp((keys[i].replace(/\//g, "\\/") + "\$"));
+              var match = url.match(rutaRegExp);
 
               if (match){
                 x = this.routes[keys[i]]; // Keys from the match object
-                custom_route = Object.keys(x)[0];
+                var custom_route = Object.keys(x)[0];
 
                 // extract URL params and Add it to global params
                 var requestParams = custom_route.match(/:(\w+)/g);
-                var requestVars = url.match(rutaRegExp)
+                var requestVars = url.match(rutaRegExp);
                 requestVars.shift();
-                requestParams.forEach(function(param){params[param.replace(":", "")]=requestVars[requestParams.indexOf(param)]});
+                requestParams.forEach(function (param) {params[param.replace(":", "")]=requestVars[requestParams.indexOf(param)]});
 
                 // if match returns ["/paht/:variable", "controller#method"]
                 return([custom_route, x[custom_route]]);
@@ -76,7 +76,13 @@
     // Get the route, asign params and call the action
     actions = Router.pointRequest(request.url);
     controllerAction = actions[1].split("#");
-    resp = TheApp[(controllerAction[0] + "Controller")][controllerAction[1]]();
-    return(JSON.stringify(resp));
+    jsonresp = TheApp[(controllerAction[0] + "Controller")][controllerAction[1]]();
+
+    jsonresp = JSON.stringify(jsonresp);
+    var CRLF = "\r\n"
+    headers = "Content-Type: text/json\r\nContent-Length: " + jsonresp.length + "\r\nDate: " + (new Date).toGMTString()
+    jsonresp = CRLF + jsonresp
+    reps = ["HTTP/1.0 200 ok", headers, jsonresp]
+    return (reps.join(CRLF))
   }
 
