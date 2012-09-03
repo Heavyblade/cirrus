@@ -102,24 +102,25 @@ describe("Response Object", function(){
       }
       TheApp.extend({ usersController: usersController })
       Router.addRoutes({"/users/:userid/show": "users#show"});
+
       CRLF = "\r\n"
   });
 
   it("should find the proper action and give me the HTTP JSON response", function(){
-    httpGet = "GET /users/44/show?x=foo HTTP/1.0"
+    httpGet = "GET /users/44/show?x=foo HTTP/1.1"
     request = Request(httpGet);
     expected_resp = JSON.stringify({hello: "world", id: "44", x: params.x });
     response = Response(request);
     expect(typeof(response)).toEqual("string");
-    expect(response.split("\r\n")[0]).toEqual("HTTP/1.0 200 ok");
+    expect(response.split("\r\n")[0]).toEqual("HTTP/1.1 200 OK");
     expect(response.split("\n\r\n")[1]).toEqual(expected_resp);
   });
 
   it("should set the proper headers for a JSON response", function(){
-    httpGet = "GET /users/44/show?x=foo HTTP/1.0"
+    httpGet = "GET /users/44/show?x=foo HTTP/1.1"
     request = Request(httpGet);
     response = Response(request);
-    expect(response.split(CRLF)[1]).toEqual("Content-Type: text/json")
+    expect(response.split(CRLF)[2]).toEqual("Content-Type: application/json; charset=utf-8")
   });
 
 });

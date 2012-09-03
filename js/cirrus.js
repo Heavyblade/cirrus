@@ -80,9 +80,15 @@
 
     jsonresp = JSON.stringify(jsonresp);
     var CRLF = "\r\n"
-    headers = "Content-Type: text/json\r\nContent-Length: " + jsonresp.length + "\r\nDate: " + (new Date).toGMTString()
-    jsonresp = CRLF + jsonresp
-    reps = ["HTTP/1.0 200 ok", headers, jsonresp]
-    return (reps.join(CRLF))
+    headers = ["HTTP/1.1 200 OK",
+            ("Date: " + (new Date).toGMTString()), 
+            "Content-Type: application/json; charset=utf-8", 
+            ("Content-Length: " + jsonresp.length), 
+            "Server: Velneo v7",
+            "transfer-coding: chunked",	  
+            "Keep-Alive: timeout=5, max=94",
+            "Connection: Keep-Alive"]
+    reps = headers.join(CRLF) + CRLF + CRLF + jsonresp
+    return (reps)
   }
 
