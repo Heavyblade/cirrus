@@ -1,10 +1,11 @@
 // xxxxxxxxxx URI params into a object xxxxxxxxxxxxxxxxxxx
     var params = {};
     function parse_params(array) {
-      array.forEach(function (variable) {
-          var subarray = variable.split("=");
+      var keys = array.length;
+      while(keys--) {
+          var subarray = array[keys].split("=");
           params[subarray[0]] = subarray[1];
-      });
+      };
       return (params);
     };
 
@@ -21,9 +22,9 @@
             });
         },
         pointRequest: function (url) {
-          keys = Object.keys(this.routes);
-            keys_count = keys.length
-            for(i=0; i < keys_count; i++){
+            keys = Object.keys(this.routes);
+            var i = keys.length;
+            while(i--) {
               var rutaRegExp = new RegExp((keys[i].replace(/\//g, "\\/") + "\$"));
               var match = url.match(rutaRegExp);
 
