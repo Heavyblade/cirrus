@@ -1,5 +1,5 @@
 // xxxxxxxxxx URI params into a object xxxxxxxxxxxxxxxxxxx
-    var params = {};
+    params = {};
     function parse_params(array) {
       var keys = array.length;
       while(keys--) {
@@ -10,7 +10,7 @@
     };
 
 // xxxxxxxxxxxxxxxx System Router xxxxxxxxxxxxxxxxxxxxxxxx
-    var Router = {
+    Router = {
         routes: {},
         addRoutes: function (rutes) {
             keys = Object.keys(rutes);
