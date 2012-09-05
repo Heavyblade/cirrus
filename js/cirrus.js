@@ -13,13 +13,14 @@
     Router = {
         routes: {},
         addRoutes: function (rutes) {
-            var keys = Object.keys(rutes);
-            var _this = this;
-            keys.forEach(function(key){
-                var basic = {};
+            var keys = Object.keys(rutes),
+                i = keys.length;
+            while(i--) {
+                var basic = {},
+                    key = keys[i];
                 basic[key] = rutes[key];
-                _this.routes[key.replace(/:\w+/g, "(\\w+)")] = basic;
-            });
+                this.routes[key.replace(/:\w+/g, "(\\w+)")] = basic;
+            }
         },
         pointRequest: function (url) {
             keys = Object.keys(this.routes);
@@ -29,7 +30,7 @@
               var match = url.match(rutaRegExp);
 
               if (match){
-                x = this.routes[keys[i]]; // Keys from the match object
+                var x = this.routes[keys[i]]; // Keys from the match object
                 var custom_route = Object.keys(x)[0];
 
                 // extract URL params and Add it to global params
@@ -37,9 +38,9 @@
                 if (requestParams) {
                   var requestVars = url.match(rutaRegExp);
                   requestVars.shift();
-                  requestParams.forEach(function (param) {params[param.replace(":", "")]=requestVars[requestParams.indexOf(param)]});
+                  var i = requestParams.length;
+                  while(i--) { var param = requestParams[i]; params[param.replace(":", "")]=requestVars[requestParams.indexOf(param)]}
                 }
-
                 // if match returns ["/paht/:variable", "controller#method"]
                 return([custom_route, x[custom_route]]);
               };
@@ -77,11 +78,11 @@
 // xxxxxxxxxxxxxxxxxxxxxxxxx Response Object xxxxxxxxxxxxxx
   function Response(request) {
     // Get the route, asign params and call the action
-    actions = Router.pointRequest(request.url);
-    controllerAction = actions[1].split("#");
-    jsonresp = TheApp[(controllerAction[0] + "Controller")][controllerAction[1]]();
+    var actions = Router.pointRequest(request.url);
+    var controllerAction = actions[1].split("#");
+    var jsonresp = TheApp[(controllerAction[0] + "Controller")][controllerAction[1]]();
 
-    jsonresp = JSON.stringify(jsonresp);
+    var jsonresp = JSON.stringify(jsonresp);
     var CRLF = "\r\n"
     headers = ["HTTP/1.1 200 OK",
             ("Date: " + (new Date).toGMTString()), 
@@ -91,7 +92,7 @@
             "transfer-coding: chunked",	  
             "Keep-Alive: timeout=5, max=94",
             "Connection: Keep-Alive"]
-    reps = headers.join(CRLF) + CRLF + CRLF + jsonresp
+    var reps = headers.join(CRLF) + CRLF + CRLF + jsonresp
     return (reps)
   }
 
