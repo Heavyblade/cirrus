@@ -259,16 +259,16 @@ Benchmark = {
         // Display each result right aligned in the `:`
         for ( r in this.results ) {
             var name = r == 0 ? "" : r.rjust(this.longest - 7) + ": ";
-            var time = "" + this.results[r] * 1000 + " miliseconds";
+            var time = "" + parseInt(this.results[r] * 1000) + " miliseconds";
             
             var parrafo = document.createElement('p');
-            var texto = document.createTextNode(name +  ":  " + time);
+            var texto = document.createTextNode(name +  "  " + time);
             parrafo.appendChild(texto);
             document.getElementById("bench").appendChild(parrafo);    
         }
         
         if (this.type == "bobject") { this.group_total_line(); }
-        this.STDOUT.log(this.output);
+        
     },
     
     // Creates the top line of dashes for a sequential, object benchmark

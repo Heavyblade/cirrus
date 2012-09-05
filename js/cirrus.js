@@ -13,10 +13,10 @@
     Router = {
         routes: {},
         addRoutes: function (rutes) {
-            keys = Object.keys(rutes);
+            var keys = Object.keys(rutes);
             var _this = this;
             keys.forEach(function(key){
-                basic = {};
+                var basic = {};
                 basic[key] = rutes[key];
                 _this.routes[key.replace(/:\w+/g, "(\\w+)")] = basic;
             });
@@ -34,9 +34,11 @@
 
                 // extract URL params and Add it to global params
                 var requestParams = custom_route.match(/:(\w+)/g);
-                var requestVars = url.match(rutaRegExp);
-                requestVars.shift();
-                requestParams.forEach(function (param) {params[param.replace(":", "")]=requestVars[requestParams.indexOf(param)]});
+                if (requestParams) {
+                  var requestVars = url.match(rutaRegExp);
+                  requestVars.shift();
+                  requestParams.forEach(function (param) {params[param.replace(":", "")]=requestVars[requestParams.indexOf(param)]});
+                }
 
                 // if match returns ["/paht/:variable", "controller#method"]
                 return([custom_route, x[custom_route]]);

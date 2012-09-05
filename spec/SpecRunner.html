@@ -38,9 +38,49 @@
           currentWindowOnload();
         }
          Benchmark.benchmark({
-            addRoutes: function(){
-              Router.addRoutes({"/users/:some_param/action":  "users#index"})
+            Route_raddRoutes: function(){
+              Router.routes = {}; params = {};
+              var x = 1000;
+              while(x--) { Router.addRoutes({"/users/:some_param/action":  ("users" + x + "#index")}) }
+            },
+            parse_params: function(){
+              Router.routes = {}; params = {};
+              var x = 1000;
+              while(x--) { var a = parse_params([("hello" + x + "=world"), ("john" + x + "doe")]); };
+            },
+            Router_PointRequest: function(){
+              Router.routes = {}; params = {};
+              Router.addRoutes({"/users/:some_param/action":  ("users#index"), "/users/flat/path": "users#flat"})
+              var url = "/users/43/action"
+              var url2 = "users/flat/path"
+              var x = 500;
+              while(x--) {
+                Router.pointRequest(url);
+                Router.pointRequest(url2);
+              }
+            },
+            RequestObject: function(){
+              Router.routes = {}; params = {};
+              http_request = "GET /some/param/action?hello=world&john=doe HTTP/1.1"
+              var x = 1000
+              while(x--) {var a = Request(http_request);}
+            },
+            ResponseObject: function() {
+              Router.routes = {}; params = {}; 
+              request = {url: "/some/param/action"};
+              Router.addRoutes({"/some/param/action": "users#index"})
+
+              var usersController = {
+                  index: function(){return("Hello World")}
+              };
+
+              TheApp.extend({usersController: usersController})
+              x = 1000;
+              while(x--) {
+                var a = Response(request);
+              }
             }
+
         });
         execJasmine();
       };
@@ -61,6 +101,9 @@
 <body>
   <div id="bench">
     <h2>Performance Benchmark</h2>
+    <p>1000 iterations per test</p>
+    <p>22,6,20,15,1</p>
+    <br/>
   </div>
 </body>
 </html>
