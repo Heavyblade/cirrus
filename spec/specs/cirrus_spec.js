@@ -12,6 +12,12 @@ describe("Router Component", function(){
     expect(routes[0]).toEqual("/some/path/resource")
   });
 
+  it("should habdle no matching routes", function(){
+     Router.addRoutes({"/some/path/resource": "controller#action"});
+     routing = Router.pointRequest("/some/23/resource");
+     expect(routing).toEqual("NOT FOUND");
+  });
+
   it("should be able to add a route with params", function(){
     Router.addRoutes({"/some/:param/resource": "controller#action"})
     routes =  Object.keys(Router.routes)
@@ -26,9 +32,7 @@ describe("Router Component", function(){
     });
 
     routing = Router.pointRequest("/some/23/resource")
-    expect(routing instanceof Array).toBeTruthy();
-    expect(routing[0]).toEqual("/some/:param/resource")
-    expect(routing[1]).toEqual("controller1#action1")
+    expect(routing).toEqual("controller1#action1")
   });
 
   it("should able to add params to the global params scope", function(){
@@ -42,7 +46,7 @@ describe("Router Component", function(){
     Router.addRoutes({"/some/:param/resource": "controller1#action1",
                       "/some/:param/resource": "controller2#action2"});
     routing = Router.pointRequest("/some/23/resource");
-    expect(routing[1]).toEqual("controller2#action2")
+    expect(routing).toEqual("controller2#action2")
   });
 
   it("should not point me to partial coincidence", function(){
@@ -51,10 +55,10 @@ describe("Router Component", function(){
     routing = Router.pointRequest("/some/23/resource");
     routes =  Object.keys(Router.routes)
     expect(routes.length).toEqual(2);
-    expect(routing[1]).toEqual("controller2#action2")
+    expect(routing).toEqual("controller2#action2")
   });
 });
-
+// xxxxxxxxxxxxxxxxxxxxxxEnd Router xxxxxxxxxxxxxxxxxxxxxxx
 describe("Main App", function(){
   it("should extend it self to add controllers", function(){
      var usersController = {
@@ -90,6 +94,16 @@ describe("Request Object", function(){
     expect(params.hello).toEqual("world");
   });
 
+  it("should be able to handle a request with headers", function(){
+    httpGet = "GET /some/path/toresource?foo=bar&hello=world HTTP/1.0\r\nContent-Type: application/json\r\nConnection: Keep-Alive"
+    request = Request(httpGet);
+    expect(request.encodeParams).toEqual("foo=bar&hello=world");
+    expect(params.foo).toEqual("bar");
+    expect(params.hello).toEqual("world");
+    expect(request.headers["Content-Type"]).toEqual("application/json");
+    expect(request.headers["Connection"]).toEqual("Keep-Alive");
+  });
+
 });
 
 
@@ -121,6 +135,22 @@ describe("Response Object", function(){
     request = Request(httpGet);
     response = Response(request);
     expect(response.split(CRLF)[2]).toEqual("Content-Type: application/json; charset=utf-8")
+  });
+
+  it("should able to handle JSONP request from JQuery", function(){
+    httpGet = "GET /users/44/show?x=foo&callback=jQuery11224324 HTTP/1.1"
+    request = Request(httpGet);
+    response = Response(request);
+    expected_resp = "jQuery11224324(" + JSON.stringify({hello: "world", id: "44", x: params.x }) + ")";
+    expect(response.split(CRLF)[2]).toEqual("Content-Type: application/javascript; charset=utf-8")
+    expect(response.split("\n\r\n")[1]).toEqual(expected_resp);
+  });
+
+  it("should handle no matching urls", function(){
+    httpGet = "GET /shops/44/show?x=foo HTTP/1.1"
+    request = Request(httpGet);
+    response = Response(request);
+    expect(response).toEqual("HTTP/1.1 404 NOT FOUND")
   });
 
 });

@@ -41,10 +41,11 @@
                   var i = requestParams.length;
                   while(i--) { var param = requestParams[i]; params[param.replace(":", "")]=requestVars[requestParams.indexOf(param)]}
                 }
-                // if match returns ["/paht/:variable", "controller#method"]
-                return([custom_route, x[custom_route]]);
+                // if match returns "controller#method"
+                return(x[custom_route]);
               };
             };
+            return("NOT FOUND");
         }
     }
 
@@ -61,12 +62,24 @@
 
 // xxxxxxxxxxxxxxxxxxxxxxxxx Request Object xxxxxxxxxxxxxx
     function Request(http_request) {
-      var request = http_request.split(" ");
+      var headers = http_request.split("\r\n")
+      var request = headers[0].split(" ");
+      headers.shift();
       req = {verb: request[0], 
              path: request[1], 
              protocol: request[2], 
              url: request[1].split("?")[0], 
-             encodeParams: request[1].split("?")[1] };
+             encodeParams: request[1].split("?")[1],
+             headers: {} };
+
+      // Setting the request Headers
+      if(headers.length != 0) {
+          i = headers.length;
+          while(i--) {
+              var header = headers[i].split(":")
+              req["headers"][header[0].trim()] = header[1].trim();
+          }
+      }
 
       // set the global params added to the URL
       if (typeof(req.encodeParams) != "undefined") {
@@ -77,22 +90,32 @@
 
 // xxxxxxxxxxxxxxxxxxxxxxxxx Response Object xxxxxxxxxxxxxx
   function Response(request) {
-    // Get the route, asign params and call the action
     var actions = Router.pointRequest(request.url);
-    var controllerAction = actions[1].split("#");
-    var jsonresp = TheApp[(controllerAction[0] + "Controller")][controllerAction[1]]();
 
-    var jsonresp = JSON.stringify(jsonresp);
-    var CRLF = "\r\n"
-    headers = ["HTTP/1.1 200 OK",
-            ("Date: " + (new Date).toGMTString()), 
-            "Content-Type: application/json; charset=utf-8", 
-            ("Content-Length: " + jsonresp.length), 
-            "Server: Velneo v7",
-            "transfer-coding: chunked",	  
-            "Keep-Alive: timeout=5, max=94",
-            "Connection: Keep-Alive"]
-    var reps = headers.join(CRLF) + CRLF + CRLF + jsonresp
-    return (reps)
+    if(actions != "NOT FOUND") {
+      var controllerAction = actions.split("#");
+      var resp = createResponse(controllerAction[0], controllerAction[1])
+    } else {
+      var resp = "HTTP/1.1 404 NOT FOUND"
+    };
+    return (resp);
   }
 
+  function createResponse(controller, action) {
+      var CRLF = "\r\n";
+      var jsonresp = TheApp[(controller + "Controller")][action]();
+      var jsonp = params.callback;
+      var headers = [("Date: " + (new Date).toGMTString()), 
+                      ("Content-Type: application/" + (jsonp ? "javascript" : "json")  + "; charset=utf-8"), 
+                      ("Content-Length: " + jsonresp.length), 
+                      "Server: Velneo v7",
+                      "transfer-coding: chunked",	  
+                      "Keep-Alive: timeout=5, max=94",
+                      "Connection: Keep-Alive"],
+          verb = "HTTP/1.1 200 OK"
+
+      var jsonresp = jsonp ? (jsonp + "(" + JSON.stringify(jsonresp) + ")") : JSON.stringify(jsonresp)
+
+      var fullResponse = verb + CRLF + headers.join(CRLF) + CRLF + CRLF + jsonresp
+      return(fullResponse);
+  }
