@@ -12,7 +12,7 @@ describe("Router Component", function(){
     expect(routes[0]).toEqual("/some/path/resource")
   });
 
-  it("should habdle no matching routes", function(){
+  it("should handle no matching routes", function(){
      Router.addRoutes({"/some/path/resource": "controller#action"});
      routing = Router.pointRequest("/some/23/resource");
      expect(routing).toEqual("NOT FOUND");
@@ -94,8 +94,8 @@ describe("Request Object", function(){
     expect(params.hello).toEqual("world");
   });
 
-  it("should be able to handle a request with headers", function(){
-    httpGet = "GET /some/path/toresource?foo=bar&hello=world HTTP/1.0\r\nContent-Type: application/json\r\nConnection: Keep-Alive"
+  it("should be able to handle a HTTP request with headers", function(){
+    httpGet = "GET /some/path/toresource?foo=bar&hello=world HTTP/1.0\r\nContent-Type: application/json\r\nConnection: Keep-Alive\r\n"
     request = Request(httpGet);
     expect(request.encodeParams).toEqual("foo=bar&hello=world");
     expect(params.foo).toEqual("bar");

@@ -64,8 +64,10 @@
     function Request(http_request) {
       var headers = http_request.split("\r\n")
       var request = headers[0].split(" ");
-      headers.shift();
-      req = {verb: request[0], 
+      headers.shift(); //delete the verb
+      headers.pop();  // delete the las \r\n
+
+      var req = {verb: request[0], 
              path: request[1], 
              protocol: request[2], 
              url: request[1].split("?")[0], 
@@ -74,7 +76,7 @@
 
       // Setting the request Headers
       if(headers.length != 0) {
-          i = headers.length;
+          var i = headers.length;
           while(i--) {
               var header = headers[i].split(":")
               req["headers"][header[0].trim()] = header[1].trim();
@@ -94,14 +96,14 @@
 
     if(actions != "NOT FOUND") {
       var controllerAction = actions.split("#");
-      var resp = createResponse(controllerAction[0], controllerAction[1])
+      var resp = renderResponse(controllerAction[0], controllerAction[1])
     } else {
       var resp = "HTTP/1.1 404 NOT FOUND"
     };
     return (resp);
   }
 
-  function createResponse(controller, action) {
+  function renderResponse(controller, action) {
       var CRLF = "\r\n";
       var jsonresp = TheApp[(controller + "Controller")][action]();
       var jsonp = params.callback;
