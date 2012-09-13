@@ -65,10 +65,10 @@ describe("Main App", function(){
         index: function(){return("Hello")}
       }
 
-      TheApp.extend({
+      wApp.extend({
         users: usersController
       })
-      expect(TheApp["users"]["index"]()).toEqual("Hello")
+      expect(wApp["users"]["index"]()).toEqual("Hello")
   });
 });
 
@@ -114,7 +114,7 @@ describe("Response Object", function(){
       var usersController = {
         show: function(){return({hello: "world", id: params.userid, x: params.x})}
       }
-      TheApp.extend({ usersController: usersController })
+      wApp.extend({ usersController: usersController })
       Router.addRoutes({"/users/:userid/show": "users#show"});
 
       CRLF = "\r\n"

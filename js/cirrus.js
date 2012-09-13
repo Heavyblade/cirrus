@@ -58,7 +58,7 @@
         return e;
     };
 
-    TheApp = new App;
+    wApp = new App;
 
 // xxxxxxxxxxxxxxxxxxxxxxxxx Request Object xxxxxxxxxxxxxx
     function Request(http_request) {
@@ -105,7 +105,7 @@
 
   function renderResponse(controller, action) {
       var CRLF = "\r\n";
-      var jsonresp = TheApp[(controller + "Controller")][action]();
+      var jsonresp = wApp[(controller + "Controller")][action]();
       var jsonp = params.callback;
       var headers = [("Date: " + (new Date).toGMTString()), 
                       ("Content-Type: application/" + (jsonp ? "javascript" : "json")  + "; charset=utf-8"), 
