@@ -1,56 +1,53 @@
-// xxxxxxxxxx URI params into a object xxxxxxxxxxxxxxxxxxx
-    params = {};
-    function parse_params(array) {
-      var keys = array.length;
-      while(keys--) {
-          var subarray = array[keys].split("=");
-          params[subarray[0]] = subarray[1];
-      };
-      return (params);
-    };
-
-// xxxxxxxxxxxxxxxx System Router xxxxxxxxxxxxxxxxxxxxxxxx
-    Router = {
-        routes: {},
-        addRoutes: function (rutes) {
-            var keys = Object.keys(rutes),
-                i = keys.length;
-            while(i--) {
-                var basic = {},
-                    key = keys[i];
-                basic[key] = rutes[key];
-                this.routes[key.replace(/:\w+/g, "(\\w+)")] = basic;
-            }
-        },
-        pointRequest: function (url) {
-            keys = Object.keys(this.routes);
-            var i = keys.length;
-            while(i--) {
-              var rutaRegExp = new RegExp((keys[i].replace(/\//g, "\\/") + "\$"));
-              var match = url.match(rutaRegExp);
-
-              if (match){
-                var x = this.routes[keys[i]]; // Keys from the match object
-                var custom_route = Object.keys(x)[0];
-
-                // extract URL params and Add it to global params
-                var requestParams = custom_route.match(/:(\w+)/g);
-                if (requestParams) {
-                  var requestVars = url.match(rutaRegExp);
-                  requestVars.shift();
-                  var i = requestParams.length;
-                  while(i--) { var param = requestParams[i]; params[param.replace(":", "")]=requestVars[requestParams.indexOf(param)]}
-                }
-                // if match returns "controller#method"
-                return(x[custom_route]);
-              };
-            };
-            return("NOT FOUND");
-        }
-    }
-
 //xxxxxxxxxxxxxxxxxxx Main Application Definition xxxxxxxx
-    function App() {}
+    function App() {
+      // System Router
+      this.router = {
+          params: {},
+          parse_params: function(array) {
+              var keys = array.length;
+              while(keys--) {
+                  var subarray = array[keys].split("=");
+                  this.params[subarray[0]] = subarray[1];
+              };
+          },
+          routes: {},
+          addRoutes: function (rutes) {
+              var keys = Object.keys(rutes),
+                  i = keys.length;
+              while(i--) {
+                  var basic = {},
+                      key = keys[i];
+                  basic[key] = rutes[key];
+                  this.routes[key.replace(/:\w+/g, "(\\w+)")] = basic;
+              }
+          },
+          pointRequest: function (url) {
+              keys = Object.keys(this.routes);
+              var i = keys.length;
+              while(i--) {
+                var rutaRegExp = new RegExp((keys[i].replace(/\//g, "\\/") + "\$"));
+                var match = url.match(rutaRegExp);
+
+                if (match){
+                  var x = this.routes[keys[i]]; // Keys from the match object
+                  var custom_route = Object.keys(x)[0];
+
+                  // extract URL params and Add it to global params
+                  var requestParams = custom_route.match(/:(\w+)/g);
+                  if (requestParams) {
+                    var requestVars = url.match(rutaRegExp);
+                    requestVars.shift();
+                    var i = requestParams.length;
+                    while(i--) { var param = requestParams[i]; this.params[param.replace(":", "")]=requestVars[requestParams.indexOf(param)]}
+                  }
+                  // if match returns "controller#method"
+                  return(x[custom_route]);
+                };
+              };
+              return("NOT FOUND");
+          }
+      }   
+    }
 
     App.prototype.extend =  function(m, e){
         var e = e || this;
@@ -58,7 +55,7 @@
         return e;
     };
 
-    wApp = new App;
+    wApp = new App
 
 // xxxxxxxxxxxxxxxxxxxxxxxxx Request Object xxxxxxxxxxxxxx
     function Request(http_request) {
@@ -85,14 +82,14 @@
 
       // set the global params added to the URL
       if (typeof(req.encodeParams) != "undefined") {
-        parse_params(decodeURIComponent(req.encodeParams).split("&"));
+        wApp.router.parse_params(decodeURIComponent(req.encodeParams).split("&"));
       }
       return(req);
     };
 
-// xxxxxxxxxxxxxxxxxxxxxxxxx Response Object xxxxxxxxxxxxxx
+// xxxxxxxxxxxxxxxxxxxx Response Object xxxxxxxxxxxxxxxxxxx
   function Response(request) {
-    var actions = Router.pointRequest(request.url);
+    var actions = wApp.router.pointRequest(request.url);
 
     if(actions != "NOT FOUND") {
       var controllerAction = actions.split("#");
@@ -106,7 +103,7 @@
   function renderResponse(controller, action) {
       var CRLF = "\r\n";
       var jsonresp = wApp[(controller + "Controller")][action]();
-      var jsonp = params.callback;
+      var jsonp = wApp.router.params.callback;
       var headers = [("Date: " + (new Date).toGMTString()), 
                       ("Content-Type: application/" + (jsonp ? "javascript" : "json")  + "; charset=utf-8"), 
                       ("Content-Length: " + jsonresp.length), 
