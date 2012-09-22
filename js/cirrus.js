@@ -65,7 +65,7 @@
       var headers = http_request.split("\r\n")
       var request = headers[0].split(" ");
       headers.shift(); //delete the verb
-      headers.pop();  // delete the las \r\n
+      headers.pop();  // delete the last \r\n
 
       var req = {verb: request[0], 
              path: request[1], 

@@ -65,10 +65,16 @@ describe("Main App", function(){
         index: function(){return("Hello")}
       }
 
+      var appsController = {
+        index: function(){return("Hello2")}
+      }
+
       wApp.extend({
-        users: usersController
+        users: usersController,
+        apps: appsController
       })
       expect(wApp["users"]["index"]()).toEqual("Hello")
+      expect(wApp["apps"]["index"]()).toEqual("Hello2")
   });
 });
 
