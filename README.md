@@ -1,7 +1,5 @@
 # HTTP-JSON-Server para la plataforma Velneo V7
 
-* http://velneo.es
-
 ## Que es ?
 
 Cirrus.js es una implementacion del protocolo HTTP corriendo sobre el objecto TCP/IP de Velneo V7 y que solo retorna JSON, orientada a la construccion de APIS para dar acceso mediante Ajax o http request a aplicaciones desarrolladas sobre esta plataforma.
@@ -86,7 +84,7 @@ esta declaración añadira automáticamente las siguientes rutas a tu aplicació
 * PUT /users/:id
 * DELETE /users/:id
 
-## peticiones POST
+## Peticiones POST y PUT
 
 Puedes realizar peticiones POST o PUT que incluyan datos JSON como parte del la petición dentro del body, estos datos serán parseados y podrás acceder a ellos desde wApp.params.body
 
@@ -119,6 +117,16 @@ Añade el controlador a tu aplicación:
 ```javascript
 wApp.extend({ usersController: usersController })
 ```
+
+## Quieres contribuir
+
+Para contribuir a Cirrus.js, clona el repositorio verifica que todos los specs pasan (abre el archivo spec/SpecRunner.html), no existen dependencias y simplemente puedes revisar el codigo y realizar pull request para añadir funcionalidades faltantes o corregir bugs encontrados.
+
+## Licencia
+
+Cirrus.js es liberado bajo las directivas de la licencia MIT
+
+* http://www.opensource.org/licenses/MIT
 
 
 
