@@ -1,6 +1,7 @@
 //xxxxxxxxxxxxxxxxxxx Main Application Definition xxxxxxxx
     function App() {
       // System Router
+
       this.router = {
           params: {},
           parse_params: function(array) {
@@ -62,7 +63,8 @@
               };
               return("NOT FOUND");
           }
-      }   
+      }
+      this.params = this.router.params   
     }
 
     App.prototype.extend =  function(m, e){
