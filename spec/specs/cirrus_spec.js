@@ -84,7 +84,7 @@ describe("Request Object", function(){
   });
 
   it("should decode the HTTP GET request", function(){
-    httpGet = "GET /some/path/toresource HTTP/1.0"
+    httpGet = "GET /some/path/toresource HTTP/1.0\r\n"
     request = Request(httpGet);
     expect(request.verb).toEqual("GET");
     expect(request.path).toEqual("/some/path/toresource")
@@ -93,7 +93,7 @@ describe("Request Object", function(){
   });
 
   it("Should parse the query varibles in the url", function(){
-    httpGet = "GET /some/path/toresource?foo=bar&hello=world HTTP/1.0"
+    httpGet = "GET /some/path/toresource?foo=bar&hello=world HTTP/1.0\r\n"
     request = Request(httpGet);
     expect(request.encodeParams).toEqual("foo=bar&hello=world");
     expect(wApp.router.params.foo).toEqual("bar");
@@ -109,6 +109,14 @@ describe("Request Object", function(){
     expect(request.headers["Content-Type"]).toEqual("application/json");
     expect(request.headers["Connection"]).toEqual("Keep-Alive");
   });
+
+  it("should be able to handle HTTP post with body", function () {
+    jsonob = {name: "john", lastname: "doe"}
+    httpGet = "GET /some/path/toresource?foo=bar&hello=world HTTP/1.0\r\nContent-Type: application/json\r\nConnection: Keep-Alive\r\n\r\n" + JSON.stringify(jsonob)
+    request = Request(httpGet);
+    expect(request.body.name).toEqual("john")
+    expect(request.body.lastname).toEqual("doe")
+  })
 
 });
 

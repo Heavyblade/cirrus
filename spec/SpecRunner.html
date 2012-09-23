@@ -40,17 +40,17 @@
 
          Benchmark.benchmark({
             Route_raddRoutes: function(){
-              wApp.router.routes = {}; params = {};
+              wApp.router.routes = {}; wApp.router.params = {};
               var x = 1000;
               while(x--) { wApp.router.addRoutes({"/users/:some_param/action":  ("users" + x + "#index")}) }
             },
             parse_params: function(){
-              wApp.router.routes = {}; params = {};
+              wApp.router.routes = {}; wApp.router.params = {};
               var x = 1000;
               while(x--) { var a = wApp.router.parse_params([("hello" + x + "=world"), ("john" + x + "doe")]); };
             },
             Router_PointRequest: function(){
-              wApp.router.routes = {}; params = {};
+              wApp.router.routes = {}; wApp.router.params = {};
               wApp.router.addRoutes({"/users/:some_param/action":  ("users#index"), "/users/flat/path": "users#flat"})
               var url = "/users/43/action"
               var url2 = "users/flat/path"
@@ -61,13 +61,13 @@
               }
             },
             RequestObject: function(){
-              wApp.router.routes = {}; params = {};
+              wApp.router.routes = {}; wApp.router.params = {};
               http_request = "GET /some/param/action?hello=world&john=doe HTTP/1.1"
               var x = 1000
               while(x--) {var a = Request(http_request);}
             },
             ResponseObject: function() {
-              wApp.router.routes = {}; params = {}; 
+              wApp.router.routes = {}; wApp.router.params = {};
               request = {url: "/some/param/action"};
               wApp.router.addRoutes({"/some/param/action": "users#index"})
 

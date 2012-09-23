@@ -59,9 +59,11 @@
 
 // xxxxxxxxxxxxxxxxxxxxxxxxx Request Object xxxxxxxxxxxxxx
     function Request(http_request) {
-      var headers = http_request.split("\r\n")
+      var headAndBody = http_request.split("\r\n\r\n") //split header from body
+
+      var headers = headAndBody[0].split("\r\n")
       var request = headers[0].split(" ");
-      headers.shift(); //delete the verb
+      headers.shift(); //delete the request
       headers.pop();  // delete the last \r\n
 
       var req = {verb: request[0], 
@@ -69,7 +71,8 @@
              protocol: request[2], 
              url: request[1].split("?")[0], 
              encodeParams: request[1].split("?")[1],
-             headers: {} };
+             headers: {},
+             body: {} };
 
       // Setting the request Headers
       if(headers.length != 0) {
@@ -78,6 +81,11 @@
               var header = headers[i].split(":")
               req["headers"][header[0].trim()] = header[1].trim();
           }
+      }
+
+      if (headAndBody.length == 2) {
+          req.body = JSON.parse(headAndBody[1])
+          wApp.router.params.request_body = req.body
       }
 
       // set the global params added to the URL
@@ -90,7 +98,6 @@
 // xxxxxxxxxxxxxxxxxxxx Response Object xxxxxxxxxxxxxxxxxxx
   function Response(request) {
     var actions = wApp.router.pointRequest(request.url);
-
     if(actions != "NOT FOUND") {
       var controllerAction = actions.split("#");
       var resp = renderResponse(controllerAction[0], controllerAction[1])
