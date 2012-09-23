@@ -1,6 +1,10 @@
-# HTTP - JSON-server for Velneo V7 Plataform
+# HTTP - JSON-server para la plataforma Velneo V7
 
 * http://velneo.es
+
+## Que es ?
+
+Cirrus.js es una implementacion del protocolo HTTP corriendo sobre el objecto TCP/IP de Velneo V7 y que solo retorna JSON, orientada a la construccion de APIS para dar acceso mediante Ajax o http request a aplicaciones desarrolladas sobre esta plataforma.
 
 ## Installation
 
