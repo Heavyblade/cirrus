@@ -15,11 +15,27 @@
               var keys = Object.keys(rutes),
                   i = keys.length;
               while(i--) {
-                  var basic = {},
-                      key = keys[i];
-                  basic[key] = rutes[key];
-                  this.routes[key.replace(/:\w+/g, "(\\w+)")] = basic;
+                  if(keys[i].split(" ")[0] == "resource") {
+                    var rest = this.createREST(keys[i].split(" ")[1]);
+                    this.addRoutes(rest)      
+                  } else {
+                    var basic = {},
+                        key = keys[i];
+                    basic[key] = rutes[key];
+                    this.routes[key.replace(/:\w+/g, "(\\w+)")] = basic;
+                  }
               }
+          },
+          createREST: function(resource) {
+            var rest = {}
+            rest["GET /" + resource] = resource + "Controller#index"
+            rest["GET /" + resource + "/new"] = resource + "Controller#new"
+            rest["POST /" + resource] = resource + "Controller#create"
+            rest["GET /" + resource + "/:id"] = resource + "Controller#show"
+            rest["GET /" + resource + "/:id/edit"] = resource + "Controller#edit"
+            rest["PUT /" + resource + "/:id"] = resource + "Controller#update"
+            rest["DELETE /" + resource + "/:id"] = resource + "Controller#delete"
+            return(rest)
           },
           pointRequest: function (url) {
               keys = Object.keys(this.routes);
@@ -97,7 +113,7 @@
 
 // xxxxxxxxxxxxxxxxxxxx Response Object xxxxxxxxxxxxxxxxxxx
   function Response(request) {
-    var actions = wApp.router.pointRequest(request.url);
+    var actions = wApp.router.pointRequest(request.verb + " " + request.url);
     if(actions != "NOT FOUND") {
       var controllerAction = actions.split("#");
       var resp = renderResponse(controllerAction[0], controllerAction[1])
@@ -109,7 +125,7 @@
 
   function renderResponse(controller, action) {
       var CRLF = "\r\n";
-      var jsonresp = wApp[(controller + "Controller")][action]();
+      var jsonresp = wApp[(controller + "Controller")][action](wApp.router.params);
       var jsonp = wApp.router.params.callback;
       var headers = [("Date: " + (new Date).toGMTString()), 
                       ("Content-Type: application/" + (jsonp ? "javascript" : "json")  + "; charset=utf-8"), 
