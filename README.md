@@ -133,9 +133,9 @@ Puedes crear funcionalidades que se alimenten de la data de tu vServer y para el
 
 Puedes usar Apache o Nginx y configurar proxys inversos de tal forma que sean capaz de servir archivos estáticos cuando existan o que redirija peticiones http hacia el vServer cuando se pidan datos dinámicos.
 
-## Que relación tiene Cirrus.js con vClouden ?
+### Que relación tiene Cirrus.js con vClouden ?
 
-Cirrus.js sera el primero de muchos plugins a desarrollar para vClouden, 
+Cirrus.js sera el primero de muchos plugins a desarrollar para vClouden, como plugin las apps que se distribuyan usando vClouden dispondrán de una carpeta para archivos html estaticos y de un setup con Nginx para recibir el trafico de la web y administrarlo, asu que el desarrollador solo tiene que ocuparse de su API.
 
 ### es Cirrus.js equivalente a vModApache ?
 
