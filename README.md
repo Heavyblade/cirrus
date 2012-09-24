@@ -111,19 +111,21 @@ Para definir el controlador debes de añadir a wApp un objeto javascript con el 
 Definición del controlador
 
 ```javascript
-	wApp.usersController = {
-		index: function(params){
-			// tu lógica
-			return(algun_objeto_json);
-		},
-		show: function(params){
-			// tu lógica
-			return(algun_objeto_json);
-		}
+wApp.usersController = {
+	index: function(params){
+		// tu lógica
+		return(algun_objeto_json);
+	},
+	show: function(params){
+		// tu lógica
+		return(algun_objeto_json);
 	}
+}
 ```
 
 ## Notas de version Alpha
+
+En esta primera liberación Cirrus.js se encuentra en version Alpha por cuanto solo ha sido utilizada por su creador y por que la salida de la v7.11 supone un cambio muy grande en cuanto a la escritura de vJavascript en v7, debido a que @vArquitecto ha programado la posibilidad de realizar imports de codigo JavaScript dentro de los scripts, por cuanto no tendras que desarrollar todo tu código de controladores y rutas en el mismo archivo y Cirrus.js podra se incluido como una mera dependencia dentro de tus scripts.
 
 
 
