@@ -62,7 +62,7 @@ con la anterior sentencia estas enviando las peticiones GET dirigidas al path "/
 
 ##### parametros:
 
-Puedes definir parametros dentro de tus urls con el fin de darles un enfoque más REST, de tal forma que tengan sentido al leerlas.
+Puedes definir parametros dentro de tus urls con el fin de darles un enfoque más REST, de tal forma que tengan sentido al leerlas, para ello dentro de al URL puedes indicar cuales componentes son parametros añadiendo dos puntos (":") antes de la palabra, puedes añadir tantos parametros como desees.
 
 ```javascript
 	wApp.addRoutes({"GET /users/:id": "users#show"})
