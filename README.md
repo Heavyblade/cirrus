@@ -1,6 +1,6 @@
 # HTTP-JSON-Server para la plataforma Velneo V7
 
-Cirrus.js es una implementacion del protocolo HTTP corriendo sobre el objecto TCP/IP de Velneo V7 y que solo retorna JSON, orientado a la construcción de API's para dar acceso mediante Ajax o peticiones Http a aplicaciones desarrolladas sobre v7.
+Cirrus.js es una implementacion vJavaScript del protocolo HTTP corriendo sobre el objecto TCP/IP de Velneo V7 y que solo retorna JSON, orientado a la construcción de API's para dar acceso mediante Ajax o peticiones Http a aplicaciones desarrolladas sobre v7.
 
 ## Installación
 
@@ -14,7 +14,7 @@ Listo ahora tienes a Cirrus.js disponible y solo debes iniciar el objeto TCP en 
 
 ## Uso rápido
 
-Hola Mundo usando Cirrus.js
+"Hola Mundo" usando Cirrus.js
 
 ```javascript
 	// Definicion del controlador
@@ -124,7 +124,7 @@ Puedes usar Apache o Nginx y configurar proxys inversos de tal forma que sea cap
 
 ### es Cirrus.js equivalente a vModApache ?
 
-No, vModApache es un modulo especializado para acceso a vServers desarrollado directamente por Velneo S.A y su función es mas parecida a las funcionalidades CGI, Cirrus.js por el contrarío pretende ser directamente un HTTP server.
+No, vModApache es un modulo especializado para acceso a vServers desarrollado directamente por Velneo S.A y su función es mas parecida a las funcionalidades CGI, Cirrus.js por el contrarío pretende ser directamente un HTTP server orientado la creación de API's.
 
 ### Consume Cirrus.js enganches al vServer?
 
