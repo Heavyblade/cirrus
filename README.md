@@ -112,7 +112,7 @@ wApp.usersController = {
 ```
 ## FAQ's
 
-### y como funcionalidades HTML + Javascript dentro de mi app v7
+### como añado funcionalidades HTML + Javascript dentro de mi app v7
 
 Puedes crear funcionalidades que se alimenten de la data de tu vServer y para ello Cirrus.js esta habilitada para peticiones JSONP para evitar la restricción que tienen los navegadores para "cross domain requests".
 
@@ -126,15 +126,15 @@ Puedes usar Apache o Nginx y configurar proxys inversos de tal forma que sea cap
 
 No, vModApache es un modulo especializado para acceso a vServers desarrollado directamente por Velneo S.A y su función es mas parecida a las funcionalidades CGI, Cirrus.js por el contrarío pretende ser directamente un HTTP server.
 
-## Consume Cirrus.js enganches ?
+### Consume Cirrus.js enganches al vServer?
 
 No para nada Cirrus.js corre directamente sobre las conexiones que permite el objeto TCP de v7 y no realiza una conexion VATP con el vServer.
 
-## es Cirrus.js multiplataforma ?
+### es Cirrus.js multiplataforma ?
 
 Si claro, al correr directamente sobre el objeto TCP de v7 correra en cualquier plataforma donde el vServer tenga capacidad de correr.
 
-## Quieres contribuir ?
+### Quieres contribuir ?
 
 Para contribuir a Cirrus.js, clona el repositorio verifica que todos los specs pasan (abre el archivo spec/SpecRunner.html), no existen dependencias y simplemente puedes revisar el codigo y realizar pull request al repositorio para añadir funcionalidades faltantes o corregir bugs encontrados.
 
