@@ -129,6 +129,7 @@
       var CRLF = "\r\n";
       var jsonresp = wApp[(controller + "Controller")][action](wApp.router.params);
       var jsonp = wApp.router.params.callback;
+      var jsonresp = jsonp ? (jsonp + "(" + JSON.stringify(jsonresp) + ")") : JSON.stringify(jsonresp)
       var headers = [("Date: " + (new Date).toGMTString()), 
                       ("Content-Type: application/" + (jsonp ? "javascript" : "json")  + "; charset=utf-8"), 
                       ("Content-Length: " + jsonresp.length), 
@@ -136,9 +137,7 @@
                       "transfer-coding: chunked",	  
                       "Keep-Alive: timeout=5, max=94",
                       "Connection: Keep-Alive"],
-          verb = "HTTP/1.1 200 OK"
-
-      var jsonresp = jsonp ? (jsonp + "(" + JSON.stringify(jsonresp) + ")") : JSON.stringify(jsonresp)
+          verb = "HTTP/1.1 200 OK"   
 
       var fullResponse = verb + CRLF + headers.join(CRLF) + CRLF + CRLF + jsonresp
       return(fullResponse);

@@ -154,7 +154,17 @@ describe("Response Object", function(){
     var response = Response(request);
     expect(typeof(response)).toEqual("string");
     expect(response.split("\r\n")[0]).toEqual("HTTP/1.1 200 OK");
-    expect(response.split("\n\r\n")[1]).toEqual(expected_resp);
+    expect(response.split("\r\n\r\n")[1]).toEqual(expected_resp);
+  });
+
+  it("should render the proper HTTP headers to the response", function(){
+    var httpGet = "GET /users/44/show?x=foo HTTP/1.1"
+    var request = Request(httpGet);
+    var expected_resp = JSON.stringify({hello: "world", id: "44", x: wApp.router.params.x });
+    var response = Response(request);
+    var headers = response.split("\r\n\r\n")[0].split("\r\n")
+    expect(typeof(response)).toEqual("string");
+    expect(headers[3].split(" ")[1]).toEqual("" + expected_resp.length);
   });
 
   it("should set the proper headers for a JSON response", function(){

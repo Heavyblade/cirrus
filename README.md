@@ -127,6 +127,7 @@ wApp.usersController = {
 
 En esta primera liberación Cirrus.js se encuentra en version Alpha por cuanto solo ha sido utilizada por su creador y por que la salida de la v7.11 supone un cambio muy grande en cuanto a la escritura de vJavascript en v7, debido a que @vArquitecto ha programado la posibilidad de realizar imports de codigo JavaScript dentro de los scripts, por cuanto no tendras que desarrollar todo tu código de controladores y rutas en el mismo archivo y Cirrus.js podra se incluido como una mera dependencia dentro de tus scripts.
 
+* http://velneo.es/foros/topic/importar-js/
 
 
 ## FAQ's
@@ -161,7 +162,7 @@ Si claro, al correr directamente sobre el objeto TCP de v7 correra en cualquier 
 
 Para contribuir a Cirrus.js, clona el repositorio, verifica que todos los specs pasan (abre el archivo spec/SpecRunner.html), no existen dependencias y simplemente puedes revisar el código y realizar pull request al repositorio para añadir funcionalidades faltantes o corregir bugs encontrados.
 
-Dipones además dentro de la suite de Jasmine.js de un apartado donde puedes tester el performance de tus cambios o adiciones utilizando para ello la librería Benchmark.js.
+Dispones además dentro de la suite de Jasmine.js de un apartado donde puedes tester el performance de tus cambios o adiciones utilizando para ello la librería Benchmark.js.
 
 ## Licencia
 
