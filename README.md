@@ -20,7 +20,7 @@ Listo ahora tienes a Cirrus.js disponible y solo debes iniciar el objeto TCP en 
 
 ```javascript
 	// Definicion del controlador
-	helloController = {
+	wApp.helloController = {
 		sayHello: function(params){
 			return({mensaje: "Hola Mundo"});
 		}
@@ -116,6 +116,11 @@ Definición del controlador
 		}
 	}
 ```
+
+## Notas de version Alpha
+
+
+
 ## FAQ's
 
 ### Como añado funcionalidades HTML + Javascript dentro de mi app v7 ?
