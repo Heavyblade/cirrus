@@ -2,6 +2,12 @@
 
 Cirrus.js es una implementación en vJavaScript del protocolo HTTP corriendo directamente sobre el objecto TCP/IP de Velneo V7 y que solo retorna JSON, orientado a la construcción de API's para dar acceso mediante Ajax o peticiones Http a aplicaciones desarrolladas sobre v7.
 
+### Para que se usa ?
+
+El propósito es abrir las aplicaciones desarrolladas sobre v7 para que puedan ser aprovechadas en entornos web, logrando de esta forma funcionalidades como pedidos online afectando directamente la app, listar el catalogo de productos, solicitud de citas online e inmuerables posibilidades gracias a que puedes desarrollar API's de acceso a tus datos que pueden ser consumidas desde servicios web, html estaticos mediante JSONP u otros programas que puedan realizar peticiones HTTP.
+
+
+
 ## Instalación
 
 #### Herencia
@@ -149,7 +155,7 @@ No, Cirrus.js corre directamente sobre las conexiones que permite el objeto TCP 
 
 Si claro, al correr directamente sobre el objeto TCP de v7 correra en cualquier plataforma donde el vServer tenga capacidad de correr.
 
-### Quieres contribuir ?
+## Quieres contribuir ?
 
 Para contribuir a Cirrus.js, clona el repositorio, verifica que todos los specs pasan (abre el archivo spec/SpecRunner.html), no existen dependencias y simplemente puedes revisar el código y realizar pull request al repositorio para añadir funcionalidades faltantes o corregir bugs encontrados.
 
