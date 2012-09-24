@@ -133,6 +133,10 @@ Puedes crear funcionalidades que se alimenten de la data de tu vServer y para el
 
 Puedes usar Apache o Nginx y configurar proxys inversos de tal forma que sean capaz de servir archivos estáticos cuando existan o que redirija peticiones http hacia el vServer cuando se pidan datos dinámicos.
 
+## Que relación tiene Cirrus.js con vClouden ?
+
+Cirrus.js sera el primero de muchos plugins a desarrollar para vClouden, 
+
 ### es Cirrus.js equivalente a vModApache ?
 
 No, vModApache es un modulo especializado para acceso a vServers desarrollado directamente por Velneo S.A y su función es mas parecida a las funcionalidades CGI, Cirrus.js por el contrarío pretende ser directamente un HTTP server orientado la creación de API's y que puede ser complementado con Nginx o Apache para obtener los mejor de ambos mundos.

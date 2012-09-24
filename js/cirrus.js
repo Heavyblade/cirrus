@@ -29,13 +29,13 @@
           },
           createREST: function(resource) {
             var rest = {}
-            rest["GET /" + resource] = resource + "Controller#index"
-            rest["GET /" + resource + "/new"] = resource + "Controller#new"
-            rest["POST /" + resource] = resource + "Controller#create"
-            rest["GET /" + resource + "/:id"] = resource + "Controller#show"
-            rest["GET /" + resource + "/:id/edit"] = resource + "Controller#edit"
-            rest["PUT /" + resource + "/:id"] = resource + "Controller#update"
-            rest["DELETE /" + resource + "/:id"] = resource + "Controller#delete"
+            rest["GET /" + resource] = resource + "#index"
+            rest["GET /" + resource + "/new"] = resource + "#new"
+            rest["POST /" + resource] = resource + "#create"
+            rest["GET /" + resource + "/:id"] = resource + "#show"
+            rest["GET /" + resource + "/:id/edit"] = resource + "#edit"
+            rest["PUT /" + resource + "/:id"] = resource + "#update"
+            rest["DELETE /" + resource + "/:id"] = resource + "#delete"
             return(rest)
           },
           pointRequest: function (url) {
