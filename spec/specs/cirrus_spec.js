@@ -79,20 +79,16 @@ describe("Router Component", function(){
 // xxxxxxxxxxxxxxxxxxxxxxEnd Router xxxxxxxxxxxxxxxxxxxxxxx
 describe("Main App", function(){
   it("should extend it self to add controllers", function(){
-     var usersController = {
+     wApp.usersController = {
         index: function(params){return("Hello")}
       }
 
-      var appsController = {
+      wApp.appsController = {
         index: function(params){return("Hello2")}
       }
 
-      wApp.extend({
-        users: usersController,
-        apps: appsController
-      })
-      expect(wApp["users"]["index"]()).toEqual("Hello")
-      expect(wApp["apps"]["index"]()).toEqual("Hello2")
+      expect(wApp["usersController"]["index"]()).toEqual("Hello")
+      expect(wApp["appsController"]["index"]()).toEqual("Hello2")
   });
 });
 
@@ -143,10 +139,9 @@ describe("Response Object", function(){
 
   beforeEach(function(){
       // Setting up an Application to test
-      var usersController = {
+      wApp.usersController = {
         show: function(params){return({hello: "world", id: wApp.router.params.userid, x: wApp.router.params.x})}
       }
-      wApp.extend({ usersController: usersController })
       wApp.router.addRoutes({"GET /users/:userid/show": "users#show"});
 
       CRLF = "\r\n"
@@ -196,23 +191,19 @@ describe("Controller creation", function(){
   });
 
   it("should add controllers to wApp object", function(){
-    var usersController = {
+    wApp.usersController = {
         show: function(params){return({hello: "world", id: wApp.router.params.userid, x: wApp.router.params.x})}
     }
 
-    wApp.extend({
-      users: usersController
-    })
-    expect(typeof(wApp.users)).toEqual("object")
+    expect(typeof(wApp.usersController)).toEqual("object")
     expect(typeof(wApp.posts)).toEqual("undefined")
   });
 
   it("should receive the params from the request", function(){
-    var usersController = {
+    wApp.usersController = {
       show: function(params){return({hello: "world", id: params.id})}
     }
     
-    wApp.extend({usersController: usersController})
     wApp.router.addRoutes({"GET /users/:id":  "users#show"});
     var httpGet = "GET /users/23 HTTP/1.1\r\n"
     var request = Request(httpGet)

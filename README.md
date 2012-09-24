@@ -1,20 +1,18 @@
 # HTTP-JSON-Server para la plataforma Velneo V7
 
-## Que es ?
+Cirrus.js es una implementacion del protocolo HTTP corriendo sobre el objecto TCP/IP de Velneo V7 y que solo retorna JSON, orientado a la construcción de API's para dar acceso mediante Ajax o peticiones Http a aplicaciones desarrolladas sobre v7.
 
-Cirrus.js es una implementacion del protocolo HTTP corriendo sobre el objecto TCP/IP de Velneo V7 y que solo retorna JSON, orientada a la construccion de APIS para dar acceso mediante Ajax o http request a aplicaciones desarrolladas sobre esta plataforma.
-
-## Installación.
+## Installación
 
 #### Herencia
-Para comenzar a usar Cirrus.js en la carpeta /bin puedes encontrar un archivo .vin el cual podrás instalar dentro de tu Velneo vServer y heredar de este algun proyecto del que desees servir datos web, es decir el webserver debe quedar "por encima" de la aplicación a servir a fin de poder usar las busquedas y procesos de datos de esta.
+Para comenzar a usar Cirrus.js en la carpeta /bin puedes encontrar un archivo .vin el cual podrás instalar dentro de tu Velneo vServer y heredar en este algún proyecto del que desees servir datos web, es decir el webserver debe quedar "por encima" de la aplicación a servir a fin de poder usar las busquedas y procesos de datos de pertenecientes a esta.
 
 #### Copia
-Si prefieres copiar directamente el servidor dentro de tu aplicación para evitar los incomvenientes de la herencia, copia la carpeta JSON-server dentro de tu solución, crea un script Js y copia el codigo de Cirrus.js dentro de ese script y finalmente asignale ese script al proceso "http-server".
+Si prefieres copiar directamente el servidor dentro de tu aplicación para evitar los inconveniente de la herencia, copia la carpeta JSON-server dentro de tu solución, crea un script Js y copia el codigo de Cirrus.js dentro de ese script y finalmente asignale ese script al proceso "HTTP-SERVER".
 
-Listo ahora tienes a Cirrus.js disponible.
+Listo ahora tienes a Cirrus.js disponible y solo debes iniciar el objeto TCP en el plano de ejecucuón en el que lo desees usar.
 
-## Uso rapido
+## Uso rápido
 
 Hola Mundo usando Cirrus.js
 
@@ -26,11 +24,12 @@ Hola Mundo usando Cirrus.js
 		}
 	}
 
-	// Añadiendo el controlador a tu App
-	wApp.extend({ helloController: helloController })
-
 	// Creando las rutas
 	wApp.addRoutes({"GET /hello": "hello#sayHello"})
+
+	//Procesando los requests
+	var request = theRoot.varToString("REQUEST")
+	theRoot.setVar("RESPONSE", Response(Request(request)))
 ```
 
 Inicio objecto TCP en el puerto 3000
@@ -43,9 +42,9 @@ Inicio objecto TCP en el puerto 3000
 
 ## Modo de uso.
 
-Cirrus.js es mas que simplemente un parseador de request HTTP te da una estructura para que organices tu codigo y no tengas que liarte con el ruteo y parametros, funcionalidad que esta embebida dentro del objeto wApp, el cual englobla los datos de aplicación que quieres exponer.
+Cirrus.js es mas que simplemente un parseador de peticiones HTTP te da una estructura para que organices tu código y no tengas que trabajar el ruteo y parametros, toda esta funcionalidad que esta embebida dentro del objeto wApp, el cual englobla los datos de aplicación que quieres exponer.
 
-#### Definicion de rutas:
+#### Definición de rutas:
 
 Dado que Cirrus.js se encarga de todo el parseo y organizacion del request HTTP por tí, tu solo tienes que encargate de ordenar tus rutas y controladores para el manejo de las peticiones.
 
@@ -55,7 +54,7 @@ wApp.addRoutes({"GET /users": "users#index", "GET /users/new": "users#new"})
 ```
 con la anterior sentencia estas enviando las peticiones GET dirigidas al path "/users" hacia el controlador usersController en la acción "index"
 
-##### Define parametros:
+##### parametros:
 
 puedes definir parametros dentro de tus urls con el fin de darles un enfoque mas REST y que tengas mas sentido al leerlas.
 
@@ -67,7 +66,7 @@ En esta ruta cuando llegue un request "/users/20" el "20" será añadido a la li
 
 Adicional a esta definicion Cirrus.js parseara cualquier para metro extra añadido al final de la URL siguiendo el formato definido para HTTP URL?param1=value1&param2=value2 y los añadira a la lista global de parametros.
 
-#### Soporte REST:
+##### Soporte REST:
 
 Si dispones de un recurso (ususarios, facturas, articulos, categorias, etc) y quieres evitarte construir las rutas para listarlos, crearlos, mostrar espeficos, editarlos, actualizarlos, etc puedes declarar recursos en tus rutas y Cirrus.js creara las 7 rutas REST para ese recurso.
 
@@ -97,7 +96,7 @@ Al igual que en el las estructuras web standar, los controladores son los mediad
 
 #### Crear el controlador:
 
-Para definir el controlador debes de crear un objeto javascript con el nombre del controlador seguido de "Controller", dentro de el definiras metodos que contendran la lógica de negocios y que tendran acceso a la lista de parametros y finalmente el objeto JSOn que representa la respuesta
+Para definir el controlador debes de crear un objeto javascript con el nombre del controlador seguido de "Controller", dentro de el definiras metodos que contendran la lógica de negocios y que tendran acceso a la lista de parametros y finalmente el objeto JSON que representa la respuesta
 
 Definición del controlador
 
@@ -110,12 +109,6 @@ usersController = {
 		return(algun_objeto_json);
 	}
 }
-```
-
-Añade el controlador a tu aplicación:
-
-```javascript
-wApp.extend({ usersController: usersController })
 ```
 
 ## Quieres contribuir
