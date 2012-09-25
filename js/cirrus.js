@@ -102,8 +102,15 @@
       }
 
       if (headAndBody.length == 2) {
-          req.body = JSON.parse(headAndBody[1])
-          wApp.router.params.request_body = req.body
+          req.body = decodeURIComponent(headAndBody[1])
+          var array = req.body.split("&");
+
+          var keys = array.length;
+          wApp.router.params.body = {}
+          while(keys--) {
+                var subarray = array[keys].split("=");
+                wApp.router.params.body[subarray[0]] = subarray[1];
+          };
       }
 
       // set the global params added to the URL
