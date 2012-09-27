@@ -97,7 +97,7 @@ esta declaración añadira automáticamente las siguientes rutas a tu aplicació
 
 ## Peticiones con datos en el body
 
-Puedes realizar peticiones POST o PUT que incluyan datos JSON como parte del la petición en el body, estos datos serán parseados y podrás acceder a ellos desde wApp.params.body
+Puedes realizar peticiones POST o PUT que incluyan datos como parte del la petición en el body en formato URL encoded standar, estos datos serán parseados y podrás acceder a ellos desde wApp.params.body
 
 ## Controladores - Añade tu código
 
@@ -144,11 +144,11 @@ Puedes usar Apache o Nginx y configurar proxys inversos de tal forma que sean ca
 
 ### Que relación tiene Cirrus.js con vClouden ?
 
-Cirrus.js sera el primero de muchos plugins a desarrollar para vClouden, como plugin las apps que se distribuyan usando vClouden dispondrán de una carpeta para archivos html estaticos y de un setup con Nginx para recibir el trafico de la web y administrarlo, asu que el desarrollador solo tiene que ocuparse de su API.
+Cirrus.js sera el primero de muchos plugins a desarrollar para vClouden, como plugin las apps que se distribuyan usando vClouden dispondrán de una carpeta para archivos html estaticos y de un setup con Nginx para recibir el trafico de la web y administrarlo, asi que el desarrollador solo tiene que ocuparse de su API.
 
 ### es Cirrus.js equivalente a vModApache ?
 
-No, vModApache es un modulo especializado para acceso a vServers desarrollado directamente por Velneo S.A y su función es mas parecida a las funcionalidades CGI, Cirrus.js por el contrarío pretende ser directamente un HTTP server orientado la creación de API's y que puede ser complementado con Nginx o Apache para obtener los mejor de ambos mundos.
+No, vModApache es un modulo especializado para acceso a vServers desarrollado directamente por Velneo S.A y su función es mas parecida a las funcionalidades CGI, Cirrus.js por el contrarío pretende ser directamente un HTTP server orientado la creación de API's y que puede ser complementado con Nginx o Apache para obtener lo mejor de ambos mundos.
 
 ### Consume Cirrus.js enganches al vServer?
 
@@ -156,7 +156,7 @@ No, Cirrus.js corre directamente sobre las conexiones que permite el objeto TCP 
 
 ### es Cirrus.js multiplataforma ?
 
-Si claro, al correr directamente sobre el objeto TCP de v7 correra en cualquier plataforma donde el vServer tenga capacidad de correr.
+Si claro, al correr directamente sobre el objeto TCP de v7 correra en cualquier plataforma donde el vServer tenga capacidad de ejecutarse.
 
 ## Quieres contribuir ?
 

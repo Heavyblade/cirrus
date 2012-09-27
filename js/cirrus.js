@@ -130,7 +130,7 @@
       var resp = "HTTP/1.1 404 NOT FOUND"
     };
     return (resp);
-  }
+  };
 
   function renderResponse(controller, action) {
       var CRLF = "\r\n";
@@ -146,6 +146,6 @@
                       "Connection: Keep-Alive"],
           verb = "HTTP/1.1 200 OK"   
 
-      var fullResponse = verb + CRLF + headers.join(CRLF) + CRLF + CRLF + jsonresp
+      var fullResponse = verb + CRLF + headers.join(CRLF) + CRLF + CRLF + unescape(encodeURIComponent(jsonresp))
       return(fullResponse);
-  }
+  };
