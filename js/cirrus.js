@@ -82,7 +82,7 @@
       var headers = headAndBody[0].split("\r\n")
       var request = headers[0].split(" ");
       headers.shift(); //delete the request
-      headers.pop();  // delete the last \r\n
+      
 
       var req = {verb: request[0], 
              path: request[1], 
@@ -101,7 +101,7 @@
           }
       }
 
-      if (headAndBody.length == 2) {
+      if ((headAndBody.length == 2) && (headAndBody[headAndBody.length -1] != "")) {
           req.body = decodeURIComponent(headAndBody[1])
           var array = req.body.split("&");
 

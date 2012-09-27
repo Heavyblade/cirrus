@@ -98,7 +98,7 @@ describe("Request Object", function(){
   });
 
   it("should decode the HTTP GET request", function(){
-    var httpGet = "GET /some/path/toresource HTTP/1.0\r\n"
+    var httpGet = "GET /some/path/toresource HTTP/1.0\r\n\r\n"
     var request = Request(httpGet);
     expect(request.verb).toEqual("GET");
     expect(request.path).toEqual("/some/path/toresource")
@@ -107,7 +107,7 @@ describe("Request Object", function(){
   });
 
   it("Should parse the query varibles in the url", function(){
-    var httpGet = "GET /some/path/toresource?foo=bar&hello=world HTTP/1.0\r\n"
+    var httpGet = "GET /some/path/toresource?foo=bar&hello=world HTTP/1.0\r\n\r\n"
     var request = Request(httpGet);
     expect(request.encodeParams).toEqual("foo=bar&hello=world");
     expect(wApp.router.params.foo).toEqual("bar");
@@ -115,7 +115,7 @@ describe("Request Object", function(){
   });
 
   it("should be able to handle a HTTP request with headers", function(){
-    var httpGet = "GET /some/path/toresource?foo=bar&hello=world HTTP/1.0\r\nContent-Type: application/json\r\nConnection: Keep-Alive\r\n"
+    var httpGet = "GET /some/path/toresource?foo=bar&hello=world HTTP/1.0\r\nContent-Type: application/json\r\nConnection: Keep-Alive\r\n\r\n"
     var request = Request(httpGet);
     expect(request.encodeParams).toEqual("foo=bar&hello=world");
     expect(wApp.router.params.foo).toEqual("bar");
@@ -214,7 +214,7 @@ describe("Controller creation", function(){
     }
     
     wApp.router.addRoutes({"GET /users/:id":  "users#show"});
-    var httpGet = "GET /users/23 HTTP/1.1\r\n"
+    var httpGet = "GET /users/23 HTTP/1.1\r\n\r\n"
     var request = Request(httpGet)
     var response = Response(request)
     var respObj = JSON.parse(response.split("\r\n\r\n")[1])
