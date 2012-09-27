@@ -109,7 +109,7 @@
           wApp.router.params.body = {}
           while(keys--) {
                 var subarray = array[keys].split("=");
-                wApp.router.params.body[subarray[0]] = subarray[1];
+                wApp.router.params.body[subarray[0]] = subarray[1].replace(/\+/g, " ");
           };
       }
 
@@ -137,6 +137,7 @@
       var jsonresp = wApp[(controller + "Controller")][action](wApp.router.params);
       var jsonp = wApp.router.params.callback;
       var jsonresp = jsonp ? (jsonp + "(" + JSON.stringify(jsonresp) + ")") : JSON.stringify(jsonresp)
+      jsonresp = unescape(encodeURIComponent(jsonresp));
       var headers = [("Date: " + (new Date).toGMTString()), 
                       ("Content-Type: application/" + (jsonp ? "javascript" : "json")  + "; charset=utf-8"), 
                       ("Content-Length: " + jsonresp.length), 
@@ -146,6 +147,6 @@
                       "Connection: Keep-Alive"],
           verb = "HTTP/1.1 200 OK"   
 
-      var fullResponse = verb + CRLF + headers.join(CRLF) + CRLF + CRLF + unescape(encodeURIComponent(jsonresp))
+      var fullResponse = verb + CRLF + headers.join(CRLF) + CRLF + CRLF + jsonresp
       return(fullResponse);
   };
