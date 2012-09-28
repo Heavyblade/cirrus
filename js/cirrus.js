@@ -134,7 +134,7 @@
 
   function renderResponse(controller, action) {
       var CRLF = "\r\n";
-      var jsonresp = wApp[(controller + "Controller")][action](wApp.router.params);
+      var jsonresp = wApp[(controller)][action](wApp.router.params);
       var jsonp = wApp.router.params.callback;
       var jsonresp = jsonp ? (jsonp + "(" + JSON.stringify(jsonresp) + ")") : JSON.stringify(jsonresp)
       jsonresp = unescape(encodeURIComponent(jsonresp));

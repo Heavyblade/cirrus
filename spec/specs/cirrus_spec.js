@@ -141,7 +141,7 @@ describe("Response Object", function(){
       wApp.usersController = {
         show: function(params){return({hello: "world", id: wApp.router.params.userid, x: wApp.router.params.x})}
       }
-      wApp.router.addRoutes({"GET /users/:userid/show": "users#show"});
+      wApp.router.addRoutes({"GET /users/:userid/show": "usersController#show"});
 
       CRLF = "\r\n"
   });
@@ -213,7 +213,7 @@ describe("Controller creation", function(){
       show: function(params){return({hello: "world", id: params.id})}
     }
     
-    wApp.router.addRoutes({"GET /users/:id":  "users#show"});
+    wApp.router.addRoutes({"GET /users/:id":  "usersController#show"});
     var httpGet = "GET /users/23 HTTP/1.1\r\n\r\n"
     var request = Request(httpGet)
     var response = Response(request)

@@ -69,7 +69,7 @@
             ResponseObject: function() {
               wApp.router.routes = {}; wApp.router.params = {};
               request = {url: "/some/param/action"};
-              wApp.router.addRoutes({"/some/param/action": "users#index"})
+              wApp.router.addRoutes({"/some/param/action": "usersController#index"})
 
               var usersController = {
                   index: function(){return("Hello World")}
