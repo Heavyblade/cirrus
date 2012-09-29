@@ -146,6 +146,14 @@ describe("Response Object", function(){
       CRLF = "\r\n"
   });
 
+  it("should calculate the proper Content-length", function() {
+    var httpGet = "GET /users/44/show?x=foo HTTP/1.1"
+    var request = Request(httpGet);
+    var expected_resp = JSON.stringify({hello: "world", id: "44", x: wApp.router.params.x });
+    var response = Response(request);
+    expect(response.split("\r\n")[3]).toEqual("Content-Length: " + expected_resp.length);
+  })
+
   it("should find the proper action and give me the HTTP JSON response", function(){
     var httpGet = "GET /users/44/show?x=foo HTTP/1.1"
     var request = Request(httpGet);

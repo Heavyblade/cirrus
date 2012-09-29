@@ -80,7 +80,7 @@
       var headAndBody = http_request.split("\r\n\r\n") //split header from body
 
       var headers = headAndBody[0].split("\r\n")
-      var request = headers[0].split(" ");
+      var request = headers[0].trim().split(" ");
       headers.shift(); //delete the request
       
 
@@ -102,7 +102,7 @@
       }
 
       if ((headAndBody.length == 2) && (headAndBody[headAndBody.length -1] != "")) {
-          req.body = decodeURIComponent(headAndBody[1])
+          req.body = decodeURIComponent(headAndBody[1].trim())
           var array = req.body.split("&");
 
           var keys = array.length;
@@ -137,7 +137,7 @@
       var jsonresp = wApp[(controller)][action](wApp.router.params);
       var jsonp = wApp.router.params.callback;
       var jsonresp = jsonp ? (jsonp + "(" + JSON.stringify(jsonresp) + ")") : JSON.stringify(jsonresp)
-      jsonresp = unescape(encodeURIComponent(jsonresp));
+      jsonresp = unescape(encodeURIComponent(jsonresp)); // Encode to UFT-8
       var headers = [("Date: " + (new Date).toGMTString()), 
                       ("Content-Type: application/" + (jsonp ? "javascript" : "json")  + "; charset=utf-8"), 
                       ("Content-Length: " + jsonresp.length), 
