@@ -137,6 +137,8 @@ describe("Request Object", function(){
 describe("Response Object", function(){
 
   beforeEach(function(){
+      wApp.router.routes = {};
+      wApp.router.params = {}
       // Setting up an Application to test
       wApp.usersController = {
         show: function(params){return({hello: "world", id: wApp.router.params.userid, x: wApp.router.params.x})}
@@ -197,7 +199,7 @@ describe("Response Object", function(){
     var response = Response(request);
     expect(response.split("\r\n")[3]).toEqual("Content-Length: " + expected_resp.length);
   })
-  
+
 });
 
 
