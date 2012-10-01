@@ -22,7 +22,7 @@ describe("Router Component", function(){
     wApp.router.addRoutes({"GET /some/:param/resource": "controller#action"})
     var routes =  Object.keys(wApp.router.routes)
     expect(routes.length).toEqual(1);
-    expect(routes[0]).toEqual("GET /some/(\\w+)/resource")
+    expect(routes[0]).toEqual("GET /some/(\\d+)/resource")
   });
 
   it("should point to me the properly controller#action", function(){
@@ -71,9 +71,9 @@ describe("Router Component", function(){
   })
 
   it("should add to router routes REST routes", function() {
-    wApp.router.addRoutes({"resource users": "users"})
+    wApp.router.addRoutes({"resource users": "users", "GET /users/anotheraction": "usersController#anotheraction"})
     var routing = Object.keys(wApp.router.routes)
-    expect(routing.length).toEqual(7)
+    expect(routing.length).toEqual(8)
   })
 });
 // xxxxxxxxxxxxxxxxxxxxxxEnd Router xxxxxxxxxxxxxxxxxxxxxxx
@@ -106,12 +106,13 @@ describe("Request Object", function(){
     expect(request.url).toEqual("/some/path/toresource")
   });
 
-  it("Should parse the query varibles in the url", function(){
-    var httpGet = "GET /some/path/toresource?foo=bar&hello=world HTTP/1.0\r\n\r\n"
+  it("Should parse the query variables in the url", function(){
+    var httpGet = "GET /some/path/toresource?foo=bar&hello=world&sentence=one+sentence+space HTTP/1.0\r\n\r\n"
     var request = Request(httpGet);
-    expect(request.encodeParams).toEqual("foo=bar&hello=world");
+    expect(request.encodeParams).toEqual("foo=bar&hello=world&sentence=one+sentence+space");
     expect(wApp.router.params.foo).toEqual("bar");
     expect(wApp.router.params.hello).toEqual("world");
+    expect(wApp.router.params.sentence).toEqual("one sentence space")
   });
 
   it("should be able to handle a HTTP request with headers", function(){

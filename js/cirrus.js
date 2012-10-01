@@ -3,12 +3,12 @@
       // System Router
 
       this.router = {
-          params: {},
+          params: {body: {}},
           parse_params: function(array) {
               var keys = array.length;
               while(keys--) {
                   var subarray = array[keys].split("=");
-                  this.params[subarray[0]] = subarray[1];
+                  this.params[subarray[0]] = subarray[1].replace(/\+/g, " ");
               };
           },
           routes: {},
@@ -23,19 +23,19 @@
                     var basic = {},
                         key = keys[i];
                     basic[key] = rutes[key];
-                    this.routes[key.replace(/:\w+/g, "(\\w+)")] = basic;
+                    this.routes[key.replace(/:\w+/g, "(\\d+)")] = basic;
                   }
               }
           },
           createREST: function(resource) {
             var rest = {}
-            rest["GET /" + resource] = resource + "#index"
-            rest["GET /" + resource + "/new"] = resource + "#new"
-            rest["POST /" + resource] = resource + "#create"
-            rest["GET /" + resource + "/:id"] = resource + "#show"
-            rest["GET /" + resource + "/:id/edit"] = resource + "#edit"
-            rest["PUT /" + resource + "/:id"] = resource + "#update"
-            rest["DELETE /" + resource + "/:id"] = resource + "#delete"
+            rest["GET /" + resource] = resource + "Controller#index"
+            rest["GET /" + resource + "/new"] = resource + "Controller#new"
+            rest["POST /" + resource] = resource + "Controller#create"
+            rest["GET /" + resource + "/:id"] = resource + "Controller#show"
+            rest["GET /" + resource + "/:id/edit"] = resource + "Controller#edit"
+            rest["PUT /" + resource + "/:id"] = resource + "Controller#update"
+            rest["DELETE /" + resource + "/:id"] = resource + "Controller#delete"
             return(rest)
           },
           pointRequest: function (url) {
@@ -101,6 +101,7 @@
           }
       }
 
+      // Body params
       if ((headAndBody.length == 2) && (headAndBody[headAndBody.length -1] != "")) {
           req.body = decodeURIComponent(headAndBody[1].trim())
           var array = req.body.split("&");
