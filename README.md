@@ -7,6 +7,7 @@ Cirrus.js es una implementación en JavaScript del protocolo HTTP corriendo dire
 El propósito es abrir las aplicaciones desarrolladas sobre v7 para que puedan ser aprovechadas en entornos web, logrando de esta forma funcionalidades como pedidos online afectando directamente la app, crear aplicaciones mobile con jQueryM consumiendo tu app mediante Ajax, listar el catalogo de productos, solicitud de citas online e inmuerables posibilidades gracias a que puedes desarrollar API's de acceso a tus datos que pueden ser consumidas mediante Ajax, servicios web, html estaticos mediante JSONP u otros programas que puedan realizar peticiones HTTP.
 
 
+Mira el [Screencast](http://velnex.wordpress.com/2012/10/01/screencast-cirrus-js/).
 
 ## Instalación
 
