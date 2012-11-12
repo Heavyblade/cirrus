@@ -71,11 +71,9 @@
               request = {url: "/some/param/action"};
               wApp.router.addRoutes({"/some/param/action": "usersController#index"})
 
-              var usersController = {
+              wApp.usersController = {
                   index: function(){return("Hello World")}
-              };
-
-              wApp.extend({usersController: usersController})
+              }
               x = 1000;
               while(x--) {
                 var a = Response(request);

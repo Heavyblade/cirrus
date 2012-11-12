@@ -1,4 +1,13 @@
-//xxxxxxxxxxxxxxxxxxx Main Application Definition xxxxxxxx
+// xxxxxxxxxxxxxxxxxxx Base 64 Encode Libreary xxxxxxxxxxxx
+function StringBuffer(){this.buffer=[]}StringBuffer.prototype.append=function(a){this.buffer.push(a);return this};StringBuffer.prototype.toString=function(){return this.buffer.join("")};
+var Base64={codex:"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",encode:function(a){for(var c=new StringBuffer,a=new Utf8EncodeEnumerator(a);a.moveNext();){var b=a.current;a.moveNext();var d=a.current;a.moveNext();var e=a.current,h=b>>2,b=(b&3)<<4|d>>4,g=(d&15)<<2|e>>6,f=e&63;isNaN(d)?g=f=64:isNaN(e)&&(f=64);c.append(this.codex.charAt(h)+this.codex.charAt(b)+this.codex.charAt(g)+this.codex.charAt(f))}return c.toString()},decode:function(a){for(var c=new StringBuffer,a=new Base64DecodeEnumerator(a);a.moveNext();){var b=
+a.current;if(128>b)c.append(String.fromCharCode(b));else if(191<b&&224>b){a.moveNext();var d=a.current;c.append(String.fromCharCode((b&31)<<6|d&63))}else a.moveNext(),d=a.current,a.moveNext(),c.append(String.fromCharCode((b&15)<<12|(d&63)<<6|a.current&63))}return c.toString()}};function Utf8EncodeEnumerator(a){this._input=a;this._index=-1;this._buffer=[]}
+Utf8EncodeEnumerator.prototype={current:Number.NaN,moveNext:function(){if(0<this._buffer.length)return this.current=this._buffer.shift(),!0;if(this._index>=this._input.length-1)return this.current=Number.NaN,!1;var a=this._input.charCodeAt(++this._index);13==a&&10==this._input.charCodeAt(this._index+1)&&(a=10,this._index+=2);128>a?this.current=a:(127<a&&2048>a?this.current=a>>6|192:(this.current=a>>12|224,this._buffer.push(a>>6&63|128)),this._buffer.push(a&63|128));return!0}};
+function Base64DecodeEnumerator(a){this._input=a;this._index=-1;this._buffer=[]}
+Base64DecodeEnumerator.prototype={current:64,moveNext:function(){if(0<this._buffer.length)return this.current=this._buffer.shift(),!0;if(this._index>=this._input.length-1)return this.current=64,!1;var a=Base64.codex.indexOf(this._input.charAt(++this._index)),c=Base64.codex.indexOf(this._input.charAt(++this._index)),b=Base64.codex.indexOf(this._input.charAt(++this._index)),d=Base64.codex.indexOf(this._input.charAt(++this._index)),e=(b&3)<<6|d;this.current=a<<2|c>>4;64!=b&&this._buffer.push((c&15)<<
+4|b>>2);64!=d&&this._buffer.push(e);return!0}};
+
+//xxxxxxxxxxxxxxxxxxx Main Application Definition xxxxxxxxx
     function App() {
       // System Router
 
@@ -63,14 +72,63 @@
               };
               return("NOT FOUND");
           }
-      }
-      this.params = this.router.params   
-    }
+      },
+      this.cookie = {};
+      this.session = {};
+      this.oldcookie = {};
+      this.setSession = function(options) {
+          var encoded = (Object.keys(this.session).length != 0) ? Base64.encode(encodeURIComponent(JSON.stringify(this.session))) : ""
+          if (Object.keys(this.session).length != 0) {
+            var expires = this.session.expires
+            var path = this.session.path
+            delete this.session["expires"]
+            delete this.session["path"]
+            
+            var encoded = Base64.encode(encodeURIComponent(JSON.stringify(this.session)))
+          } else {
+            var expires = undefined
+            var path = undefined
+            var enconded = ""
+          }
 
-    App.prototype.extend =  function(m, e){
-        var e = e || this;
-        for (var x in m) e[x] = m[x];
-        return e;
+          var cookie = "value=" + encoded
+          if(expires != undefined) {cookie += ("; " + "expires=" + expires.toGMTString())}
+          if(path != undefined) {cookie += ("; " + "path=" + path)}
+          
+          return("set-Cookie: " + cookie);
+      }
+      this.cookieChanged = function(){
+        this.cookie.session = this.session
+        var o1 = this.cookie,
+            o2 = this.oldcookie
+        if (Object.keys(o1).length == Object.keys(o2).length) {
+            for(var p in o1){ if(o1[p] !== o2[p]){ return true; }}
+            for(var p in o2){ if(o1[p] !== o2[p]){ return true; }}
+        } else {
+          return true
+        }
+        return false;
+      };
+      this.getSession = function(cookie) { 
+        var values = cookie.split("; ")
+        var i = values.length
+        var myCookie = {}
+        var myOldCookie = {}
+        
+        while(i--) {
+            var keys = values[i].split("=")
+            myCookie[keys[0]] = keys[1]
+            myOldCookie[keys[0]] = keys[1]
+        }
+
+        myCookie.session = JSON.parse(decodeURIComponent(Base64.decode(myCookie.value)));
+        myOldCookie.session = myCookie.session
+        this.cookie = myCookie
+        this.oldcookie = myOldCookie
+        this.session = myCookie.session
+        return(myCookie.value);
+       },
+      this.params = this.router.params   
     };
 
     wApp = new App
@@ -90,14 +148,16 @@
              url: request[1].split("?")[0], 
              encodeParams: request[1].split("?")[1],
              headers: {},
-             body: {} };
+             body: {},
+             cookie: ""};
 
       // Setting the request Headers
       if(headers.length != 0) {
           var i = headers.length;
-          while(i--) {
-              var header = headers[i].split(":")
-              req["headers"][header[0].trim()] = header[1].trim();
+          while(i--) { 
+            var header = headers[i].split(":")
+            req["headers"][header[0].trim()] = header[1].trim();
+            if(header[0].trim() == "Cookie") {wApp.getSession(header[1].trim());}
           }
       }
 
@@ -147,7 +207,7 @@
                       "Keep-Alive: timeout=5, max=94",
                       "Connection: Keep-Alive"],
           verb = "HTTP/1.1 200 OK"   
-
+      if (wApp.cookieChanged()) {headers.push(wApp.setSession())}
       var fullResponse = verb + CRLF + headers.join(CRLF) + CRLF + CRLF + jsonresp
       return(fullResponse);
   };

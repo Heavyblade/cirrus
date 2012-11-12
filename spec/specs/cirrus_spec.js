@@ -134,7 +134,6 @@ describe("Request Object", function(){
 
 });
 
-
 describe("Response Object", function(){
 
   beforeEach(function(){
@@ -203,7 +202,6 @@ describe("Response Object", function(){
 
 });
 
-
 describe("Controller creation", function(){
 
   beforeEach(function(){
@@ -232,4 +230,120 @@ describe("Controller creation", function(){
     var respObj = JSON.parse(response.split("\r\n\r\n")[1])
     expect(respObj.id).toEqual("23")
   })
+});
+
+describe("Cookies handling", function(){
+  beforeEach(function(){
+      wApp.router.routes = {};
+      wApp.router.params = {};
+      wApp.cookie = {}
+      wApp.session = {}
+      wApp.oldcookie = {}
+
+      // Setting up an Application to test
+      wApp.usersController = {
+        show: function(params){return({hello: "world", id: wApp.router.params.userid, x: wApp.router.params.x})}
+      }
+      wApp.router.addRoutes({"GET /users/:userid/show": "usersController#show"});
+
+      var cookie = "value=" + Base64.encode(encodeURIComponent(JSON.stringify({name: "JhonDoe", spaces: "Jhon Doe"})));
+      var httpGet = "GET /some/path/toresource?foo=bar&hello=world HTTP/1.0\r\nContent-Type: application/json\r\nConnection: Keep-Alive\r\nCookie: " + cookie + "\r\n\r\n"
+      var request = Request(httpGet);
+  });
+
+  it("Should extract the cookie from the header and parse it", function(){
+    expect(wApp.session.name).toEqual("JhonDoe");
+    expect(wApp.session.spaces).toEqual("Jhon Doe");
+  });
+
+  it("should be able to identify if the cookie has changed by adding keys", function(){
+    expect(wApp.cookieChanged()).toBe(false);
+    wApp.cookie.username = "Hello John" 
+    expect(wApp.cookieChanged()).toBe(true);
+  });
+
+  it("should be able to identify if the cookie has changed by changing values", function(){
+    expect(wApp.cookieChanged()).toBe(false);
+    wApp.cookie.name = "Peter" 
+    expect(wApp.cookieChanged()).toBe(true);
+  });
+
+  describe("setting the cookie header", function(){
+    beforeEach(function(){
+
+      wApp.router.routes = {};
+      wApp.router.params = {};
+      wApp.cookie = {}
+      wApp.session = {}
+      wApp.oldcookie = {}
+
+      // Setting up an Application to test
+      wApp.router.addRoutes({"GET /users/:userid/show": "usersController#show"});
+    })
+
+    it("should set the properly cookie header", function(){
+      wApp.usersController = {
+        show: function(params){
+          wApp.session.username = "Hello John"; 
+          return({hello: "world", id: wApp.router.params.userid, x: wApp.router.params.x})}
+      }      
+
+      var httpGet = "GET /users/23/show HTTP/1.0\r\nContent-Type: application/json\r\nConnection: Keep-Alive\r\n\r\n"
+      var request = Request(httpGet);
+      var response = Response(request)
+      base = response.split(CRLF)[8].split(": ")[1].split(";")[0].split("value=")[1]
+      var session = JSON.parse(decodeURIComponent(Base64.decode(base)));
+      expect(response.split(CRLF)[8].split(": ")[0]).toEqual("set-Cookie")
+      expect(session.username).toEqual("Hello John")   
+    })
+
+    it("should set the path to apply the cookie", function(){
+
+      wApp.usersController = {
+        show: function(params){
+          wApp.session.username = "Hello John";
+          wApp.session.path = "/my_path" 
+          return({hello: "world", id: wApp.router.params.userid, x: wApp.router.params.x})}
+      }      
+
+      var httpGet = "GET /users/23/show HTTP/1.0\r\nContent-Type: application/json\r\nConnection: Keep-Alive\r\n\r\n"
+      var response = Response(Request(httpGet))
+
+      base = response.split(CRLF)[8].split(": ")[1].split(";")[0].split("value=")[1]
+      var session = JSON.parse(decodeURIComponent(Base64.decode(base)));
+      var keys = Object.keys(session).length
+
+      var cookie = response.split(CRLF)[8].split(": ")[1]
+      var path = cookie.split(";")[1].split("=")[1]
+      expect("/my_path").toEqual(path)
+      expect(keys).toEqual(1)
+    })
+
+    it("should set the expires date to the cookie", function(){
+      wApp.usersController = {
+        show: function(params){
+          wApp.session.username = "Hello John";
+          var data = new Date("2012-12-31")
+          wApp.session.expires = data
+          return({hello: "world", id: wApp.router.params.userid, x: wApp.router.params.x})}
+      }      
+
+      var httpGet = "GET /users/23/show HTTP/1.0\r\nContent-Type: application/json\r\nConnection: Keep-Alive\r\n\r\n"
+      var response = Response(Request(httpGet))
+
+      // Get the session from cookie
+      base = response.split(CRLF)[8].split(": ")[1].split(";")[0].split("value=")[1]
+      var session = JSON.parse(decodeURIComponent(Base64.decode(base)));
+      var keys = Object.keys(session).length
+
+      var cookie = response.split(CRLF)[8].split(": ")[1]
+      var date = cookie.split(";")[1].split("=")[1]
+      expect("Mon, 31 Dec 2012 00:00:00 GMT").toEqual(date)
+      expect(keys).toEqual(1)
+
+
+    })
+
+  })
+
 });
