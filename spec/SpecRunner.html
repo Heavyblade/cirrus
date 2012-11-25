@@ -41,12 +41,12 @@
          Benchmark.benchmark({
             Route_raddRoutes: function(){
               wApp.router.routes = {}; wApp.router.params = {};
-              var x = 1000;
+              var x = 10000;
               while(x--) { wApp.router.addRoutes({"/users/:some_param/action":  ("users" + x + "#index")}) }
             },
             parse_params: function(){
               wApp.router.routes = {}; wApp.router.params = {};
-              var x = 1000;
+              var x = 10000;
               while(x--) { var a = wApp.router.parse_params([("hello" + x + "=world"), ("john" + x + "=doe")]); };
             },
             Router_PointRequest: function(){
@@ -54,7 +54,7 @@
               wApp.router.addRoutes({"/users/:some_param/action":  ("users#index"), "/users/flat/path": "users#flat"})
               var url = "/users/43/action"
               var url2 = "users/flat/path"
-              var x = 500;
+              var x = 10000;
               while(x--) {
                 wApp.router.pointRequest(url);
                 wApp.router.pointRequest(url2);
@@ -63,7 +63,7 @@
             RequestObject: function(){
               wApp.router.routes = {}; wApp.router.params = {};
               http_request = "GET /some/param/action?hello=world&john=doe HTTP/1.1"
-              var x = 1000
+              var x = 10000
               while(x--) {var a = Request(http_request);}
             },
             ResponseObject: function() {
@@ -74,7 +74,7 @@
               wApp.usersController = {
                   index: function(){return("Hello World")}
               }
-              x = 1000;
+              x = 10000;
               while(x--) {
                 var a = Response(request);
               }
@@ -100,8 +100,8 @@
 <body>
   <div id="bench">
     <h2>Performance Benchmark</h2>
-    <p>1000 iterations per test</p>
-    <p>10,6,16,14,25</p>
+    <p>10.000 iterations per test</p>
+    <p>124, 73, 286, 151, 427</p>
     <br/>
   </div>
 </body>

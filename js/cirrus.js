@@ -8,130 +8,127 @@ Base64DecodeEnumerator.prototype={current:64,moveNext:function(){if(0<this._buff
 4|b>>2);64!=d&&this._buffer.push(e);return!0}};
 
 //xxxxxxxxxxxxxxxxxxx Main Application Definition xxxxxxxxx
-    function App() {
-      // System Router
+  wApp = {
+    // System Router
+    router: {
+        params: {body: {}},
+        parse_params: function(array) {
+            var keys = array.length;
+            while(keys--) {
+                var subarray = array[keys].split("=");
+                this.params[subarray[0]] = subarray[1].replace(/\+/g, " ");
+            };
+        },
+        routes: {},
+        addRoutes: function (rutes) {
+            var keys = Object.keys(rutes),
+                i = keys.length;
+            while(i--) {
+                if(keys[i].split(" ")[0] == "resource") {
+                  var rest = this.createREST(keys[i].split(" ")[1]);
+                  this.addRoutes(rest)      
+                } else {
+                  var basic = {},
+                      key = keys[i];
+                  basic[key] = rutes[key];
+                  this.routes[key.replace(/:\w+/g, "(\\d+)")] = basic;
+                }
+            }
+        },
+        createREST: function(resource) {
+          var rest = {}
+          rest["GET /" + resource] = resource + "Controller#index"
+          rest["GET /" + resource + "/new"] = resource + "Controller#new"
+          rest["POST /" + resource] = resource + "Controller#create"
+          rest["GET /" + resource + "/:id"] = resource + "Controller#show"
+          rest["GET /" + resource + "/:id/edit"] = resource + "Controller#edit"
+          rest["PUT /" + resource + "/:id"] = resource + "Controller#update"
+          rest["DELETE /" + resource + "/:id"] = resource + "Controller#delete"
+          return(rest)
+        },
+        pointRequest: function (url) {
+            keys = Object.keys(this.routes);
+            var i = keys.length;
+            while(i--) {
+              var rutaRegExp = new RegExp((keys[i].replace(/\//g, "\\/") + "\$"));
+              var match = url.match(rutaRegExp);
 
-      this.router = {
-          params: {body: {}},
-          parse_params: function(array) {
-              var keys = array.length;
-              while(keys--) {
-                  var subarray = array[keys].split("=");
-                  this.params[subarray[0]] = subarray[1].replace(/\+/g, " ");
+              if (match){
+                var x = this.routes[keys[i]]; // Keys from the match object
+                var custom_route = Object.keys(x)[0];
+
+                // extract URL params and Add it to global params
+                var requestParams = custom_route.match(/:(\w+)/g);
+                if (requestParams) {
+                  var requestVars = url.match(rutaRegExp);
+                  requestVars.shift();
+                  var i = requestParams.length;
+                  while(i--) { var param = requestParams[i]; this.params[param.replace(":", "")]=requestVars[requestParams.indexOf(param)]}
+                }
+                // if match returns "controller#method"
+                return(x[custom_route]);
               };
-          },
-          routes: {},
-          addRoutes: function (rutes) {
-              var keys = Object.keys(rutes),
-                  i = keys.length;
-              while(i--) {
-                  if(keys[i].split(" ")[0] == "resource") {
-                    var rest = this.createREST(keys[i].split(" ")[1]);
-                    this.addRoutes(rest)      
-                  } else {
-                    var basic = {},
-                        key = keys[i];
-                    basic[key] = rutes[key];
-                    this.routes[key.replace(/:\w+/g, "(\\d+)")] = basic;
-                  }
-              }
-          },
-          createREST: function(resource) {
-            var rest = {}
-            rest["GET /" + resource] = resource + "Controller#index"
-            rest["GET /" + resource + "/new"] = resource + "Controller#new"
-            rest["POST /" + resource] = resource + "Controller#create"
-            rest["GET /" + resource + "/:id"] = resource + "Controller#show"
-            rest["GET /" + resource + "/:id/edit"] = resource + "Controller#edit"
-            rest["PUT /" + resource + "/:id"] = resource + "Controller#update"
-            rest["DELETE /" + resource + "/:id"] = resource + "Controller#delete"
-            return(rest)
-          },
-          pointRequest: function (url) {
-              keys = Object.keys(this.routes);
-              var i = keys.length;
-              while(i--) {
-                var rutaRegExp = new RegExp((keys[i].replace(/\//g, "\\/") + "\$"));
-                var match = url.match(rutaRegExp);
-
-                if (match){
-                  var x = this.routes[keys[i]]; // Keys from the match object
-                  var custom_route = Object.keys(x)[0];
-
-                  // extract URL params and Add it to global params
-                  var requestParams = custom_route.match(/:(\w+)/g);
-                  if (requestParams) {
-                    var requestVars = url.match(rutaRegExp);
-                    requestVars.shift();
-                    var i = requestParams.length;
-                    while(i--) { var param = requestParams[i]; this.params[param.replace(":", "")]=requestVars[requestParams.indexOf(param)]}
-                  }
-                  // if match returns "controller#method"
-                  return(x[custom_route]);
-                };
-              };
-              return("NOT FOUND");
-          }
-      },
-      this.cookie = {};
-      this.session = {};
-      this.oldcookie = {};
-      this.setSession = function(options) {
-          var encoded = (Object.keys(this.session).length != 0) ? Base64.encode(encodeURIComponent(JSON.stringify(this.session))) : ""
-          if (Object.keys(this.session).length != 0) {
-            var expires = this.session.expires
-            var path = this.session.path
-            delete this.session["expires"]
-            delete this.session["path"]
-            
-            var encoded = Base64.encode(encodeURIComponent(JSON.stringify(this.session)))
-          } else {
-            var expires = undefined
-            var path = undefined
-            var enconded = ""
-          }
-
-          var cookie = "value=" + encoded
-          if(expires != undefined) {cookie += ("; " + "expires=" + expires.toGMTString())}
-          if(path != undefined) {cookie += ("; " + "path=" + path)}
+            };
+            return("NOT FOUND");
+        }
+    },
+    cookie: {},
+    session: {},
+    oldcookie: {},
+    setSession: function(options) {
+        var encoded = (Object.keys(this.session).length != 0) ? Base64.encode(encodeURIComponent(JSON.stringify(this.session))) : ""
+        if (Object.keys(this.session).length != 0) {
+          var expires = this.session.expires
+          var path = this.session.path
+          delete this.session["expires"]
+          delete this.session["path"]
           
-          return("set-Cookie: " + cookie);
-      }
-      this.cookieChanged = function(){
-        this.cookie.session = this.session
-        var o1 = this.cookie,
-            o2 = this.oldcookie
-        if (Object.keys(o1).length == Object.keys(o2).length) {
-            for(var p in o1){ if(o1[p] !== o2[p]){ return true; }}
-            for(var p in o2){ if(o1[p] !== o2[p]){ return true; }}
+          var encoded = Base64.encode(encodeURIComponent(JSON.stringify(this.session)))
         } else {
-          return true
+          var expires = undefined
+          var path = undefined
+          var enconded = ""
         }
-        return false;
-      };
-      this.getSession = function(cookie) { 
-        var values = cookie.split("; ")
-        var i = values.length
-        var myCookie = {}
-        var myOldCookie = {}
+
+        var cookie = "value=" + encoded
+        if(expires != undefined) {cookie += ("; " + "expires=" + expires.toGMTString())}
+        if(path != undefined) {cookie += ("; " + "path=" + path)}
         
-        while(i--) {
-            var keys = values[i].split("=")
-            myCookie[keys[0]] = keys[1]
-            myOldCookie[keys[0]] = keys[1]
-        }
+        return("set-Cookie: " + cookie);
+    },
+    cookieChanged: function(){
+      this.cookie.session = this.session
+      var o1 = this.cookie,
+          o2 = this.oldcookie
+      if (Object.keys(o1).length == Object.keys(o2).length) {
+          for(var p in o1){ if(o1[p] !== o2[p]){ return true; }}
+          for(var p in o2){ if(o1[p] !== o2[p]){ return true; }}
+      } else {
+        return true
+      }
+      return false;
+    },
+    getSession: function(cookie) { 
+      var values = cookie.split("; ")
+      var i = values.length
+      var myCookie = {}
+      var myOldCookie = {}
+      
+      while(i--) {
+          var keys = values[i].split("=")
+          myCookie[keys[0]] = keys[1]
+          myOldCookie[keys[0]] = keys[1]
+      }
 
-        myCookie.session = JSON.parse(decodeURIComponent(Base64.decode(myCookie.value)));
-        myOldCookie.session = myCookie.session
-        this.cookie = myCookie
-        this.oldcookie = myOldCookie
-        this.session = myCookie.session
-        return(myCookie.value);
-       },
-      this.params = this.router.params   
-    };
-
-    wApp = new App
+      myCookie.session = JSON.parse(decodeURIComponent(Base64.decode(myCookie.value)));
+      myOldCookie.session = myCookie.session
+      this.cookie = myCookie
+      this.oldcookie = myOldCookie
+      this.session = myCookie.session
+      return(myCookie.value);
+    },
+    params: function(){return(this.router.params);}   
+  }
 
 // xxxxxxxxxxxxxxxxxxxxxxxxx Request Object xxxxxxxxxxxxxx
     function Request(http_request) {
@@ -149,7 +146,8 @@ Base64DecodeEnumerator.prototype={current:64,moveNext:function(){if(0<this._buff
              encodeParams: request[1].split("?")[1],
              headers: {},
              body: {},
-             cookie: ""};
+             cookie: "",
+             wapp: wApp};
 
       // Setting the request Headers
       if(headers.length != 0) {
@@ -186,14 +184,14 @@ Base64DecodeEnumerator.prototype={current:64,moveNext:function(){if(0<this._buff
     var actions = wApp.router.pointRequest(request.verb + " " + request.url);
     if(actions != "NOT FOUND") {
       var controllerAction = actions.split("#");
-      var resp = renderResponse(controllerAction[0], controllerAction[1])
+      var resp = renderResponse(controllerAction[0], controllerAction[1], wApp)
     } else {
       var resp = "HTTP/1.1 404 NOT FOUND"
     };
     return (resp);
   };
 
-  function renderResponse(controller, action) {
+  function renderResponse(controller, action, wApp) {
       var CRLF = "\r\n";
       var jsonresp = wApp[(controller)][action](wApp.router.params);
       var jsonp = wApp.router.params.callback;

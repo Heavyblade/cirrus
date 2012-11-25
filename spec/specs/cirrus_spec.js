@@ -268,9 +268,8 @@ describe("Cookies handling", function(){
     expect(wApp.cookieChanged()).toBe(true);
   });
 
-  describe("setting the cookie header", function(){
+  describe("Setting the cookie header", function(){
     beforeEach(function(){
-
       wApp.router.routes = {};
       wApp.router.params = {};
       wApp.cookie = {}
@@ -293,12 +292,12 @@ describe("Cookies handling", function(){
       var response = Response(request)
       base = response.split(CRLF)[8].split(": ")[1].split(";")[0].split("value=")[1]
       var session = JSON.parse(decodeURIComponent(Base64.decode(base)));
+
       expect(response.split(CRLF)[8].split(": ")[0]).toEqual("set-Cookie")
       expect(session.username).toEqual("Hello John")   
     })
 
     it("should set the path to apply the cookie", function(){
-
       wApp.usersController = {
         show: function(params){
           wApp.session.username = "Hello John";
@@ -339,9 +338,7 @@ describe("Cookies handling", function(){
       var cookie = response.split(CRLF)[8].split(": ")[1]
       var date = cookie.split(";")[1].split("=")[1]
       expect("Mon, 31 Dec 2012 00:00:00 GMT").toEqual(date)
-      expect(keys).toEqual(1)
-
-
+      expect(keys).toEqual(1);
     })
 
   })
