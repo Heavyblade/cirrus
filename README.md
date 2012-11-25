@@ -105,7 +105,7 @@ Puedes realizar peticiones POST o PUT que incluyan datos como parte del la petic
 Al igual que en el modelo MVC, los controladores son los mediadores entre las peticiones y el acceso a los datos, asi tu definirás controladores para manejar tu lógica de negocios y el acceso a los datos del vServer.
 
 
-#### Crear controladores:
+### Crear controladores:
 
 Para definir el controlador debes de añadir a wApp un objeto javascript con el nombre del controlador seguido de "Controller", dentro de el definiras metodos que contendran la lógica de negocios y que tendrán acceso a la lista de parametros de la petición y finalmente el objeto JSON que representa la respuesta.
 
@@ -123,13 +123,50 @@ wApp.usersController = {
 	}
 }
 ```
+## Manejo de sessiones y cookies:
+
+Para guardar datos en una cookie a fin de mantener una session con un determinado cliente cirrus te da la posibilidad de leer o escribir a dicha sessión desde tus controladores a traves del objeto wApp.session, encargandose del resto:
+
+```javascript
+	wApp.usersController = {
+	createSession: function(params){
+		// tu lógica para verificar que el usuario sea válido
+		wApp.session["user_id"] = 10
+		return(algun_objeto_json);
+	}}
+```
+En este codigo el valor del key "user_id" sera almacenado en una cookie en la cual podrás leer y escribir mientras dura la sessión del usuario.
+
+### Sessiones persistentes:
+
+Si deseas que la session quede guardada por un cierto intervalo de tiempo en el navegador, puedes indicar un expire date para la sessión, el siguiente código le indica al navegador que guarde la sessión hasta el 21 de diciembre de 2012, fecha a partir de la cual el navegador dejara de enviarnos la sessión salvo que indiquemos una nueva fecha de expiración de la misma:
+
+```javascript
+	wApp.usersController = {
+	createSession: function(params){
+		// Codigo dentro de un controlador
+		var date = new Date("2012-12-21")
+    	wApp.session.expires = date
+    }}
+```
+
+### Especificar el Path:
+
+En algunos casos se desea asociar la cookie con un path particular de la aplicación ("/pedidos", "/articulos/index", etc.), para ello puedes indicar a que path quieres que vaya asociada la cookie y el navegador solo la enviara cuando se hagan request a esa ruta en particular:
+
+```javascript
+	wApp.usersController = {
+	createSession: function(params){		
+    	wApp.session.path = "/mi_path"
+    }}
+```
+
 
 ## Notas de version Alpha
 
 En esta primera liberación Cirrus.js se encuentra en version Alpha por cuanto solo ha sido utilizada por su creador y por que la salida de la v7.11 supone un cambio muy grande en cuanto a la escritura de vJavascript en v7, debido a que @vArquitecto ha programado la posibilidad de realizar imports de codigo JavaScript dentro de los scripts, por cuanto no tendras que desarrollar todo tu código de controladores y rutas en el mismo archivo y Cirrus.js podra ser incluido como una mera dependencia dentro de tus scripts.
 
 * http://velneo.es/foros/topic/importar-js/
-
 
 ## FAQ's
 

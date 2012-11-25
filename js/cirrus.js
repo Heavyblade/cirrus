@@ -146,8 +146,7 @@ Base64DecodeEnumerator.prototype={current:64,moveNext:function(){if(0<this._buff
              encodeParams: request[1].split("?")[1],
              headers: {},
              body: {},
-             cookie: "",
-             wapp: wApp};
+             cookie: ""};
 
       // Setting the request Headers
       if(headers.length != 0) {
