@@ -126,7 +126,7 @@ describe("Request Object", function(){
   });
 
   it("should be able to handle HTTP post with body", function () {
-    var httpGet = "POST /some/path/toresource?foo=bar&hello=world HTTP/1.0\r\nContent-Type: application/json\r\nConnection: Keep-Alive\r\n\r\nname=john&lastname=doe" 
+    var httpGet = "POST /some/path/toresource?foo=bar&hello=world HTTP/1.0\r\nContent-Type: application/json\r\nConnection: Keep-Alive\r\n\r\nname=john&lastname=doe\r\n" 
     var request = Request(httpGet);
     expect(request.body).toEqual("name=john&lastname=doe");
     expect(wApp.router.params.body.name).toEqual("john");

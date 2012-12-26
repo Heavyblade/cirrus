@@ -130,52 +130,51 @@ Base64DecodeEnumerator.prototype={current:64,moveNext:function(){if(0<this._buff
     params: function(){return(this.router.params);}   
   }
 
+// xxxxxxxxxxxxxxxxxxxxxxxxx HTTP Parser xxxxxxxxxxxxxx
+function http_parser(http_request) {
+  var split_request = http_request.split("\r\n\r\n") //split header from body
+
+  var request = split_request[0].match(/^(GET|POST|PUT|DELETE|UPDATE) (.+) (.+)[\r\n]?/),
+      headers = split_request[0].replace(/^(GET|POST|PUT|DELETE|UPDATE) (.+) (.+)[\r\n]?/, ""),
+      header_regx = /(.+): (.+)/g,
+      body_params_regx = /([^&]+)=([^&]+)/g,
+      url_and_params = request[2].split("?"),
+      req = {verb: request[1], 
+           path: request[2], 
+           protocol: request[3], 
+           url: url_and_params[0], 
+           encodeParams: url_and_params[1],
+           decodeParams:{},
+           headers: {},
+           body: {},
+           bodyDecoded: {},
+           cookie: ""};
+
+  // Setting Headers
+  while(header = header_regx.exec(headers)) { req.headers[header[1]] = header[2];}
+
+  // Get the Query String
+  var params = decodeURIComponent(req.encodeParams).replace(/\+/g, " ");
+  if(req.encodeParams) { while(param = body_params_regx.exec(params)) {req.decodeParams[param[1]] = param[2];} }
+  
+  // Body params if any
+  if(split_request.length == 2) { 
+    params = req.body = decodeURIComponent(split_request[1].trim().replace(/\+/g, " "));
+    while(body = body_params_regx.exec(split_request[1])) { req.bodyDecoded[body[1]] = body[2];} 
+  }
+  return(req);
+}
+
 // xxxxxxxxxxxxxxxxxxxxxxxxx Request Object xxxxxxxxxxxxxx
     function Request(http_request) {
-      var headAndBody = http_request.split("\r\n\r\n") //split header from body
-
-      var headers = headAndBody[0].split("\r\n")
-      var request = headers[0].trim().split(" ");
-      headers.shift(); //delete the request
-      
-
-      var req = {verb: request[0], 
-             path: request[1], 
-             protocol: request[2], 
-             url: request[1].split("?")[0], 
-             encodeParams: request[1].split("?")[1],
-             headers: {},
-             body: {},
-             cookie: ""};
-
-      // Setting the request Headers
-      if(headers.length != 0) {
-          var i = headers.length;
-          while(i--) { 
-            var header = headers[i].split(":")
-            req["headers"][header[0].trim()] = header[1].trim();
-            if(header[0].trim() == "Cookie") {wApp.getSession(header[1].trim());}
-          }
-      }
-
-      // Body params
-      if ((headAndBody.length == 2) && (headAndBody[headAndBody.length -1] != "")) {
-          req.body = decodeURIComponent(headAndBody[1].trim())
-          var array = req.body.split("&");
-
-          var keys = array.length;
-          wApp.router.params.body = {}
-          while(keys--) {
-                var subarray = array[keys].split("=");
-                wApp.router.params.body[subarray[0]] = subarray[1].replace(/\+/g, " ");
-          };
-      }
-
-      // set the global params added to the URL
-      if (typeof(req.encodeParams) != "undefined") {
-        wApp.router.parse_params(decodeURIComponent(req.encodeParams).split("&"));
-      }
-      return(req);
+        var req = http_parser(http_request);
+        wApp.router.params = req.decodeParams
+        wApp.router.params.body = req.bodyDecoded
+        // Set Cookie
+        if(req.headers["Cookie"] != undefined) {
+          wApp.getSession(req.headers["Cookie"]);
+        }
+        return(req);
     };
 
 // xxxxxxxxxxxxxxxxxxxx Response Object xxxxxxxxxxxxxxxxxxx

@@ -125,7 +125,7 @@ wApp.usersController = {
 ```
 ## Manejo de sessiones y cookies:
 
-Para guardar datos en una cookie a fin de mantener una session con un determinado cliente cirrus te da la posibilidad de leer o escribir a dicha sessión desde tus controladores a traves del objeto wApp.session, encargandose del resto:
+Para guardar datos en una cookie a fin de mantener una session con un determinado cliente Cirrus.js te da la posibilidad de leer o escribir a dicha sessión desde tus controladores a traves del objeto wApp.session:
 
 ```javascript
 	wApp.usersController = {

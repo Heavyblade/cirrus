@@ -62,10 +62,10 @@
             },
             RequestObject: function(){
               wApp.router.routes = {}; wApp.router.params = {};
-              http_request = "GET /some/param/action?hello=world&john=doe HTTP/1.1"
+              http_request = "GET /some/param/action?hello=world&john=doe HTTP/1.1\r\n"
               var x = 10000
               while(x--) {var a = Request(http_request);}
-            },
+            },            
             ResponseObject: function() {
               wApp.router.routes = {}; wApp.router.params = {};
               request = {url: "/some/param/action"};
