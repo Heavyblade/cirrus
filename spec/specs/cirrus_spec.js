@@ -239,6 +239,7 @@ describe("Cookies handling", function(){
       wApp.cookie = {}
       wApp.session = {}
       wApp.oldcookie = {}
+      wApp.sessionChanged = false
 
       // Setting up an Application to test
       wApp.usersController = {
@@ -257,33 +258,38 @@ describe("Cookies handling", function(){
   });
 
   it("should be able to identify if the cookie has changed by adding keys", function(){
-    expect(wApp.cookieChanged()).toBe(false);
-    wApp.cookie.username = "Hello John" 
-    expect(wApp.cookieChanged()).toBe(true);
+    expect(wApp.sessionChanged).toBe(false);
+    wApp.setInSession("username", "Hello John"); 
+    expect(wApp.sessionChanged).toBe(true);
   });
 
   it("should be able to identify if the cookie has changed by changing values", function(){
-    expect(wApp.cookieChanged()).toBe(false);
-    wApp.cookie.name = "Peter" 
-    expect(wApp.cookieChanged()).toBe(true);
+    expect(wApp.sessionChanged).toBe(false);
+    wApp.setInSession("name", "Peter");
+    expect(wApp.sessionChanged).toBe(true);
   });
 
   describe("Setting the cookie header", function(){
     beforeEach(function(){
       wApp.router.routes = {};
       wApp.router.params = {};
-      wApp.cookie = {}
+      wApp.cookie = {session: {}}
       wApp.session = {}
-      wApp.oldcookie = {}
+      wApp.oldcookie = {session: {}}
 
       // Setting up an Application to test
       wApp.router.addRoutes({"GET /users/:userid/show": "usersController#show"});
     })
 
+    it("should be able to indicate if cookie is or changed", function(){
+      expect(wApp.sessionChanged).toBe(false);
+    });
+
     it("should set the properly cookie header", function(){
       wApp.usersController = {
         show: function(params){
-          wApp.session.username = "Hello John"; 
+          wApp.session.username = "Hello John";
+          wApp.setInSession("username", "Hello John");
           return({hello: "world", id: wApp.router.params.userid, x: wApp.router.params.x})}
       }      
 
@@ -300,8 +306,8 @@ describe("Cookies handling", function(){
     it("should set the path to apply the cookie", function(){
       wApp.usersController = {
         show: function(params){
-          wApp.session.username = "Hello John";
-          wApp.session.path = "/my_path" 
+          wApp.setInSession("username", "Hello John");
+          wApp.setInSession("path", "/my_path");
           return({hello: "world", id: wApp.router.params.userid, x: wApp.router.params.x})}
       }      
 
@@ -321,9 +327,10 @@ describe("Cookies handling", function(){
     it("should set the expires date to the cookie", function(){
       wApp.usersController = {
         show: function(params){
-          wApp.session.username = "Hello John";
+          wApp.setInSession("username", "Hello John");
           var data = new Date("2012-12-31")
-          wApp.session.expires = data
+          wApp.setInSession("expires", data)
+
           return({hello: "world", id: wApp.router.params.userid, x: wApp.router.params.x})}
       }      
 

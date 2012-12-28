@@ -72,9 +72,14 @@ Base64DecodeEnumerator.prototype={current:64,moveNext:function(){if(0<this._buff
             return("NOT FOUND");
         }
     },
-    cookie: {},
+    cookie: {session: {}},
     session: {},
-    oldcookie: {},
+    oldcookie: {session: {}},
+    sessionChanged: false,
+    setInSession: function (key, value) {
+      this.sessionChanged = true;
+      wApp.session[key] = value;
+    },
     setSession: function(options) {
         var encoded = (Object.keys(this.session).length != 0) ? Base64.encode(encodeURIComponent(JSON.stringify(this.session))) : ""
         if (Object.keys(this.session).length != 0) {
@@ -96,32 +101,19 @@ Base64DecodeEnumerator.prototype={current:64,moveNext:function(){if(0<this._buff
         
         return("set-Cookie: " + cookie);
     },
-    cookieChanged: function(){
-      this.cookie.session = this.session
-      var o1 = this.cookie,
-          o2 = this.oldcookie
-      if (Object.keys(o1).length == Object.keys(o2).length) {
-          for(var p in o1){ if(o1[p] !== o2[p]){ return true; }}
-          for(var p in o2){ if(o1[p] !== o2[p]){ return true; }}
-      } else {
-        return true
-      }
-      return false;
-    },
     getSession: function(cookie) { 
-      var values = cookie.split("; ")
-      var i = values.length
-      var myCookie = {}
-      var myOldCookie = {}
+      var values = cookie.split("; "),
+          i = values.length,
+          myCookie = {},
+          myOldCookie = {}
       
       while(i--) {
-          var keys = values[i].split("=")
-          myCookie[keys[0]] = keys[1]
-          myOldCookie[keys[0]] = keys[1]
+        var keys = values[i].split("=")
+        myCookie[keys[0]] = keys[1]
+        myOldCookie[keys[0]] = keys[1]
       }
 
-      myCookie.session = JSON.parse(decodeURIComponent(Base64.decode(myCookie.value)));
-      myOldCookie.session = myCookie.session
+      myOldCookie.session = myCookie.session = JSON.parse(decodeURIComponent(Base64.decode(myCookie.value)));
       this.cookie = myCookie
       this.oldcookie = myOldCookie
       this.session = myCookie.session
@@ -131,8 +123,9 @@ Base64DecodeEnumerator.prototype={current:64,moveNext:function(){if(0<this._buff
   }
 
 // xxxxxxxxxxxxxxxxxxxxxxxxx HTTP Parser xxxxxxxxxxxxxx
-function http_parser(http_request) {
+function http_parser(http_request, type) {
   var split_request = http_request.split("\r\n\r\n") //split header from body
+  var response = /(HTTP\/1\.[1|0]) (\d{3}) (.+)/
 
   var request = split_request[0].match(/^(GET|POST|PUT|DELETE|UPDATE) (.+) (.+)[\r\n]?/),
       headers = split_request[0].replace(/^(GET|POST|PUT|DELETE|UPDATE) (.+) (.+)[\r\n]?/, ""),
@@ -203,7 +196,7 @@ function http_parser(http_request) {
                       "Keep-Alive: timeout=5, max=94",
                       "Connection: Keep-Alive"],
           verb = "HTTP/1.1 200 OK"   
-      if (wApp.cookieChanged()) {headers.push(wApp.setSession())}
+      if (wApp.sessionChanged) {headers.push(wApp.setSession())}
       var fullResponse = verb + CRLF + headers.join(CRLF) + CRLF + CRLF + jsonresp
       return(fullResponse);
   };
