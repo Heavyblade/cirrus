@@ -132,6 +132,14 @@ describe("Request Object", function(){
     expect(wApp.router.params.body.name).toEqual("john");
   })
 
+  it("should be able to handel blank spaces in body params", function(){
+    var httpGet = "POST /some/path/toresource?foo=bar&hello=world HTTP/1.0\r\nContent-Type: application/json\r\nConnection: Keep-Alive\r\n\r\nname=john&lastname=doe+perez\r\n" 
+    var request = Request(httpGet);
+    expect(request.body).toEqual("name=john&lastname=doe perez");
+    expect(wApp.router.params.body.name).toEqual("john");
+    expect(wApp.router.params.body.lastname).toEqual("doe perez");
+  });
+
 });
 
 describe("Response Object", function(){
