@@ -72,6 +72,7 @@ Base64DecodeEnumerator.prototype={current:64,moveNext:function(){if(0<this._buff
             return("NOT FOUND");
         }
     },
+    cookie_name: "v7App",
     cookie: {session: {}},
     session: {},
     oldcookie: {session: {}},
@@ -95,29 +96,26 @@ Base64DecodeEnumerator.prototype={current:64,moveNext:function(){if(0<this._buff
           var enconded = ""
         }
 
-        var cookie = "value=" + encoded
+        var cookie = wApp.cookie_name + "=" + encoded
         if(expires != undefined) {cookie += ("; " + "expires=" + expires.toGMTString())}
         if(path != undefined) {cookie += ("; " + "path=" + path)}
         
         return("set-Cookie: " + cookie);
     },
     getSession: function(cookie) { 
-      var values = cookie.split("; "),
-          i = values.length,
-          myCookie = {},
-          myOldCookie = {}
+      var regexp = new RegExp(wApp.cookie_name + "=(\\w+)\\;?")
+      var myCookie = {},
+          myOldCookie = {},
+          cookie_name = wApp.cookie_name
       
-      while(i--) {
-        var keys = values[i].split("=")
-        myCookie[keys[0]] = keys[1]
-        myOldCookie[keys[0]] = keys[1]
+      myOldCookie[cookie_name] = myCookie[cookie_name] = cookie.match(regexp)[1]
+      if(myCookie[cookie_name] != undefined) {
+        myOldCookie.session = myCookie.session = JSON.parse(decodeURIComponent(Base64.decode(myCookie[cookie_name])));
+        this.cookie = myCookie
+        this.oldcookie = myOldCookie
+        this.session = myCookie.session
       }
-
-      myOldCookie.session = myCookie.session = JSON.parse(decodeURIComponent(Base64.decode(myCookie.value)));
-      this.cookie = myCookie
-      this.oldcookie = myOldCookie
-      this.session = myCookie.session
-      return(myCookie.value);
+      return(myCookie[cookie_name]);
     },
     params: function(){return(this.router.params);}   
   }

@@ -75,6 +75,19 @@ describe("Router Component", function(){
     var routing = Object.keys(wApp.router.routes)
     expect(routing.length).toEqual(8)
   })
+
+  it("should be able to behave differen depending on HTTP verb", function(){
+    wApp.router.addRoutes({"resource users": "users"})
+    wApp.usersController = {
+      index: function(params) { return({method: "I'm Index"})},
+      create: function(params) { return({method: "I'm create"})}
+    }
+    
+    var response = Response(Request("GET /users HTTP/1.0\r\n\r\n"))
+    expect(response.split("\n\r\n")[1]).toEqual(JSON.stringify({method: "I'm Index"}));
+    var response = Response(Request("POST /users HTTP/1.0\r\n\r\n"))
+    expect(response.split("\n\r\n")[1]).toEqual(JSON.stringify({method: "I'm create"}));
+  })
 });
 // xxxxxxxxxxxxxxxxxxxxxxEnd Router xxxxxxxxxxxxxxxxxxxxxxx
 describe("Main App", function(){
@@ -255,7 +268,7 @@ describe("Cookies handling", function(){
       }
       wApp.router.addRoutes({"GET /users/:userid/show": "usersController#show"});
 
-      var cookie = "value=" + Base64.encode(encodeURIComponent(JSON.stringify({name: "JhonDoe", spaces: "Jhon Doe"})));
+      var cookie = wApp.cookie_name + "=" + Base64.encode(encodeURIComponent(JSON.stringify({name: "JhonDoe", spaces: "Jhon Doe"}))) + ";";
       var httpGet = "GET /some/path/toresource?foo=bar&hello=world HTTP/1.0\r\nContent-Type: application/json\r\nConnection: Keep-Alive\r\nCookie: " + cookie + "\r\n\r\n"
       var request = Request(httpGet);
   });
@@ -276,6 +289,21 @@ describe("Cookies handling", function(){
     wApp.setInSession("name", "Peter");
     expect(wApp.sessionChanged).toBe(true);
   });
+
+  it("should only take the cookie that belongs to the app", function(){
+      wApp.router.params = {};
+      wApp.cookie = {}
+      wApp.session = {}
+      wApp.oldcookie = {}
+
+      var cookie = wApp.cookie_name + "=" + Base64.encode(encodeURIComponent(JSON.stringify({name: "JhonDoe", spaces: "Jhon Doe"}))) + "; second_cookie=abc123";
+      var httpGet = "GET /some/path/toresource?foo=bar&hello=world HTTP/1.0\r\nContent-Type: application/json\r\nConnection: Keep-Alive\r\nCookie: " + cookie + "\r\n\r\n"
+      var request = Request(httpGet);
+
+      expect(Object.keys(wApp.cookie).length).toEqual(2);
+      expect(wApp.session.name).toEqual("JhonDoe");
+      expect(wApp.session.spaces).toEqual("Jhon Doe");
+  })
 
   describe("Setting the cookie header", function(){
     beforeEach(function(){
@@ -304,7 +332,7 @@ describe("Cookies handling", function(){
       var httpGet = "GET /users/23/show HTTP/1.0\r\nContent-Type: application/json\r\nConnection: Keep-Alive\r\n\r\n"
       var request = Request(httpGet);
       var response = Response(request)
-      base = response.split(CRLF)[8].split(": ")[1].split(";")[0].split("value=")[1]
+      base = response.split(CRLF)[8].split(": ")[1].split(";")[0].split(wApp.cookie_name + "=")[1]
       var session = JSON.parse(decodeURIComponent(Base64.decode(base)));
 
       expect(response.split(CRLF)[8].split(": ")[0]).toEqual("set-Cookie")
@@ -322,7 +350,7 @@ describe("Cookies handling", function(){
       var httpGet = "GET /users/23/show HTTP/1.0\r\nContent-Type: application/json\r\nConnection: Keep-Alive\r\n\r\n"
       var response = Response(Request(httpGet))
 
-      base = response.split(CRLF)[8].split(": ")[1].split(";")[0].split("value=")[1]
+      base = response.split(CRLF)[8].split(": ")[1].split(";")[0].split(wApp.cookie_name + "=")[1]
       var session = JSON.parse(decodeURIComponent(Base64.decode(base)));
       var keys = Object.keys(session).length
 
@@ -346,7 +374,7 @@ describe("Cookies handling", function(){
       var response = Response(Request(httpGet))
 
       // Get the session from cookie
-      base = response.split(CRLF)[8].split(": ")[1].split(";")[0].split("value=")[1]
+      base = response.split(CRLF)[8].split(": ")[1].split(";")[0].split(wApp.cookie_name + "=")[1]
       var session = JSON.parse(decodeURIComponent(Base64.decode(base)));
       var keys = Object.keys(session).length
 
