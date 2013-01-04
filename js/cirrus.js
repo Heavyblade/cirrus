@@ -108,8 +108,9 @@ Base64DecodeEnumerator.prototype={current:64,moveNext:function(){if(0<this._buff
           myOldCookie = {},
           cookie_name = wApp.cookie_name
       
-      myOldCookie[cookie_name] = myCookie[cookie_name] = cookie.match(regexp)[1]
-      if(myCookie[cookie_name] != undefined) {
+      var matched_cookie = cookie.match(regexp)
+      if(matched_cookie) {
+        myOldCookie[cookie_name] = myCookie[cookie_name] = matched_cookie[1]
         myOldCookie.session = myCookie.session = JSON.parse(decodeURIComponent(Base64.decode(myCookie[cookie_name])));
         this.cookie = myCookie
         this.oldcookie = myOldCookie

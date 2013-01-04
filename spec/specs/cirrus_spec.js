@@ -296,13 +296,11 @@ describe("Cookies handling", function(){
       wApp.session = {}
       wApp.oldcookie = {}
 
-      var cookie = wApp.cookie_name + "=" + Base64.encode(encodeURIComponent(JSON.stringify({name: "JhonDoe", spaces: "Jhon Doe"}))) + "; second_cookie=abc123";
+      var cookie =  "second_cookie=abc123";
       var httpGet = "GET /some/path/toresource?foo=bar&hello=world HTTP/1.0\r\nContent-Type: application/json\r\nConnection: Keep-Alive\r\nCookie: " + cookie + "\r\n\r\n"
       var request = Request(httpGet);
 
-      expect(Object.keys(wApp.cookie).length).toEqual(2);
-      expect(wApp.session.name).toEqual("JhonDoe");
-      expect(wApp.session.spaces).toEqual("Jhon Doe");
+      expect(Object.keys(wApp.cookie).length).toEqual(0);
   })
 
   describe("Setting the cookie header", function(){
