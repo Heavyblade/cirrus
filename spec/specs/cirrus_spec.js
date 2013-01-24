@@ -210,7 +210,7 @@ describe("Response Object", function(){
     var httpGet = "GET /shops/44/show?x=foo HTTP/1.1"
     var request = Request(httpGet);
     var response = Response(request);
-    expect(response).toEqual("HTTP/1.1 404 NOT FOUND")
+    expect(response).toEqual("HTTP/1.0 404 NOT FOUND")
   });
 
   it("should calculate the proper Content-length", function() {
@@ -220,6 +220,18 @@ describe("Response Object", function(){
     var response = Response(request);
     expect(response.split("\r\n")[3]).toEqual("Content-Length: " + expected_resp.length);
   })
+
+  it("should properly handle the internal errors and send the response", function(){
+
+    wApp.usersController = { show: function(params){ i.dont.exist += 0 } }
+    var httpGet = "GET /users/44/show?x=foo HTTP/1.1"
+    var request = Request(httpGet);
+    var response = Response(request);
+    var expectedResponse = JSON.stringify({message: "Cannot read property 'exist' of undefined"})
+
+    expect(response.split("\r\n")[0]).toEqual("HTTP/1.O 500  INTERNAL SERVER ERROR")
+    expect(response.split("\r\n\r\n")[1]).toEqual(expectedResponse);
+  });
 
 });
 
@@ -382,6 +394,19 @@ describe("Cookies handling", function(){
       expect(keys).toEqual(1);
     })
 
+  })
+
+});
+
+function alert(x) {return(x)}
+describe("Logging Errors", function(){
+
+  it("should be able to show to me the error message and the stacktrace if is needed", function(){
+    try {
+      i.dont.exist += 0
+    } catch(e) {
+      expect(logError(e)).toEqual("Cannot read property 'exist' of undefined");
+    }
   })
 
 });

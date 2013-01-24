@@ -82,13 +82,12 @@ Base64DecodeEnumerator.prototype={current:64,moveNext:function(){if(0<this._buff
       wApp.session[key] = value;
     },
     setSession: function(options) {
-        var encoded = (Object.keys(this.session).length != 0) ? Base64.encode(encodeURIComponent(JSON.stringify(this.session))) : ""
         if (Object.keys(this.session).length != 0) {
           var expires = this.session.expires
           var path = this.session.path
           delete this.session["expires"]
           delete this.session["path"]
-          
+
           var encoded = Base64.encode(encodeURIComponent(JSON.stringify(this.session)))
         } else {
           var expires = undefined
@@ -99,21 +98,19 @@ Base64DecodeEnumerator.prototype={current:64,moveNext:function(){if(0<this._buff
         var cookie = wApp.cookie_name + "=" + encoded
         if(expires != undefined) {cookie += ("; " + "expires=" + expires.toGMTString())}
         if(path != undefined) {cookie += ("; " + "path=" + path)}
-        
+
         return("set-Cookie: " + cookie);
     },
     getSession: function(cookie) { 
       var regexp = new RegExp(wApp.cookie_name + "=(\\w+)\\;?")
       var myCookie = {},
-          myOldCookie = {},
           cookie_name = wApp.cookie_name
-      
+
       var matched_cookie = cookie.match(regexp)
       if(matched_cookie) {
-        myOldCookie[cookie_name] = myCookie[cookie_name] = matched_cookie[1]
-        myOldCookie.session = myCookie.session = JSON.parse(decodeURIComponent(Base64.decode(myCookie[cookie_name])));
+        myCookie[cookie_name] = matched_cookie[1]
+        myCookie.session = JSON.parse(decodeURIComponent(Base64.decode(myCookie[cookie_name])));
         this.cookie = myCookie
-        this.oldcookie = myOldCookie
         this.session = myCookie.session
       }
       return(myCookie[cookie_name]);
@@ -148,7 +145,7 @@ function http_parser(http_request, type) {
   // Get the Query String
   var params = decodeURIComponent(req.encodeParams).replace(/\+/g, " ");
   if(req.encodeParams) { while(param = body_params_regx.exec(params)) {req.decodeParams[param[1]] = param[2];} }
-  
+
   // Body params if any
   if(split_request.length == 2) { 
     params = req.body = decodeURIComponent(split_request[1].trim().replace(/\+/g, " "));
@@ -170,15 +167,25 @@ function http_parser(http_request, type) {
     };
 
 // xxxxxxxxxxxxxxxxxxxx Response Object xxxxxxxxxxxxxxxxxxx
+  var BasicHeaders =[ "Server: Velneo v7",
+                      "transfer-coding: chunked",	
+                      "Keep-Alive: timeout=5, max=94",
+                      "Connection: Keep-Alive"]
   function Response(request) {
-    var actions = wApp.router.pointRequest(request.verb + " " + request.url);
-    if(actions != "NOT FOUND") {
-      var controllerAction = actions.split("#");
-      var resp = renderResponse(controllerAction[0], controllerAction[1], wApp)
-    } else {
-      var resp = "HTTP/1.1 404 NOT FOUND"
-    };
-    return (resp);
+    try {
+          var actions = wApp.router.pointRequest(request.verb + " " + request.url);
+          if(actions != "NOT FOUND") {
+            var controllerAction = actions.split("#");
+            var resp = renderResponse(controllerAction[0], controllerAction[1], wApp)
+          } else {
+            var resp = "HTTP/1.0 404 NOT FOUND"
+          };
+          return (resp);
+    } catch(e) {
+      // Sending Internal Message Error with info
+      var errorDesc = logError(e)
+      return(renderErrorResponse(e, errorDesc));
+    }
   };
 
   function renderResponse(controller, action, wApp) {
@@ -191,11 +198,29 @@ function http_parser(http_request, type) {
                       ("Content-Type: application/" + (jsonp ? "javascript" : "json")  + "; charset=utf-8"), 
                       ("Content-Length: " + jsonresp.length), 
                       "Server: Velneo v7",
-                      "transfer-coding: chunked",	  
+                      "transfer-coding: chunked",	
                       "Keep-Alive: timeout=5, max=94",
                       "Connection: Keep-Alive"],
           verb = "HTTP/1.1 200 OK"   
       if (wApp.sessionChanged) {headers.push(wApp.setSession())}
       var fullResponse = verb + CRLF + headers.join(CRLF) + CRLF + CRLF + jsonresp
       return(fullResponse);
+  };
+
+
+  function logError(e) {
+     var toLog = (e.lineNumber == undefined) ? e.message : (e.message + ". In Line Number: " + e.lineNumber)
+     alert(toLog);
+     return(toLog);
+  };
+
+  function renderErrorResponse(e, errorDesc) {
+      var CRLF = "\r\n";
+      var jsonp = wApp.router.params.callback;
+      var jsonresp = {message: errorDesc}
+      var jsonresp = jsonp ? (jsonp + "(" + JSON.stringify(jsonresp) + ")") : JSON.stringify(jsonresp)
+      jsonresp = unescape(encodeURIComponent(jsonresp)); // Encode to UFT-8
+
+      var resp = "HTTP/1.O 500  INTERNAL SERVER ERROR" + CRLF + BasicHeaders.join(CRLF) + CRLF + CRLF + jsonresp
+      return(resp)
   };
