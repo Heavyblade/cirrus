@@ -210,7 +210,6 @@ function http_parser(http_request, type) {
 
   function logError(e) {
      var toLog = (e.lineNumber == undefined) ? e.message : (e.message + ". In Line Number: " + e.lineNumber)
-     alert(toLog);
      return(toLog);
   };
 
