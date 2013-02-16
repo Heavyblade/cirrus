@@ -34,7 +34,7 @@ Listo ahora tienes a Cirrus.js disponible y solo debes iniciar el objeto TCP en 
 	}
 
 	// Creando las rutas
-	wApp.addRoutes({"GET /hello": "helloController#sayHello"})
+	wApp.router.addRoutes({"GET /hello": "helloController#sayHello"})
 
 	//Procesando los requests
 	var request = theRoot.varToString("REQUEST")
@@ -59,12 +59,12 @@ Las rutas son el intermediario entre las peticiones HTTP y la lógica de negocio
 
 
 ```javascript
-	wApp.addRoutes({"GET /users": "usersController#index"})
+	wApp.router.addRoutes({"GET /users": "usersController#index"})
 ```
 con la anterior sentencia estas enviando las peticiones GET dirigidas al path "/users" hacia el controlador usersController y la acción "index", igualmente puedes añadir multiples rutas al mismo tiempo:
 
 ```javascript
-	wApp.addRoutes({"GET /users": "usersController#index", "GET /users/new": "usersController#new"})
+	wApp.router.addRoutes({"GET /users": "usersController#index", "GET /users/new": "usersController#new"})
 ```
 
 ##### parametros:
@@ -72,7 +72,7 @@ con la anterior sentencia estas enviando las peticiones GET dirigidas al path "/
 Puedes definir parametros dentro de tus urls con el fin de darles un enfoque más REST, de tal forma que sean más limpias y tengan sentido al leerlas, para ello dentro de al URL puedes indicar cuales componentes son parametros añadiendo dos puntos (":") antes de la palabra, puedes añadir tantos parametros como desees.
 
 ```javascript
-	wApp.addRoutes({"GET /users/:id": "usersController#show"})
+	wApp.router.addRoutes({"GET /users/:id": "usersController#show"})
 
 	// para un request "/users/20" el "20" será añadido a la lista global de parametros, a los que puedes acceder a traves de la variable params en los controladores.
 ```
@@ -84,7 +84,7 @@ Adicional a esta definición Cirrus.js parseara cualquier parametro extra añadi
 Si deseas crear la interface para un recurso (ususarios, facturas, articulos, categorias, etc) y quieres evitarte construir las rutas para listarlos, crearlos, mostrar espeficos, editarlos, actualizarlos, etc.  Cirrus.js te permite declarar recursos y generarar automáticamente las 7 rutas REST necesarias.
 
 ```javascript
-	wApp.addRoutes({"resource users": "users"})
+	wApp.router.addRoutes({"resource users": "users"})
 ```
 esta declaración añadira automáticamente las siguientes rutas a tu aplicación:
 
