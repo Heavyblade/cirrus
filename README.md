@@ -160,13 +160,18 @@ En algunos casos se desea asociar la cookie con un path particular de la aplicac
     	wApp.setInsession("path", "/mi_path");
     }}
 ```
+### Leyendo la cookie:
 
+Una vez hayas escrito variables de sessión atra vez de la cookie podrás acceder a estas a traves de objeto wApp.session:
 
-## Notas de version Alpha
-
-En esta primera liberación Cirrus.js se encuentra en version Alpha por cuanto solo ha sido utilizada por su creador y por que la salida de la v7.11 supone un cambio muy grande en cuanto a la escritura de vJavascript en v7, debido a que @vArquitecto ha programado la posibilidad de realizar imports de codigo JavaScript dentro de los scripts, por cuanto no tendras que desarrollar todo tu código de controladores y rutas en el mismo archivo y Cirrus.js podra ser incluido como una mera dependencia dentro de tus scripts.
-
-* http://velneo.es/foros/topic/importar-js/
+```javascript
+	wApp.usersController = {
+		show: function(params) {
+			var user_id = wApp.session.user_id
+			var current_user = VRegister.find("CAJA/USERS", user_id)
+		}
+	}
+```
 
 ## FAQ's
 
