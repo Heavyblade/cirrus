@@ -22,7 +22,7 @@ describe("Router Component", function(){
     wApp.router.addRoutes({"GET /some/:param/resource": "controller#action"})
     var routes =  Object.keys(wApp.router.routes)
     expect(routes.length).toEqual(1);
-    expect(routes[0]).toEqual("GET /some/(\\d+)/resource")
+    expect(routes[0]).toEqual("GET /some/(\\w+)/resource")
   });
 
   it("should point to me the properly controller#action", function(){
@@ -41,6 +41,12 @@ describe("Router Component", function(){
     expect(wApp.router.params.id).toEqual("23");
     expect(wApp.router.params.userid).toEqual("42");
   });
+
+  it("should able to add alpha numeric vars to params scope", function(){
+    wApp.router.addRoutes({"GET /some/:id": "controller1#action1"})
+    var routing = wApp.router.pointRequest("GET /some/cristian")
+    expect(wApp.router.params.id).toEqual("cristian");
+  })
 
   it("should point me to the last coincidence", function(){
     wApp.router.addRoutes({"GET /some/:param/resource": "controller1#action1",

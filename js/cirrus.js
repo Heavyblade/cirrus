@@ -31,7 +31,7 @@ Base64DecodeEnumerator.prototype={current:64,moveNext:function(){if(0<this._buff
                   var basic = {},
                       key = keys[i];
                   basic[key] = rutes[key];
-                  this.routes[key.replace(/:\w+/g, "(\\d+)")] = basic;
+                  this.routes[key.replace(/:\w+/g, "(\\w+)")] = basic;
                 }
             }
         },
