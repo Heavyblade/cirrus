@@ -17,7 +17,9 @@ var server = net.createServer(function (socket) {
   socket.addListener("connect", function () {
     socket.on('data', function(data) {
         wApp.router.params = {}
+        console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
         console.log(data.toString());
+        console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
         request = wApp.request(data.toString())
         socket.end(wApp.response(request));
     })
