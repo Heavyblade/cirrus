@@ -16,7 +16,6 @@ var server = net.createServer(function (socket) {
   // every time someone connects, tell them hello and then close the connection.
   socket.addListener("connect", function () {
     socket.on('data', function(data) {
-        console.log(data.toString())
         request = wApp.request(data.toString())
         socket.end(wApp.response(request));
     })
