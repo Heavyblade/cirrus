@@ -25,4 +25,3 @@ var server = net.createServer(function (socket) {
 
 // fire up the server bound to port 7000 on localhost
 server.listen(5000, "localhost");
-console.log("tcp server listening on port 5000 at localhost.");
