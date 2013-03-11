@@ -1,5 +1,7 @@
 var wApp = require("./cirrus.js")
+var net = require('net');
 
+// xxxxxxxxxxxxxxxxxxxxxxx Application xxxxxxxxxxxxxxxxxxxxxxx
 wApp.usersController = {
   show: function(params){
     return({hello: "world", id: wApp.router.params.userid, x: wApp.router.params.x})}
@@ -7,19 +9,14 @@ wApp.usersController = {
 wApp.router.addRoutes({"GET /users/:userid/show": "usersController#show"});
 
 
-// load the net module to create a tcp server.
-var net = require('net');
+// xxxxxxxxxxxxxxxxxxxxxxx setup a tcp server xxxxxxxxxxxxxxxxxxxxxxx
+// Nota: solo funciona en local o conexiones muy rápidas
 
-// setup a tcp server
 var server = net.createServer(function (socket) {
   var request = ""
-  // every time someone connects, tell them hello and then close the connection.
   socket.addListener("connect", function () {
     socket.on('data', function(data) {
         wApp.router.params = {}
-        console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
-        console.log(data.toString());
-        console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
         request = wApp.request(data.toString())
         socket.end(wApp.response(request));
     })
@@ -27,5 +24,4 @@ var server = net.createServer(function (socket) {
 
 });
 
-// fire up the server bound to port 7000 on localhost
 server.listen((process.env.PORT || 5000), "0.0.0.0");
