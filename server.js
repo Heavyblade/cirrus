@@ -24,4 +24,4 @@ var server = net.createServer(function (socket) {
 });
 
 // fire up the server bound to port 7000 on localhost
-server.listen(5000, "localhost");
+server.listen((process.env.PORT || 5000), "localhost");
