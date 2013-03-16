@@ -113,12 +113,12 @@ Base64 = require("./base64.js");
     request: Request,
     response: Response,
     logError: logError
-  }
+  };
 
 // xxxxxxxxxxxxxxxxxxxxxxxxx HTTP Parser xxxxxxxxxxxxxx
 function http_parser(http_request, type) {
-  var split_request = http_request.split("\r\n\r\n") //split header from body
-  var response = /(HTTP\/1\.[1|0]) (\d{3}) (.+)/
+  var split_request = http_request.split("\r\n\r\n"); //split header from body
+  var response = /(HTTP\/1\.[1|0]) (\d{3}) (.+)/;
 
   var request = split_request[0].match(/^(GET|POST|PUT|DELETE|UPDATE) (.+) (.+)[\r\n]?/),
       headers = split_request[0].replace(/^(GET|POST|PUT|DELETE|UPDATE) (.+) (.+)[\r\n]?/, ""),
@@ -154,71 +154,70 @@ function http_parser(http_request, type) {
 // xxxxxxxxxxxxxxxxxxxxxxxxx Request Object xxxxxxxxxxxxxx
     function Request(http_request) {
         var req = http_parser(http_request);
-        wApp.router.params = req.decodeParams
-        wApp.router.params.body = req.bodyDecoded
+        wApp.router.params = req.decodeParams;
+        wApp.router.params.body = req.bodyDecoded;
         // Set Cookie
-        if(req.headers["Cookie"] != undefined) {
-          wApp.getSession(req.headers["Cookie"]);
+        if(req.headers.Cookie !== undefined) {
+          wApp.getSession(req.headers.Cookie);
         }
         return(req);
-    };
+    }
 
 // xxxxxxxxxxxxxxxxxxxx Response Object xxxxxxxxxxxxxxxxxxx
   var BasicHeaders =[ "Server: Velneo v7",
                       "transfer-coding: chunked",	
                       "Keep-Alive: timeout=5, max=94",
-                      "Connection: Keep-Alive"]
+                      "Connection: Keep-Alive"];
   function Response(request) {
     try {
           var actions = wApp.router.pointRequest(request.verb + " " + request.url);
           if(actions != "NOT FOUND") {
             var controllerAction = actions.split("#");
-            var resp = renderResponse(controllerAction[0], controllerAction[1], wApp)
+            return(renderResponse(controllerAction[0], controllerAction[1], wApp));
           } else {
-            var resp = "HTTP/1.0 404 NOT FOUND"
-          };
-          return (resp);
+            return("HTTP/1.0 404 NOT FOUND");
+          }
     } catch(e) {
       // Sending Internal Message Error with info
-      var errorDesc = logError(e)
+      var errorDesc = logError(e);
       return(renderErrorResponse(e, errorDesc));
     }
-  };
+  }
 
   function renderResponse(controller, action, wApp) {
       var CRLF = "\r\n";
       var jsonresp = wApp[(controller)][action](wApp.router.params);
       var jsonp = wApp.router.params.callback;
-      var jsonresp = jsonp ? (jsonp + "(" + JSON.stringify(jsonresp) + ")") : JSON.stringify(jsonresp)
+      jsonresp = jsonp ? (jsonp + "(" + JSON.stringify(jsonresp) + ")") : JSON.stringify(jsonresp);
       jsonresp = unescape(encodeURIComponent(jsonresp)); // Encode to UFT-8
-      var headers = [("Date: " + (new Date).toGMTString()), 
+      var headers = [("Date: " + (new Date()).toGMTString()), 
                       ("Content-Type: application/" + (jsonp ? "javascript" : "json")  + "; charset=utf-8"), 
                       ("Content-Length: " + jsonresp.length), 
                       "Server: Velneo v7",
                       "transfer-coding: chunked",	
                       "Keep-Alive: timeout=5, max=94",
                       "Connection: Keep-Alive"],
-          verb = "HTTP/1.1 200 OK"   
-      if (wApp.sessionChanged) {headers.push(wApp.setSession())}
-      var fullResponse = verb + CRLF + headers.join(CRLF) + CRLF + CRLF + jsonresp
+          verb = "HTTP/1.1 200 OK";   
+      if (wApp.sessionChanged) {headers.push(wApp.setSession());}
+      var fullResponse = verb + CRLF + headers.join(CRLF) + CRLF + CRLF + jsonresp;
       return(fullResponse);
-  };
+  }
 
 
   function logError(e) {
-     var toLog = (e.lineNumber == undefined) ? e.message : (e.message + ". In Line Number: " + e.lineNumber)
+     var toLog = (e.lineNumber === undefined) ? e.message : (e.message + ". In Line Number: " + e.lineNumber);
      return(toLog);
-  };
+  }
 
   function renderErrorResponse(e, errorDesc) {
       var CRLF = "\r\n";
       var jsonp = wApp.router.params.callback;
-      var jsonresp = {message: errorDesc}
-      var jsonresp = jsonp ? (jsonp + "(" + JSON.stringify(jsonresp) + ")") : JSON.stringify(jsonresp)
+      var jsonresp = {message: errorDesc};
+      jsonresp = jsonp ? (jsonp + "(" + JSON.stringify(jsonresp) + ")") : JSON.stringify(jsonresp);
       jsonresp = unescape(encodeURIComponent(jsonresp)); // Encode to UFT-8
 
-      var resp = "HTTP/1.O 500  INTERNAL SERVER ERROR" + CRLF + BasicHeaders.join(CRLF) + CRLF + CRLF + jsonresp
-      return(resp)
-  };
+      var resp = "HTTP/1.O 500  INTERNAL SERVER ERROR" + CRLF + BasicHeaders.join(CRLF) + CRLF + CRLF + jsonresp;
+      return(resp);
+  }
 
- module.exports = wApp
+ module.exports = wApp;
