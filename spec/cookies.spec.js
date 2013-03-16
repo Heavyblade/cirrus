@@ -1,4 +1,4 @@
-Base64 = require("./../base64.js")
+Base64 = require("./../libs/base64.js")
 var CRLF = "\r\n"
 
 describe("Cookies handling", function(){
