@@ -1,4 +1,4 @@
-Base64 = require("./base64.js")
+Base64 = require("./base64.js");
 
 //xxxxxxxxxxxxxxxxxxx Main Application Definition xxxxxxxxx
   wApp = {
@@ -10,7 +10,7 @@ Base64 = require("./base64.js")
             while(keys--) {
                 var subarray = array[keys].split("=");
                 this.params[subarray[0]] = subarray[1].replace(/\+/g, " ");
-            };
+            }
         },
         routes: {},
         addRoutes: function (rutes) {
@@ -19,7 +19,7 @@ Base64 = require("./base64.js")
             while(i--) {
                 if(keys[i].split(" ")[0] == "resource") {
                   var rest = this.createREST(keys[i].split(" ")[1]);
-                  this.addRoutes(rest)      
+                  this.addRoutes(rest);      
                 } else {
                   var basic = {},
                       key = keys[i];
@@ -29,21 +29,21 @@ Base64 = require("./base64.js")
             }
         },
         createREST: function(resource) {
-          var rest = {}
-          rest["GET /" + resource] = resource + "Controller#index"
-          rest["GET /" + resource + "/new"] = resource + "Controller#new"
-          rest["POST /" + resource] = resource + "Controller#create"
-          rest["GET /" + resource + "/:id"] = resource + "Controller#show"
-          rest["GET /" + resource + "/:id/edit"] = resource + "Controller#edit"
-          rest["PUT /" + resource + "/:id"] = resource + "Controller#update"
-          rest["DELETE /" + resource + "/:id"] = resource + "Controller#delete"
-          return(rest)
+          var rest = {};
+          rest["GET /" + resource] = resource + "Controller#index";
+          rest["GET /" + resource + "/new"] = resource + "Controller#new";
+          rest["POST /" + resource] = resource + "Controller#create";
+          rest["GET /" + resource + "/:id"] = resource + "Controller#show";
+          rest["GET /" + resource + "/:id/edit"] = resource + "Controller#edit";
+          rest["PUT /" + resource + "/:id"] = resource + "Controller#update";
+          rest["DELETE /" + resource + "/:id"] = resource + "Controller#delete";
+          return(rest);
         },
         pointRequest: function (url) {
             keys = Object.keys(this.routes);
             var i = keys.length;
             while(i--) {
-              var rutaRegExp = new RegExp((keys[i].replace(/\//g, "\\/") + "\$"));
+              var rutaRegExp = new RegExp((keys[i].replace(/\//g, "\\/") + "$"));
               var match = url.match(rutaRegExp);
 
               if (match){
@@ -55,13 +55,13 @@ Base64 = require("./base64.js")
                 if (requestParams) {
                   var requestVars = url.match(rutaRegExp);
                   requestVars.shift();
-                  var i = requestParams.length;
-                  while(i--) { var param = requestParams[i]; this.params[param.replace(":", "")]=requestVars[requestParams.indexOf(param)]}
+                  var z = requestParams.length;
+                  while(z--) { var param = requestParams[z]; this.params[param.replace(":", "")]=requestVars[requestParams.indexOf(param)];}
                 }
                 // if match returns "controller#method"
                 return(x[custom_route]);
-              };
-            };
+              }
+            }
             return("NOT FOUND");
         }
     },
@@ -75,36 +75,37 @@ Base64 = require("./base64.js")
       wApp.session[key] = value;
     },
     setSession: function(options) {
-        if (Object.keys(this.session).length != 0) {
-          var expires = this.session.expires
-          var path = this.session.path
-          delete this.session["expires"]
-          delete this.session["path"]
+        var expires;
+        var path;
+        var enconded = "";
+        
+        if (Object.keys(this.session).length !== 0) {
+          expires = this.session.expires;
+          path = this.session.path;
 
-          var encoded = Base64.encode(encodeURIComponent(JSON.stringify(this.session)))
-        } else {
-          var expires = undefined
-          var path = undefined
-          var enconded = ""
+          delete this.session.expires;
+          delete this.session.path;
+
+          encoded = Base64.encode(encodeURIComponent(JSON.stringify(this.session)));
         }
 
-        var cookie = wApp.cookie_name + "=" + encoded
-        if(expires != undefined) {cookie += ("; " + "expires=" + expires.toGMTString())}
-        if(path != undefined) {cookie += ("; " + "path=" + path)}
+        var cookie = this.cookie_name + "=" + encoded;
+        if(expires !== undefined) {cookie += ("; " + "expires=" + expires.toGMTString());}
+        if(path !== undefined) {cookie += ("; " + "path=" + path);}
 
         return("set-Cookie: " + cookie);
     },
     getSession: function(cookie) { 
-      var regexp = new RegExp(wApp.cookie_name + "=(\\w+)\\;?")
+      var regexp = new RegExp(wApp.cookie_name + "=(\\w+)\\;?");
       var myCookie = {},
-          cookie_name = wApp.cookie_name
+          cookie_name = wApp.cookie_name;
 
-      var matched_cookie = cookie.match(regexp)
+      var matched_cookie = cookie.match(regexp);
       if(matched_cookie) {
-        myCookie[cookie_name] = matched_cookie[1]
+        myCookie[cookie_name] = matched_cookie[1];
         myCookie.session = JSON.parse(decodeURIComponent(Base64.decode(myCookie[cookie_name])));
-        this.cookie = myCookie
-        this.session = myCookie.session
+        this.cookie = myCookie;
+        this.session = myCookie.session;
       }
       return(myCookie[cookie_name]);
     },
