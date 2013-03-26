@@ -1,4 +1,4 @@
-// xxxxxxxxxxxxxxxxxxx Base 64 Encode Libreary xxxxxxxxxxxx
+// xxxxxxxxxxxxxxxxxxx Base 64 Encode Library xxxxxxxxxxxx
 function StringBuffer(){this.buffer=[]}StringBuffer.prototype.append=function(a){this.buffer.push(a);return this};StringBuffer.prototype.toString=function(){return this.buffer.join("")};
 var Base64={codex:"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",encode:function(a){for(var c=new StringBuffer,a=new Utf8EncodeEnumerator(a);a.moveNext();){var b=a.current;a.moveNext();var d=a.current;a.moveNext();var e=a.current,h=b>>2,b=(b&3)<<4|d>>4,g=(d&15)<<2|e>>6,f=e&63;isNaN(d)?g=f=64:isNaN(e)&&(f=64);c.append(this.codex.charAt(h)+this.codex.charAt(b)+this.codex.charAt(g)+this.codex.charAt(f))}return c.toString()},decode:function(a){for(var c=new StringBuffer,a=new Base64DecodeEnumerator(a);a.moveNext();){var b=
 a.current;if(128>b)c.append(String.fromCharCode(b));else if(191<b&&224>b){a.moveNext();var d=a.current;c.append(String.fromCharCode((b&31)<<6|d&63))}else a.moveNext(),d=a.current,a.moveNext(),c.append(String.fromCharCode((b&15)<<12|(d&63)<<6|a.current&63))}return c.toString()}};function Utf8EncodeEnumerator(a){this._input=a;this._index=-1;this._buffer=[]}
@@ -27,7 +27,7 @@ Base64DecodeEnumerator.prototype={current:64,moveNext:function(){if(0<this._buff
             while(i--) {
                 if(keys[i].split(" ")[0] == "resource") {
                   var rest = this.createREST(keys[i].split(" ")[1]);
-                  this.addRoutes(rest);      
+                  this.addRoutes(rest);
                 } else {
                   var basic = {},
                       key = keys[i];
@@ -73,49 +73,52 @@ Base64DecodeEnumerator.prototype={current:64,moveNext:function(){if(0<this._buff
             return("NOT FOUND");
         }
     },
-    cookie_name: "v7App",
-    cookie: {session: {}},
-    session: {},
-    oldcookie: {session: {}},
-    sessionChanged: false,
-    setInSession: function (key, value) {
-      this.sessionChanged = true;
-      wApp.session[key] = value;
-    },
-    setSession: function(options) {
-        var expires;
-        var path;
-        var enconded = "";
-        
-        if (Object.keys(this.session).length !== 0) {
-          expires = this.session.expires;
-          path = this.session.path;
+    session: {
+      cookie_name: "v7App",
+      cookie: {session: {}},
+      session: {},
+      changed: false,
+      set: function (key, value) {
+        this.changed = true;
+        this.session[key] = value;
+        return(true);
+      },
+      get: function(key){
+        return(this.session[key]);
+      },
+      setInHeader: function() {
+          var expires;
+          var path;
+          var enconded = "";
 
-          delete this.session.expires;
-          delete this.session.path;
+          if (Object.keys(this.session).length !== 0) {
+            expires = this.session.expires;
+            path = this.session.path;
+            delete this.session.expires;
+            delete this.session.path;
+            encoded = Base64.encode(encodeURIComponent(JSON.stringify(this.session)));
+          }
 
-          encoded = Base64.encode(encodeURIComponent(JSON.stringify(this.session)));
+          var cookie = this.cookie_name + "=" + encoded;
+          if(expires !== undefined) {cookie += ("; " + "expires=" + expires.toGMTString());}
+          if(path !== undefined) {cookie += ("; " + "path=" + path);}
+
+          return("set-Cookie: " + cookie);
+      },
+      getFromHeader: function(cookie) { 
+        var regexp = new RegExp(wApp.cookie_name + "=(\\w+)\\;?");
+        var myCookie = {},
+            cookie_name = wApp.cookie_name;
+
+        var matched_cookie = cookie.match(regexp);
+        if(matched_cookie) {
+          myCookie[cookie_name] = matched_cookie[1];
+          myCookie.session = JSON.parse(decodeURIComponent(Base64.decode(myCookie[cookie_name])));
+          this.cookie = myCookie; // raw cookie + session
+          this.session = myCookie.session;
         }
-
-        var cookie = this.cookie_name + "=" + encoded;
-        if(expires !== undefined) {cookie += ("; " + "expires=" + expires.toGMTString());}
-        if(path !== undefined) {cookie += ("; " + "path=" + path);}
-
-        return("set-Cookie: " + cookie);
-    },
-    getSession: function(cookie) { 
-      var regexp = new RegExp(wApp.cookie_name + "=(\\w+)\\;?");
-      var myCookie = {},
-          cookie_name = wApp.cookie_name;
-
-      var matched_cookie = cookie.match(regexp);
-      if(matched_cookie) {
-        myCookie[cookie_name] = matched_cookie[1];
-        myCookie.session = JSON.parse(decodeURIComponent(Base64.decode(myCookie[cookie_name])));
-        this.cookie = myCookie;
-        this.session = myCookie.session;
-      }
-      return(myCookie[cookie_name]);
+        return(myCookie[cookie_name]);
+      }      
     },
     params: function(){return(this.router.params);},
     request: Request,
@@ -166,7 +169,7 @@ function http_parser(http_request, type) {
         wApp.router.params.body = req.bodyDecoded;
         // Set Cookie
         if(req.headers.Cookie !== undefined) {
-          wApp.getSession(req.headers.Cookie);
+          wApp.session.getFromHeader(req.headers.Cookie);
         }
         return(req);
     }
@@ -206,7 +209,7 @@ function http_parser(http_request, type) {
                       "Keep-Alive: timeout=5, max=94",
                       "Connection: Keep-Alive"],
           verb = "HTTP/1.1 200 OK";   
-      if (wApp.sessionChanged) {headers.push(wApp.setSession());}
+      if (wApp.session.changed) {headers.push(wApp.session.setInHeader());}
       var fullResponse = verb + CRLF + headers.join(CRLF) + CRLF + CRLF + jsonresp;
       return(fullResponse);
   }
