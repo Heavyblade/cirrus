@@ -95,4 +95,22 @@ describe("Router Component", function(){
     var response = wApp.response(wApp.request("POST /users HTTP/1.0\r\n\r\n"))
     expect(response.split("\n\r\n")[1]).toEqual(JSON.stringify({method: "I'm create"}));
   })
+
+  it("should be able to handle case insensitive urls", function(){
+    wApp.router.addRoutes({"/helloworld": "usersController#index"})
+    wApp.usersController = {
+      index: function(params) { return({method: "I'm Index"})}
+    }
+    var response = wApp.response(wApp.request("GET /helloWorld HTTP/1.0\r\n\r\n"))
+    expect(response.split("\n\r\n")[1]).toEqual(JSON.stringify({method: "I'm Index"}));
+  });
+
+  it("should be able to handle urls ended in /", function(){
+    wApp.router.addRoutes({"/helloworld": "usersController#index"})
+    wApp.usersController = {
+      index: function(params) { return({method: "I'm Index"})}
+    }
+    var response = wApp.response(wApp.request("GET /helloWorld/ HTTP/1.0\r\n\r\n"))
+    expect(response.split("\n\r\n")[1]).toEqual(JSON.stringify({method: "I'm Index"}));
+  });
 });

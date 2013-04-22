@@ -51,7 +51,7 @@ Base64DecodeEnumerator.prototype={current:64,moveNext:function(){if(0<this._buff
             keys = Object.keys(this.routes);
             var i = keys.length;
             while(i--) {
-              var rutaRegExp = new RegExp((keys[i].replace(/\//g, "\\/") + "$"));
+              var rutaRegExp = new RegExp((keys[i].replace(/\//g, "\\/") + "\/?$"), "i");
               var match = url.match(rutaRegExp);
 
               if (match){
