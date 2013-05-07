@@ -6,4 +6,3 @@ Utf8EncodeEnumerator.prototype={current:Number.NaN,moveNext:function(){if(0<this
 function Base64DecodeEnumerator(a){this._input=a;this._index=-1;this._buffer=[]}
 Base64DecodeEnumerator.prototype={current:64,moveNext:function(){if(0<this._buffer.length)return this.current=this._buffer.shift(),!0;if(this._index>=this._input.length-1)return this.current=64,!1;var a=Base64.codex.indexOf(this._input.charAt(++this._index)),c=Base64.codex.indexOf(this._input.charAt(++this._index)),b=Base64.codex.indexOf(this._input.charAt(++this._index)),d=Base64.codex.indexOf(this._input.charAt(++this._index)),e=(b&3)<<6|d;this.current=a<<2|c>>4;64!=b&&this._buffer.push((c&15)<<
 4|b>>2);64!=d&&this._buffer.push(e);return!0}};
- module.exports = Base64

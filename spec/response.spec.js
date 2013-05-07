@@ -30,14 +30,14 @@ describe("Response Object", function(){
     var response = wApp.response(request);
     var headers = response.split("\r\n\r\n")[0].split("\r\n")
     expect(typeof(response)).toEqual("string");
-    expect(headers[3].split(" ")[1]).toEqual("" + expected_resp.length);
+    expect(headers[2].split(" ")[1]).toEqual("" + expected_resp.length);
   });
 
   it("should set the proper headers for a JSON response", function(){
     var httpGet = "GET /users/44/show?x=foo HTTP/1.1"
     var request = wApp.request(httpGet);
     var response = wApp.response(request);
-    expect(response.split(CRLF)[2]).toEqual("Content-Type: application/json; charset=utf-8")
+    expect(response.split(CRLF)[7]).toEqual("Content-Type: application/json; charset=utf-8")
   });
 
   it("should able to handle JSONP request from JQuery", function(){
@@ -45,7 +45,7 @@ describe("Response Object", function(){
     var request = wApp.request(httpGet);
     var response = wApp.response(request);
     expected_resp = "jQuery11224324(" + JSON.stringify({hello: "world", id: "44", x: wApp.router.params.x }) + ")";
-    expect(response.split(CRLF)[2]).toEqual("Content-Type: application/javascript; charset=utf-8")
+    expect(response.split(CRLF)[7]).toEqual("Content-Type: application/javascript; charset=utf-8")
     expect(response.split("\n\r\n")[1]).toEqual(expected_resp);
   });
 
@@ -61,7 +61,7 @@ describe("Response Object", function(){
     var request = wApp.request(httpGet);
     var expected_resp = JSON.stringify({hello: "world", id: "44", x: wApp.router.params.x });
     var response = wApp.response(request);
-    expect(response.split("\r\n")[3]).toEqual("Content-Length: " + expected_resp.length);
+    expect(response.split("\r\n")[2]).toEqual("Content-Length: " + expected_resp.length);
   })
 
   it("should properly handle the internal errors and send the response", function(){

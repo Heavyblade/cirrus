@@ -23,6 +23,8 @@ describe("Controller creation", function(){
     var request = wApp.request(httpGet)
     var response = wApp.response(request)
     var respObj = JSON.parse(response.split("\r\n\r\n")[1])
+    console.log("xxxxxxxxxxxxxxxxxxxxxxxxxx")
+    console.log(response)
     expect(respObj.id).toEqual("23")
   })
 });

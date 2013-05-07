@@ -1,4 +1,4 @@
-wApp = require("./../libs/cirrus.js")
+wApp = require("./../builds/cirrus.min.js")
 
 describe("Router Component", function(){
 
