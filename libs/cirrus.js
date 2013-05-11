@@ -174,7 +174,7 @@ function http_parser(http_request, type) {
           var actions = wApp.router.pointRequest(request.verb + " " + request.url);
           if(actions != "NOT FOUND") {
             var controllerAction = actions.split("#");
-            return(renderResponse(controllerAction[0], controllerAction[1], wApp, request["Content-Type"]));
+            return(renderResponse(controllerAction[0], controllerAction[1], wApp, request["accept"]));
           } else {
             return("HTTP/1.0 404 NOT FOUND");
           }
@@ -187,16 +187,17 @@ function http_parser(http_request, type) {
 
   function renderResponse(controller, action, wapp, type) {
       var CRLF = "\r\n";
+      var jsonresp = wapp[(controller)][action](wapp.router.params);
 
       if (type != undefined) {
           switch (type) {
             case (/json/i).test(type):
-              var rendered = Engine.json(controller, action, wapp);
+              var rendered = Engine.json(jsonresp, wapp, controller, action);
             case(/html/i).test(type):
-              var rendered = Engine.html(controller, action, wapp);
+              var rendered = Engine.html(jsonresp, wapp, controller, action);
           }
       } else {
-          var rendered = Engine.json(controller, action, wapp);
+        var rendered = Engine.json(jsonresp, wapp);
       }
 
       var verb = "HTTP/1.1 200 OK";
@@ -225,13 +226,46 @@ function http_parser(http_request, type) {
   }
 
   var Engine = {
-    json: function(controller, action, wapp) {
-            var jsonresp = wapp[(controller)][action](wapp.router.params);
-            var jsonp = wapp.router.params.callback;
-            jsonresp = jsonp ? (jsonp + "(" + JSON.stringify(jsonresp) + ")") : JSON.stringify(jsonresp);
-            jsonresp = unescape(encodeURIComponent(jsonresp)); // Encode to UFT-8
-            var headers = [("Content-Type: application/" + (jsonp ? "javascript" : "json")  + "; charset=utf-8")]
-            return({body: jsonresp, headers: headers});
+    json: function(jsonresp, wapp) {
+          var jsonp = wapp.router.params.callback;
+          jsonresp = jsonp ? (jsonp + "(" + JSON.stringify(jsonresp) + ")") : JSON.stringify(jsonresp);
+          jsonresp = unescape(encodeURIComponent(jsonresp)); // Encode to UFT-8
+          var headers = [("Content-Type: application/" + (jsonp ? "javascript" : "json")  + "; charset=utf-8")]
+          return({body: jsonresp, headers: headers});
+    },
+    html: function(jsonresp, wapp, controller, action) {
+      var file = "views/" + controller + "/" + action + ".html"
+      var pureHTML = getHTML(file);
+
+      if (pureHTML.type == "template") {
+          // Rendering the html with HandleBars
+          var template = Handlebars.compile(pureHTML.html);
+          var body = template(jsonresp)
+      } else {
+          var body = pureHTML.html 
+      }
+      var headers = ["Content-Type: text/html; charset=utf-8"];
+      return({body: body, headers: headers});
     }
   }
+
+  function getHTML(path) {
+    var records = new VRegisterList(theRoot);
+    records.setTable("CIRRUSDAT/ASSETS");
+    records.load("NAME", [path]);
+
+    if (records.listSize() > 0) {
+        var html =  records.readAt(0).fieldToString("BODY");
+        var type =  records.readAt(0).fieldToString("TYPE") == "1" ? "html" : "template"
+    } else {
+        // TODO check what happens when two calls to load
+        records.load("NAME", ["NOT_VIEW"]);
+        var html =  records.readAt(0).fieldToString("BODY");
+        var type = "html"
+    }
+    
+    return({html: html, type: type});  
+  }
+
+
 module.exports = wApp;
