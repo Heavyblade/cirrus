@@ -251,12 +251,12 @@ function http_parser(http_request, type) {
 
   function getHTML(path) {
     var records = new VRegisterList(theRoot);
-    records.setTable("CIRRUSDAT/ASSETS");
+    records.setTable("cirrusdat/FILES");
     records.load("NAME", [path]);
 
     if (records.listSize() > 0) {
         var html =  records.readAt(0).fieldToString("BODY");
-        var type =  records.readAt(0).fieldToString("TYPE") == "1" ? "html" : "template"
+        var type =  records.readAt(0).fieldToString("TIP0") == "1" ? "html" : "template"
     } else {
         // TODO check what happens when two calls to load
         records.load("NAME", ["NOT_VIEW"]);
