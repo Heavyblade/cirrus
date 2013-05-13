@@ -1,3 +1,5 @@
+var VRegister = require("./vregister");
+var jf = require('jsonfile')
 var fs = require('fs');
 var theRoot = {} 
 
@@ -22,23 +24,16 @@ function VRegisterList(theRoot) {
   this.setTable = function(table) { this.table = table }
   
   this.load = function(index, params) {
-                var files = getFileNames("./../../spec/views"),
-                    route = params[0],
-                    i = files.length
-                
-                for(z=0; z < i ; z++) {
-                    if (files[z].path == route) {
-                        var file = files[z]
-                        var record = new VRegister(theRoot);
-                        record.fields = {NAME: file.path, BODY: file.content, TIPO: file.type }
-                        this.records = [record]
-                        return([record]);
-                    } 
-                }
+     var file = jf.readFileSync("./spec/fixtures/files.json")
+     var base = file[params[0]]
+     var registro = new VRegister(theRoot);
+     registro.fields = {BODY: base.content, TIPO: base.tipo}
+     this.records = [registro]
+     return([registro]);
   }
 
   this.records = []
-  this.listSize = function() { this.records.length }
+  this.listSize = function() { return(this.records.length) }
   this.readAt = function(position) { return(this.records[position]); }
 }
 
