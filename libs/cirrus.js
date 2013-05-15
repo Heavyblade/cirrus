@@ -113,7 +113,8 @@
     params: function(){return(this.router.params);},
     request: Request,
     response: Response,
-    logError: logError
+    logError: logError,
+    getHTML: getHTML
   };
 
 // xxxxxxxxxxxxxxxxxxxxxxxxx HTTP Parser xxxxxxxxxxxxxx
@@ -174,7 +175,7 @@ function http_parser(http_request, type) {
           var actions = wApp.router.pointRequest(request.verb + " " + request.url);
           if(actions != "NOT FOUND") {
             var controllerAction = actions.split("#");
-            return(renderResponse(controllerAction[0], controllerAction[1], wApp, request["accept"]));
+            return(renderResponse(controllerAction[0], controllerAction[1], wApp, request.headers["Accept"]));
           } else {
             return("HTTP/1.0 404 NOT FOUND");
           }
@@ -190,7 +191,7 @@ function http_parser(http_request, type) {
       var jsonresp = wapp[(controller)][action](wapp.router.params);
 
       if (type != undefined) {
-          switch (type) {
+          switch (true) {
             case (/json/i).test(type):
               var rendered = Engine.json(jsonresp, wapp, controller, action);
             case(/html/i).test(type):
@@ -234,7 +235,7 @@ function http_parser(http_request, type) {
           return({body: jsonresp, headers: headers});
     },
     html: function(jsonresp, wapp, controller, action) {
-      var file = "views/" + controller + "/" + action + ".html"
+      var file = "views/" + controller.replace("Controller", "") + "/" + action 
       var pureHTML = getHTML(file);
 
       if (pureHTML.type == "template") {
@@ -256,14 +257,13 @@ function http_parser(http_request, type) {
 
     if (records.listSize() > 0) {
         var html =  records.readAt(0).fieldToString("BODY");
-        var type =  records.readAt(0).fieldToString("TIP0") == "1" ? "html" : "template"
+        var type =  records.readAt(0).fieldToString("TIPO") == "1" ? "html" : "template"
     } else {
         // TODO check what happens when two calls to load
         records.load("NAME", ["NOT_VIEW"]);
         var html =  records.readAt(0).fieldToString("BODY");
         var type = "html"
     }
-    
     return({html: html, type: type});  
   }
 

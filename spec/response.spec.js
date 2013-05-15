@@ -1,3 +1,5 @@
+theRoot = {}
+
 describe("Response Object", function(){
 
   beforeEach(function(){
@@ -78,3 +80,59 @@ describe("Response Object", function(){
 
 });
 
+describe("Handling HTML templates", function() {
+
+  it("should be able to take the HTML from a path", function(){
+    var path = "users/show"
+    var result = wApp.getHTML(path);
+    expect(result.type).toEqual("html");
+  });
+
+  it("should be able to render a template from path", function(){
+    var path = "users/showtemp"
+    var result = wApp.getHTML(path);
+    expect(result.type).toEqual("template");
+  });
+});
+
+
+describe("Handling standar html request", function(){
+
+  beforeEach(function(){
+      wApp.router.routes = {};
+      wApp.router.params = {}
+      // Setting up an Application to test
+      wApp.usersController = {
+        show: function(params){return({message: "Hello World"})},
+        template: function(params){return({message: "Hello Template"})},
+        edit: function(params){return({message: "Hello Template"})}
+      }
+      wApp.router.addRoutes({"GET /users/:userid/show": "usersController#show", 
+                             "GET /users/:userid/template": "usersController#template",
+                             "GET /users/:userid/edit": "usersController#edit",
+                            });
+      CRLF = "\r\n"
+  });
+
+  it("should render te proper template for the controller#action", function(){
+    var httpGet = "GET /users/44/show HTTP/1.1\r\nAccept: text/html"
+    var request = wApp.request(httpGet);
+    var response = wApp.response(request);
+    expect(response.split("\r\n\r\n")[1]).toEqual("<div><h1>Hello World</h1></div>");
+  });
+
+  it("should render te proper template for the controller#action", function(){
+    var httpGet = "GET /users/44/template HTTP/1.1\r\nAccept: text/html"
+    var request = wApp.request(httpGet);
+    var response = wApp.response(request);
+    expect(response.split("\r\n\r\n")[1]).toEqual("<div><h1>Hello Template</h1></div>");
+  });
+
+  it("should show a message with no-view template", function(){
+    var httpGet = "GET /users/44/edit HTTP/1.1\r\nAccept: text/html"
+    var request = wApp.request(httpGet);
+    var response = wApp.response(request);
+    var resp = "<div><h1>There is not view for this action</h1></div>" 
+    expect(response.split("\r\n\r\n")[1]).toEqual(resp);
+  });
+});

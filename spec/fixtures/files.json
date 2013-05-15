@@ -1,3 +1,7 @@
 {
-"users/show": {"content": "<div><h1>Hello World</h1></div>", "tipo": "1"}
+"users/show": {"content": "<div><h1>Hello World</h1></div>", "tipo": "1"},
+"users/showtemp": {"content": "<div><h1>{{ message }}</h1></div>", "tipo": "2"},
+"views/users/show": {"content": "<div><h1>Hello World</h1></div>", "tipo": "1"},
+"views/users/template": {"content": "<div><h1>{{ message }}</h1></div>", "tipo": "2"},
+"NOT_VIEW": {"content": "<div><h1>There is not view for this action</h1></div>", "tipo": "1"}
 }

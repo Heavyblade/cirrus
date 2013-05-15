@@ -3,13 +3,11 @@ var VRegister = require('./../libs/fake_vjavascript/vregister');
 var VRegisterList = require('./../libs/fake_vjavascript/vregister_list');
 
 describe("Fake implementation of vJavascript - VRegister", function() {
-
   it("should be able to set fields", function(){
       var record = new VRegister(theRoot);
       record.fields = {HI: "hello world"}
       expect(record.fieldToString("HI")).toEqual("hello world");
   })
-
 });
 
 
@@ -50,5 +48,4 @@ describe("Fake implementation of vJavascrip - VRegisterList", function(){
     expect(records.readAt(0).fieldToString("TIPO")).toEqual("1");
     expect(records.readAt(0).fieldToString("BODY")).toEqual("<div><h1>Hello World</h1></div>");
   });
-
 })
