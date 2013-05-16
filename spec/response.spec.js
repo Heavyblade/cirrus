@@ -6,11 +6,8 @@ describe("Response Object", function(){
       wApp.router.routes = {};
       wApp.router.params = {}
       // Setting up an Application to test
-      wApp.usersController = {
-        show: function(params){return({hello: "world", id: wApp.router.params.userid, x: wApp.router.params.x})}
-      }
+      wApp.usersController = { show: function(params){return({hello: "world", id: wApp.router.params.userid, x: wApp.router.params.x})} }
       wApp.router.addRoutes({"GET /users/:userid/show": "usersController#show"});
-
       CRLF = "\r\n"
   });
 
@@ -74,7 +71,7 @@ describe("Response Object", function(){
     var response = wApp.response(request);
     var expectedResponse = JSON.stringify({message: "i is not defined"})
 
-    expect(response.split("\r\n")[0]).toEqual("HTTP/1.O 500  INTERNAL SERVER ERROR")
+    expect(response.split("\r\n")[0]).toEqual("HTTP/1.0 500  INTERNAL SERVER ERROR")
     expect(response.split("\r\n\r\n")[1]).toEqual(expectedResponse);
   });
 
