@@ -210,19 +210,6 @@ function http_parser(http_request, type) {
       return(fullResponse);
   }
 
-  function logError(e) { return(e.lineNumber === undefined) ? e.message : (e.message + ". In Line Number: " + e.lineNumber); }
-
-  function renderErrorResponse(e, errorDesc) {
-      var CRLF = "\r\n";
-      var jsonp = wApp.router.params.callback;
-      var jsonresp = {message: errorDesc};
-      jsonresp = jsonp ? (jsonp + "(" + JSON.stringify(jsonresp) + ")") : JSON.stringify(jsonresp);
-      jsonresp = unescape(encodeURIComponent(jsonresp)); // Encode to UFT-8
-
-      var resp = "HTTP/1.0 500  INTERNAL SERVER ERROR" + CRLF + BasicHeaders.join(CRLF) + CRLF + CRLF + jsonresp;
-      return(resp);
-  }
-
   var Engine = {
     json: function(jsonresp, wapp) {
           var jsonp = wapp.router.params.callback;
@@ -258,5 +245,16 @@ function http_parser(http_request, type) {
     return({html: html, type: type});  
   }
 
+  function logError(e) { return(e.lineNumber === undefined) ? e.message : (e.message + ". In Line Number: " + e.lineNumber); }
 
+  function renderErrorResponse(e, errorDesc) {
+      var CRLF = "\r\n";
+      var jsonp = wApp.router.params.callback;
+      var jsonresp = {message: errorDesc};
+      jsonresp = jsonp ? (jsonp + "(" + JSON.stringify(jsonresp) + ")") : JSON.stringify(jsonresp);
+      jsonresp = unescape(encodeURIComponent(jsonresp)); // Encode to UFT-8
+
+      var resp = "HTTP/1.0 500  INTERNAL SERVER ERROR" + CRLF + BasicHeaders.join(CRLF) + CRLF + CRLF + jsonresp;
+      return(resp);
+  }
 module.exports = wApp;

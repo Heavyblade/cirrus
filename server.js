@@ -1,4 +1,4 @@
-var wApp = require("./cirrus.js")
+var wApp = require("./builds/cirrus.min.js")
 var net = require('net');
 
 // xxxxxxxxxxxxxxxxxxxxxxx Application xxxxxxxxxxxxxxxxxxxxxxx
@@ -23,5 +23,5 @@ var server = net.createServer(function (socket) {
   });
 
 });
-
+console.log("Server UP and running on localhost:5000")
 server.listen((process.env.PORT || 5000), "0.0.0.0");
