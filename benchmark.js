@@ -1,18 +1,23 @@
 var Benchmark = require("benchmark");
 
-var suite = new Benchmark.Suite;
 
+var wApp = require("./builds/cirrus.min") 
+var wApp2 = require("./builds/cirrus.min")
+
+wApp.router.addRoutes({"resource users": "users"})
+var routes = wApp.router.routes
+store_routes = JSON.stringify(routes)
+
+wApp.router.routes = {};
+
+var suite = new Benchmark.Suite;
 // add tests
-suite.add('RegExp#test', function() {
-  /o/.test('Hello World!');
+suite.add('default behavior', function() {
+  wApp.router.addRoutes({"resource users": "users"})
 })
-.add('String#indexOf', function() {
-  'Hello World!'.indexOf('o') > -1;
+.add('variable JSON object', function() {
+  wApp.router.routes = JSON.parse(store_routes)
 })
-.add('String#match', function() {
-  !!'Hello World!'.match(/o/);
-})
-// add listeners
 .on('cycle', function(event) {
   console.log(String(event.target));
 })

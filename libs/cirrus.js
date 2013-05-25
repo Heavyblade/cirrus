@@ -189,17 +189,10 @@ function http_parser(http_request, type) {
   function renderResponse(controller, action, wapp, type) {
       var CRLF = "\r\n";
       var jsonresp = wapp[(controller)][action](wapp.router.params);
-
-      switch (true) {
-        case (/json/i).test(type):
-          var rendered = Engine.json(jsonresp, wapp, controller, action);
-          break;
-        case(/html/i).test(type):
-          var rendered = Engine.html(jsonresp, wapp, controller, action);
-          break;
-        default:
-          var rendered = Engine.json(jsonresp, wapp, controller, action);
-      }
+      
+      var type = type || "json"
+      var format = type.match(/(html|json)/i) || ["json"]
+      var rendered = Engine[format[0]](jsonresp, wapp, controller, action);
 
       var verb = "HTTP/1.1 200 OK";
       var headers = [("Date: " + (new Date()).toGMTString()),("Content-Length: " + (rendered.body ? rendered.body.length: "0"))]
@@ -221,7 +214,8 @@ function http_parser(http_request, type) {
     html: function(jsonresp, wapp, controller, action) {
           var file = "views/" + controller.replace("Controller", "") + "/" + action 
           var pureHTML = getHTML(file);
-          var body = pureHTML.type == "template" ?  Handlebars.compile(pureHTML.html)(jsonresp) : pureHTML.html         
+          if (pureHTML.type == "template") {eval("template = " + pureHTML.template);}
+          var body = pureHTML.type == "template" ?  Handlebars.VM.template(template)(jsonresp) : pureHTML.html        
           var headers = ["Content-Type: text/html; charset=utf-8"];
           return({body: body, headers: headers});
     }
@@ -236,13 +230,15 @@ function http_parser(http_request, type) {
         var record = records.readAt(0); 
         var html =  record.fieldToString("BODY");
         var type =  record.fieldToString("TIPO") == "1" ? "html" : "template"
+        var template = record.fieldToString("COMPILED");
     } else {
         // TODO check what happens when two calls to load
         records.load("NAME", ["NOT_VIEW"]);
         var html =  records.readAt(0).fieldToString("BODY");
+        var template = ""
         var type = "html"
     }
-    return({html: html, type: type});  
+    return({html: html, type: type, template: template});  
   }
 
   function logError(e) { return(e.lineNumber === undefined) ? e.message : (e.message + ". In Line Number: " + e.lineNumber); }

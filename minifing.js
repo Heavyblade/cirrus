@@ -4,7 +4,7 @@ var compressor = require('node-minify');
 new compressor.minify({
     type: 'no-compress',
     language: 'ECMASCRIPT5',
-    fileIn: ['libs/base64.js', 'libs/handlebars.js', 'libs/cirrus.js'],
+    fileIn: ['libs/vjavascript.js','libs/base64.js', 'libs/handlebars_vm.js', 'libs/cirrus.js'],
     fileOut: 'builds/cirrus.min.js',
     callback: function(err){
         console.log(err);

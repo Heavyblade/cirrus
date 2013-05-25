@@ -1,5 +1,6 @@
 var VRegister = require("./vregister");
 var jf = require('jsonfile')
+var Handlebars = require("./../handlebars")
 var fs = require('fs');
 var theRoot = {} 
 
@@ -12,7 +13,7 @@ function VRegisterList(theRoot) {
      var base = file[params[0]]
      if (base != undefined) {
          var registro = new VRegister(theRoot);
-         registro.fields = {BODY: base.content, TIPO: base.tipo}
+         registro.fields = {BODY: base.content, TIPO: base.tipo, COMPILED: Handlebars.precompile(base.content).toString()};
          this.records = [registro]
          return([registro]);
      } else {
