@@ -119,7 +119,6 @@ describe("Handling standar html request", function(){
   });
 
   it("should render te proper template for the controller#action", function(){
-    console.log("fallando ...")
     var httpGet = "GET /users/44/template HTTP/1.1\r\nAccept: text/html"
     var request = wApp.request(httpGet);
     var response = wApp.response(request);
