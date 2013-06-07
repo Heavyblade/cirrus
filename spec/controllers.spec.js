@@ -1,7 +1,8 @@
 describe("Controller creation", function(){
   beforeEach(function(){
     wApp.router.routes = {};
-    wApp.router.params = {}
+    wApp.router.params = {};
+    theApp.vars = {};
   });
 
   it("should add controllers to wApp object", function(){

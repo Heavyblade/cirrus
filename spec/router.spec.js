@@ -5,6 +5,7 @@ describe("Router Component", function(){
   beforeEach(function(){
     wApp.router.routes = {};
     wApp.router.params = {};
+    theApp.vars = {};
   });
 
   it("Should be able to add simple routes", function(){
@@ -12,6 +13,22 @@ describe("Router Component", function(){
     var routes =  Object.keys(wApp.router.routes)
     expect(routes.length).toEqual(1);
     expect(routes[0]).toEqual("GET /some/path/resource")
+  });
+
+  it("Should set the routes on memory", function(){
+    wApp.router.addRoutes({"/helloworld": "usersController#index"});
+    var memory = theApp.globalVarToString("cirrusdat/ROUTES");
+    expect(memory).toEqual('{"/helloworld":{"/helloworld":"usersController#index"}}');
+  });
+
+  it("Should be able to take routes from memory", function(){
+    var memory = '{"/helloworld":{"/helloworld":"usersController#index"}}'
+    wApp.usersController = {
+      index: function(params) { return({method: "I'm Index"})}
+    }
+    wApp.router.routes = JSON.parse(memory)
+    var routing = wApp.router.pointRequest("GET /helloworld")
+    expect(routing).toEqual("usersController#index")
   });
 
   it("should handle no matching routes", function(){

@@ -16,6 +16,7 @@ describe("Main App", function(){
 describe("Request Object", function(){
   beforeEach(function(){
     wApp.router.params = {}
+    theApp.vars = {};
   });
 
   it("should decode the HTTP GET request", function(){

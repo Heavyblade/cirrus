@@ -11,19 +11,22 @@
             }
         },
         routes: {},
-        addRoutes: function (rutes) {
-            var keys = Object.keys(rutes),
-                i = keys.length;
-            while(i--) {
-                if(keys[i].split(" ")[0] == "resource") {
-                  var rest = this.createREST(keys[i].split(" ")[1]);
-                  this.addRoutes(rest);
-                } else {
-                  var basic = {},
-                      key = keys[i];
-                  basic[key] = rutes[key];
-                  this.routes[key.replace(/:\w+/g, "(\\w+)")] = basic;
+        addRoutes: function (rutes, type) {
+            if ( Object.keys(this.routes).length == 0 || type == "rest") {
+                var keys = Object.keys(rutes),
+                    i = keys.length;
+                while(i--) {
+                    if(keys[i].split(" ")[0] == "resource") {
+                      var rest = this.createREST(keys[i].split(" ")[1]);
+                      this.addRoutes(rest, "rest");
+                    } else {
+                      var basic = {},
+                          key = keys[i];
+                      basic[key] = rutes[key];
+                      this.routes[key.replace(/:\w+/g, "(\\w+)")] = basic;
+                    }
                 }
+                theApp.setGlobalVar("cirrusdat/ROUTES", JSON.stringify(this.routes));
             }
         },
         createREST: function(resource) {
@@ -159,9 +162,9 @@ function http_parser(http_request, type) {
         wApp.router.params = req.decodeParams;
         wApp.router.params.body = req.bodyDecoded;
         // Set Cookie
-        if(req.headers.Cookie !== undefined) {
-          wApp.session.getFromHeader(req.headers.Cookie);
-        }
+        if(req.headers.Cookie !== undefined) { wApp.session.getFromHeader(req.headers.Cookie); }
+        var memory_routes = theApp.globalVarToString("cirrusdat/ROUTES")
+        if (memory_routes != "") { wApp.router.routes = JSON.parse(memory_routes) }
         return(req);
     }
 
