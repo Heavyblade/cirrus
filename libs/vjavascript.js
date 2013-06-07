@@ -1,10 +1,9 @@
-theRoot = {}
-theApp = {
-  globalVarToString: function(variable) {
+theRoot = {
+  varToString: function(variable) {
     return(this.vars[variable] == undefined ? "" : this.vars[variable]);
   },
   vars: {},
-  setGlobalVar: function(variable, value) {
+  setVar: function(variable, value) {
       this.vars[variable] = value
   }
 }

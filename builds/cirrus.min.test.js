@@ -1,10 +1,9 @@
-theRoot = {}
-theApp = {
-  globalVarToString: function(variable) {
+theRoot = {
+  varToString: function(variable) {
     return(this.vars[variable] == undefined ? "" : this.vars[variable]);
   },
   vars: {},
-  setGlobalVar: function(variable, value) {
+  setVar: function(variable, value) {
       this.vars[variable] = value
   }
 }
@@ -59,7 +58,7 @@ c,d,e,f,g){e={helpers:e,partials:f,data:g};if(a===l)throw new b.Exception("The p
                       this.routes[key.replace(/:\w+/g, "(\\w+)")] = basic;
                     }
                 }
-                theApp.setGlobalVar("cirrusdat/ROUTES", JSON.stringify(this.routes));
+                theRoot.setVar("ROUTES", JSON.stringify(this.routes));
             }
         },
         createREST: function(resource) {
@@ -196,7 +195,7 @@ function http_parser(http_request, type) {
         wApp.router.params.body = req.bodyDecoded;
         // Set Cookie
         if(req.headers.Cookie !== undefined) { wApp.session.getFromHeader(req.headers.Cookie); }
-        var memory_routes = theApp.globalVarToString("cirrusdat/ROUTES")
+        var memory_routes = theRoot.varToString("ROUTES")
         if (memory_routes != "") { wApp.router.routes = JSON.parse(memory_routes) }
         return(req);
     }

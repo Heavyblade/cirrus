@@ -5,7 +5,7 @@ describe("Router Component", function(){
   beforeEach(function(){
     wApp.router.routes = {};
     wApp.router.params = {};
-    theApp.vars = {};
+    theRoot.vars = {};
   });
 
   it("Should be able to add simple routes", function(){
@@ -17,7 +17,7 @@ describe("Router Component", function(){
 
   it("Should set the routes on memory", function(){
     wApp.router.addRoutes({"/helloworld": "usersController#index"});
-    var memory = theApp.globalVarToString("cirrusdat/ROUTES");
+    var memory = theRoot.varToString("ROUTES");
     expect(memory).toEqual('{"/helloworld":{"/helloworld":"usersController#index"}}');
   });
 

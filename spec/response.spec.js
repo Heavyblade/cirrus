@@ -5,7 +5,7 @@ describe("Response Object", function(){
   beforeEach(function(){
       wApp.router.routes = {};
       wApp.router.params = {}
-      theApp.vars = {};
+      theRoot.vars = {};
       // Setting up an Application to test
       wApp.usersController = { show: function(params){return({hello: "world", id: wApp.router.params.userid, x: wApp.router.params.x})} }
       wApp.router.addRoutes({"GET /users/:userid/show": "usersController#show"});
@@ -99,7 +99,7 @@ describe("Handling standar html request", function(){
   beforeEach(function(){
       wApp.router.routes = {};
       wApp.router.params = {}
-      theApp.vars = {};
+      theRoot.vars = {};
       // Setting up an Application to test
       wApp.usersController = {
         show: function(params){return({message: "Hello World"})},

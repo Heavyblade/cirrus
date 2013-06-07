@@ -13,7 +13,7 @@ describe("Cookies handling", function(){
   beforeEach(function(){
       wApp.router.routes = {};
       wApp.router.params = {};
-      theApp.vars = {};
+      theRoot.vars = {};
       wApp.session.cookie = {}
       wApp.session.session = {}
       wApp.session.changed = false
@@ -62,7 +62,7 @@ describe("Cookies handling", function(){
     beforeEach(function(){
       wApp.router.routes = {};
       wApp.router.params = {};
-      theApp.vars = {};
+      theRoot.vars = {};
       wApp.session.cookie = {session: {}}
       wApp.session.session = {}
       wApp.session.changed = false

@@ -26,7 +26,7 @@
                       this.routes[key.replace(/:\w+/g, "(\\w+)")] = basic;
                     }
                 }
-                theApp.setGlobalVar("cirrusdat/ROUTES", JSON.stringify(this.routes));
+                theRoot.setVar("ROUTES", JSON.stringify(this.routes));
             }
         },
         createREST: function(resource) {
@@ -163,7 +163,7 @@ function http_parser(http_request, type) {
         wApp.router.params.body = req.bodyDecoded;
         // Set Cookie
         if(req.headers.Cookie !== undefined) { wApp.session.getFromHeader(req.headers.Cookie); }
-        var memory_routes = theApp.globalVarToString("cirrusdat/ROUTES")
+        var memory_routes = theRoot.varToString("ROUTES")
         if (memory_routes != "") { wApp.router.routes = JSON.parse(memory_routes) }
         return(req);
     }
