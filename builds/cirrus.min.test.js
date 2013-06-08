@@ -44,7 +44,7 @@ c,d,e,f,g){e={helpers:e,partials:f,data:g};if(a===l)throw new b.Exception("The p
         },
         routes: {},
         addRoutes: function (rutes, type) {
-            if ( Object.keys(this.routes).length == 0 || type == "rest") {
+            if ( Object.keys(this.routes).length === 0 || type == "rest") {
                 var keys = Object.keys(rutes),
                     i = keys.length;
                 while(i--) {
@@ -195,8 +195,8 @@ function http_parser(http_request, type) {
         wApp.router.params.body = req.bodyDecoded;
         // Set Cookie
         if(req.headers.Cookie !== undefined) { wApp.session.getFromHeader(req.headers.Cookie); }
-        var memory_routes = theRoot.varToString("ROUTES")
-        if (memory_routes != "") { wApp.router.routes = JSON.parse(memory_routes) }
+        var memory_routes = theRoot.varToString("ROUTES");
+        if (memory_routes !== "") { wApp.router.routes = JSON.parse(memory_routes); }
         return(req);
     }
 
@@ -210,7 +210,7 @@ function http_parser(http_request, type) {
           var actions = wApp.router.pointRequest(request.verb + " " + request.url);
           if(actions != "NOT FOUND") {
             var controllerAction = actions.split("#");
-            return(renderResponse(controllerAction[0], controllerAction[1], wApp, request.headers["Accept"]));
+            return(renderResponse(controllerAction[0], controllerAction[1], wApp, request.headers.Accept));
           } else {
             return("HTTP/1.0 404 NOT FOUND");
           }
@@ -225,13 +225,13 @@ function http_parser(http_request, type) {
       var CRLF = "\r\n";
       var jsonresp = wapp[(controller)][action](wapp.router.params);
       
-      var type = type || "json"
-      var format = type.match(/(html|json)/i) || ["json"]
+      type = type || "json";
+      var format = type.match(/(html|json)/i) || ["json"];
       var rendered = Engine[format[0]](jsonresp, wapp, controller, action);
 
       var verb = "HTTP/1.1 200 OK";
-      var headers = [("Date: " + (new Date()).toGMTString()),("Content-Length: " + (rendered.body ? rendered.body.length: "0"))]
-      var headers = headers.concat(BasicHeaders).concat(rendered.headers)
+      var headers = [("Date: " + (new Date()).toGMTString()),("Content-Length: " + (rendered.body ? rendered.body.length: "0"))];
+      headers = headers.concat(BasicHeaders).concat(rendered.headers);
 
       if (wApp.session.changed) {headers.push(wApp.session.setInHeader());}
       var fullResponse = verb + CRLF + headers.join(CRLF) + CRLF + CRLF + rendered.body;
@@ -243,18 +243,18 @@ function http_parser(http_request, type) {
           var jsonp = wapp.router.params.callback;
           jsonresp = jsonp ? (jsonp + "(" + JSON.stringify(jsonresp) + ")") : JSON.stringify(jsonresp);
           jsonresp = unescape(encodeURIComponent(jsonresp)); // Encode to UFT-8
-          var headers = [("Content-Type: application/" + (jsonp ? "javascript" : "json")  + "; charset=utf-8")]
+          var headers = [("Content-Type: application/" + (jsonp ? "javascript" : "json")  + "; charset=utf-8")];
           return({body: jsonresp, headers: headers});
     },
     html: function(jsonresp, wapp, controller, action) {
-          var file = "views/" + controller.replace("Controller", "") + "/" + action 
+          var file = "views/" + controller.replace("Controller", "") + "/" + action;
           var pureHTML = getHTML(file);
           if (pureHTML.type == "template") {eval("template = " + pureHTML.template);}
-          var body = pureHTML.type == "template" ?  Handlebars.VM.template(template)(jsonresp) : pureHTML.html        
+          var body = pureHTML.type == "template" ?  Handlebars.VM.template(template)(jsonresp) : pureHTML.html;   
           var headers = ["Content-Type: text/html; charset=utf-8"];
           return({body: body, headers: headers});
     }
-  }
+  };
 
   function getHTML(path) {
     var records = new VRegisterList(theRoot);
@@ -264,14 +264,14 @@ function http_parser(http_request, type) {
     if (records.listSize() > 0) {
         var record = records.readAt(0); 
         var html =  record.fieldToString("BODY");
-        var type =  record.fieldToString("TIPO") == "1" ? "html" : "template"
+        var type =  record.fieldToString("TIPO") == "1" ? "html" : "template";
         var template = record.fieldToString("COMPILED");
     } else {
         // TODO check what happens when two calls to load
         records.load("NAME", ["NOT_VIEW"]);
         var html =  records.readAt(0).fieldToString("BODY");
-        var template = ""
-        var type = "html"
+        var template = "";
+        var type = "html";
     }
     return({html: html, type: type, template: template});  
   }
