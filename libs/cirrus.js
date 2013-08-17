@@ -227,7 +227,7 @@ function http_parser(http_request, type) {
   function getHTML(path) {
     var records = new VRegisterList(theRoot);
     records.setTable("cirrusdat/FILES");
-    records.load("NAME", [path]);
+    records.load("PATH", [path]);
 
     if (records.listSize() > 0) {
         var record = records.readAt(0); 
