@@ -247,12 +247,24 @@ function http_parser(http_request, type) {
           return({body: jsonresp, headers: headers});
     },
     html: function(jsonresp, wapp, controller, action) {
-          var file = "views/" + controller.replace("Controller", "") + "/" + action;
+          var layout = jsonresp.layout || "application";
+          var file = "/views/" + controller.replace("Controller", "") + "/" + action;
+
+          if(jsonresp.layout != false) {
+              var layoutHTML = getHTML("/layouts/" + layout)
+              if (layoutHTML.type == "template") {eval("layout_temp = " + layoutHTML.template);}
+              var layout_body = layoutHTML.type == "template" ?  Handlebars.VM.template(layout_temp)(jsonresp) : layoutHTML.html;   
+          } else {
+              var layout_body = "#yield" 
+          }
+
           var pureHTML = getHTML(file);
           if (pureHTML.type == "template") {eval("template = " + pureHTML.template);}
           var body = pureHTML.type == "template" ?  Handlebars.VM.template(template)(jsonresp) : pureHTML.html;   
+         
+          var full_body = layout_body.replace("#yield", body) 
           var headers = ["Content-Type: text/html; charset=utf-8"];
-          return({body: body, headers: headers});
+          return({body: full_body, headers: headers});
     }
   };
 

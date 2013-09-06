@@ -117,6 +117,26 @@ describe("Handling standar html request", function(){
     var httpGet = "GET /users/44/show HTTP/1.1\r\nAccept: text/html"
     var request = wApp.request(httpGet);
     var response = wApp.response(request);
+    expect(response.split("\r\n\r\n")[1]).toEqual("<html><head></head><body><div><h1>Hello World</h1></div></body></html>");
+  });
+
+  it("shoul render the proper template in a custom layout", function(){
+    wApp.usersController = {
+      show: function(params){return({message: "Hello World", layout: "dashboard"})} 
+    }
+    var httpGet = "GET /users/44/show HTTP/1.1\r\nAccept: text/html"
+    var request = wApp.request(httpGet);
+    var response = wApp.response(request);
+    expect(response.split("\r\n\r\n")[1]).toEqual("<html><head><title>dashboard</title></head><body><div><h1>Hello World</h1></div></body></html>");
+  });
+  
+  it("should render the proper template with out a layout ", function(){
+    wApp.usersController = {
+      show: function(params){return({message: "Hello World", layout: false})} 
+    }
+    var httpGet = "GET /users/44/show HTTP/1.1\r\nAccept: text/html"
+    var request = wApp.request(httpGet);
+    var response = wApp.response(request);
     expect(response.split("\r\n\r\n")[1]).toEqual("<div><h1>Hello World</h1></div>");
   });
 
@@ -124,14 +144,14 @@ describe("Handling standar html request", function(){
     var httpGet = "GET /users/44/template HTTP/1.1\r\nAccept: text/html"
     var request = wApp.request(httpGet);
     var response = wApp.response(request);
-    expect(response.split("\r\n\r\n")[1]).toEqual("<div><h1>Hello Template</h1></div>");
+    expect(response.split("\r\n\r\n")[1]).toEqual("<html><head></head><body><div><h1>Hello Template</h1></div></body></html>");
   });
 
   it("should show a message with no-view template", function(){
     var httpGet = "GET /users/44/edit HTTP/1.1\r\nAccept: text/html"
     var request = wApp.request(httpGet);
     var response = wApp.response(request);
-    var resp = "<div><h1>There is not view for this action</h1></div>" 
+    var resp = "<html><head></head><body><div><h1>There is not view for this action</h1></div></body></html>" 
     expect(response.split("\r\n\r\n")[1]).toEqual(resp);
   });
 });
