@@ -154,4 +154,21 @@ describe("Handling standar html request", function(){
     var resp = "<html><head></head><body><div><h1>There is not view for this action</h1></div></body></html>" 
     expect(response.split("\r\n\r\n")[1]).toEqual(resp);
   });
+
+  it("should get assets css files from database", function(){
+    var httpGet = "GET /public/css/application.css HTTP/1.1\r\nAccept: text/css"
+    var request = wApp.request(httpGet);
+    var response = wApp.response(request);
+    var resp = 'body {backgrund-color}'
+    expect(response.split("\r\n\r\n")[1]).toEqual(resp);
+  });
+
+  it("should get assets js files from database", function(){
+    var httpGet = "GET /public/css/application.js HTTP/1.1\r\nAccept: text/css"
+    var request = wApp.request(httpGet);
+    var response = wApp.response(request);
+    var resp = "function(){alert('hello world')}"
+    expect(response.split("\r\n\r\n")[1]).toEqual(resp);
+  });
+  
 });

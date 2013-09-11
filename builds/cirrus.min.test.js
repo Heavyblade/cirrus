@@ -205,20 +205,41 @@ function http_parser(http_request, type) {
                       "transfer-coding: chunked",	
                       "Keep-Alive: timeout=5, max=94",
                       "Connection: Keep-Alive"];
+
+  function isAsset(url) { return(url.match(/(\.css$|\.js$)/i));}
+
   function Response(request) {
     try {
-          var actions = wApp.router.pointRequest(request.verb + " " + request.url);
-          if(actions != "NOT FOUND") {
-            var controllerAction = actions.split("#");
-            return(renderResponse(controllerAction[0], controllerAction[1], wApp, request.headers.Accept));
+          if (isAsset(request.url) == null) {
+              var actions = wApp.router.pointRequest(request.verb + " " + request.url);
+              if(actions != "NOT FOUND") {
+                var controllerAction = actions.split("#");
+                return(renderResponse(controllerAction[0], controllerAction[1], wApp, request.headers.Accept));
+              } else {
+                return("HTTP/1.0 404 NOT FOUND");
+              }
           } else {
-            return("HTTP/1.0 404 NOT FOUND");
+              var html = getHTML(request.url).html;
+              if(html != "") { 
+                return(renderResponseAssets(html));
+              } else {
+                return("HTTP/1.0 404 NOT FOUND");
+              }  
           }
     } catch(e) {
       // Sending Internal Message Error with info
       var errorDesc = logError(e);
      return(renderErrorResponse(e, errorDesc));
     }
+  }
+
+  function renderResponseAssets(string) {
+      var CRLF = "\r\n";
+      var verb = "HTTP/1.1 200 OK";
+      var headers = [("Date: " + (new Date()).toGMTString()),("Content-Length: " + string.length)];
+      headers = headers.concat(BasicHeaders).concat(["Content-Type: text/css"]);
+      var fullResponse = verb + CRLF + headers.join(CRLF) + CRLF + CRLF + string;
+      return(fullResponse);
   }
 
   function renderResponse(controller, action, wapp, type) {
@@ -249,14 +270,13 @@ function http_parser(http_request, type) {
     html: function(jsonresp, wapp, controller, action) {
           var layout = jsonresp.layout || "application";
           var file = "/views/" + controller.replace("Controller", "") + "/" + action;
-
+          
+          // Render without a layout
           if(jsonresp.layout != false) {
               var layoutHTML = getHTML("/layouts/" + layout)
               if (layoutHTML.type == "template") {eval("layout_temp = " + layoutHTML.template);}
               var layout_body = layoutHTML.type == "template" ?  Handlebars.VM.template(layout_temp)(jsonresp) : layoutHTML.html;   
-          } else {
-              var layout_body = "#yield" 
-          }
+          } else { var layout_body = "#yield"}
 
           var pureHTML = getHTML(file);
           if (pureHTML.type == "template") {eval("template = " + pureHTML.template);}
