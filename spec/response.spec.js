@@ -19,7 +19,7 @@ describe("Response Object", function(){
     var expected_resp = JSON.stringify({hello: "world", id: "44", x: wApp.router.params.x });
     var response = wApp.response(request);
     expect(typeof(response)).toEqual("string");
-    expect(response.split("\r\n")[0]).toEqual("HTTP/1.1 200 OK");
+    expect(response.split("\r\n")[0]).toEqual("HTTP/1.0 200 OK");
     expect(response.split("\r\n\r\n")[1]).toEqual(expected_resp);
   });
 
@@ -169,6 +169,18 @@ describe("Handling standar html request", function(){
     var response = wApp.response(request);
     var resp = "function(){alert('hello world')}"
     expect(response.split("\r\n\r\n")[1]).toEqual(resp);
+  });
+
+
+  it("should redirect to another page when needed", function(){
+    wApp.usersController = {
+      show: function(params){return({message: "Hello World", redirect_to: "/another_page"})} 
+    }
+    var httpGet = "GET /users/44/show HTTP/1.1\r\nAccept: text/html"
+    var request = wApp.request(httpGet);
+    var response = wApp.response(request);
+    expect(response.split("\r\n\r\n")[0].split("\r\n")[0]).toEqual("HTTP/1.0 302 Found");
+    expect(response.split("\r\n\r\n")[0].split("\r\n")[7]).toEqual("location: /another_page");
   });
   
 });

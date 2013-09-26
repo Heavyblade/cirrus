@@ -215,27 +215,30 @@ function http_parser(http_request, type) {
       var jsonresp = wapp[(controller)][action](wapp.router.params);
       
       type = type || "json";
-      var format = type.match(/(html|json)/i) || ["json"];
+      if (jsonresp.redirect_to) {type = "redirect";} //Check for redirection
+      var format = type.match(/(html|json|redirect)/i) || ["json"];
       var rendered = Engine[format[0]](jsonresp, wapp, controller, action);
 
-      var verb = "HTTP/1.1 200 OK";
       var headers = [("Date: " + (new Date()).toGMTString()),("Content-Length: " + (rendered.body ? rendered.body.length: "0"))];
       headers = headers.concat(BasicHeaders).concat(rendered.headers);
 
       if (wApp.session.changed) {headers.push(wApp.session.setInHeader());}
-      var fullResponse = verb + CRLF + headers.join(CRLF) + CRLF + CRLF + rendered.body;
+      var fullResponse = rendered.verb + CRLF + headers.join(CRLF) + CRLF + CRLF + rendered.body;
       return(fullResponse);
   }
 
+
   var Engine = {
     json: function(jsonresp, wapp) {
+          var verb = "HTTP/1.0 200 OK";
           var jsonp = wapp.router.params.callback;
           jsonresp = jsonp ? (jsonp + "(" + JSON.stringify(jsonresp) + ")") : JSON.stringify(jsonresp);
           jsonresp = unescape(encodeURIComponent(jsonresp)); // Encode to UFT-8
           var headers = [("Content-Type: application/" + (jsonp ? "javascript" : "json")  + "; charset=utf-8")];
-          return({body: jsonresp, headers: headers});
+          return({verb: verb, body: jsonresp, headers: headers});
     },
     html: function(jsonresp, wapp, controller, action) {
+          var verb = "HTTP/1.0 200 OK";
           var layout = jsonresp.layout || "application";
           var file = "/views/" + controller.replace("Controller", "") + "/" + action;
           
@@ -252,7 +255,12 @@ function http_parser(http_request, type) {
          
           var full_body = layout_body.replace("#yield", body) 
           var headers = ["Content-Type: text/html; charset=utf-8"];
-          return({body: full_body, headers: headers});
+          return({verb: verb, body: full_body, headers: headers});
+    },
+    redirect: function(jsonresp) {
+          var verb = "HTTP/1.0 302 Found";
+          var headers = ["location: " + jsonresp.redirect_to];
+          return({verb: verb, body: "", headers: headers});
     }
   };
 
