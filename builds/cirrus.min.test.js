@@ -287,7 +287,7 @@ function http_parser(http_request, type) {
          
           var full_body = layout_body.replace("#yield", body) 
           var headers = ["Content-Type: text/html; charset=utf-8"];
-          return({verb: verb, body: full_body, headers: headers});
+          return({verb: verb, body: unescape(encodeURIComponent(full_body)), headers: headers});
     },
     redirect: function(jsonresp) {
           var verb = "HTTP/1.0 302 Found";
