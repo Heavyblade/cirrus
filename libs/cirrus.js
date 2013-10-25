@@ -23,7 +23,7 @@
                       var basic = {},
                           key = keys[i];
                       basic[key] = rutes[key];
-                      this.routes[key.replace(/:\w+/g, "(\\w+)")] = basic;
+                      this.routes[key.replace(/:id/g, "(\\d+)").replace(/:\w+/g, "(\\w+)")] = basic;
                     }
                 }
                 theRoot.setVar("ROUTES", JSON.stringify(this.routes));
@@ -188,8 +188,9 @@ function http_parser(http_request, type) {
               }
           } else {
               var html = getHTML(request.url).html;
-              if(html != "") { 
-                return(renderResponseAssets(html));
+              if(html != "") {
+                var asset_type = (request.url.substr(request.url.length - 3) == "css") ? "text/css" : "application/javascript"
+                return(renderResponseAssets(html, asset_type));
               } else {
                 return("HTTP/1.0 404 NOT FOUND");
               }  
@@ -201,11 +202,11 @@ function http_parser(http_request, type) {
     }
   }
 
-  function renderResponseAssets(string) {
+  function renderResponseAssets(string, type) {
       var CRLF = "\r\n";
-      var verb = "HTTP/1.1 200 OK";
+      var verb = "HTTP/1.0 200 OK";
       var headers = [("Date: " + (new Date()).toGMTString()),("Content-Length: " + string.length)];
-      headers = headers.concat(BasicHeaders).concat(["Content-Type: text/css"]);
+      headers = headers.concat(BasicHeaders).concat([("Content-Type: " + type)]);
       var fullResponse = verb + CRLF + headers.join(CRLF) + CRLF + CRLF + string;
       return(fullResponse);
   }

@@ -62,9 +62,9 @@ describe("Router Component", function(){
   });
 
   it("should able to add alpha numeric vars to params scope", function(){
-    wApp.router.addRoutes({"GET /some/:id": "controller1#action1"})
+    wApp.router.addRoutes({"GET /some/:cosa": "controller1#action1"})
     var routing = wApp.router.pointRequest("GET /some/cristian")
-    expect(wApp.router.params.id).toEqual("cristian");
+    expect(wApp.router.params.cosa).toEqual("cristian");
   })
 
   it("should point me to the last coincidence", function(){
