@@ -12,6 +12,7 @@ El propósito es abrir las aplicaciones desarrolladas sobre v7 para que puedan s
 * [Vistas](https://github.com/Heavyblade/cirrus/wiki/Vistas)
 * [Controllers](https://github.com/Heavyblade/cirrus/wiki/controllers)
 * [Sessiones](https://github.com/Heavyblade/cirrus/wiki/sessiones-y-cookies)
+* [Performance](https://github.com/Heavyblade/cirrus/wiki/performance)
 
 
 ## Instalación
@@ -40,7 +41,7 @@ Listo ahora tienes a Cirrus.js disponible y solo debes iniciar el objeto TCP en 
 	theRoot.setVar("RESPONSE", Response(Request(request)))
 ```
 
-Inicio objecto TCP en el puerto 3000 y pruebo:
+Inicio objecto TCP en el puerto 4000 y pruebo:
 
 ```bash
 	>> curl -i -H "Accept: application/json" http://localhost:4000/hello
