@@ -130,4 +130,15 @@ describe("Router Component", function(){
     var response = wApp.response(wApp.request("GET /helloWorld/ HTTP/1.0\r\n\r\n"))
     expect(response.split("\n\r\n")[1]).toEqual(JSON.stringify({method: "I'm Index"}));
   });
+
+  it("should be able to handle file extensions", function(){
+    wApp.router.addRoutes({"GET /some_url": "statiController#2index", "GET /some_url.txt": "statiController#index"});
+    wApp.statiController = {
+      index: function(params) { return({method: "I'm Index"})},
+      index2: function(params) { return({method: "I'm Index 2"})}
+    }
+  
+    var response = wApp.response(wApp.request("GET /some_url.txt HTTP/1.0\r\n\r\n"))
+    expect(response.split("\n\r\n")[1]).toEqual(JSON.stringify({method: "I'm Index"}));
+  });
 });

@@ -1,25 +1,24 @@
-# HTTP-JSON-Server para la plataforma Velneo V7
+# HTTP-Server para la plataforma Velneo V7
 
-Cirrus.js es una implementación en JavaScript del protocolo HTTP corriendo directamente sobre el objecto TCP/IP de Velneo V7 y que solo retorna JSON, orientado a la construcción de API's para dar acceso mediante Ajax o peticiones Http a aplicaciones desarrolladas sobre v7.
+Cirrus.js es una implementación en JavaScript del protocolo HTTP corriendo directamente sobre el objecto TCP/IP de Velneo V7, Que permite servir paginas HTML, JSON, Javascript y Css directamente desde una app Velneo v7.
 
 ### Para que se usa ?
 
-El propósito es abrir las aplicaciones desarrolladas sobre v7 para que puedan ser aprovechadas en entornos web, logrando de esta forma funcionalidades como pedidos online afectando directamente la app, crear aplicaciones mobile con jQueryM consumiendo tu app mediante Ajax, listar el catalogo de productos, solicitud de citas online e inmuerables posibilidades gracias a que puedes desarrollar API's de acceso a tus datos que pueden ser consumidas mediante Ajax, servicios web, html estaticos mediante JSONP u otros programas que puedan realizar peticiones HTTP.
+El propósito es abrir las aplicaciones desarrolladas sobre v7 para que puedan ser aprovechadas en entornos web, logrando de esta forma funcionalidades como pedidos online afectando directamente la app, crear aplicaciones mobile con jQuery Mobile, listar el catalogo de productos, solicitud de citas online e inmuerables posibilidades gracias a que puedes desarrollar webs y API's de acceso a tus datos que pueden ser consumidas mediante paginas html o webservices.
 
+### Indice
 
-Mira el [Screencast](http://velnex.wordpress.com/2012/10/01/screencast-cirrus-js/).
+* [Router](https://github.com/Heavyblade/cirrus/wiki/Router)
+* [Vistas](https://github.com/Heavyblade/cirrus/wiki/Vistas)
+* [Controllers](https://github.com/Heavyblade/cirrus/wiki/controllers)
+* [Sessiones](https://github.com/Heavyblade/cirrus/wiki/sessiones-y-cookies)
+
 
 ## Instalación
 
-#### Herencia
 Para comenzar a usar Cirrus.js en la carpeta /bin puedes encontrar un archivo .vin el cual podrás instalar dentro de tu Velneo vServer y heredar en este algún proyecto del que desees servir datos web, es decir el webserver debe quedar "por encima" de la aplicación a servir a fin de poder usar las busquedas y procesos de datos de pertenecientes a esta.
 
-#### Copia
-Si prefieres copiar directamente el servidor dentro de tu aplicación y no tener que heredar, copia la carpeta "JSON Server" dentro de tu solución, crea un script Js y copia el codigo de CirrusTemplate.js dentro de ese script y finalmente asignale ese script al proceso "HTTP-SERVER".
-
-![Cirrus vServer] (http://content.screencast.com/users/heavyblade/folders/Jing/media/22188fad-7a55-44fd-a4d6-982a9b12e49e/2012-09-24_0632.png)
-
-Listo ahora tienes a Cirrus.js disponible y solo debes iniciar el objeto TCP en el plano y puerto de ejecución de ejecucuón en el que lo desees usar.
+Listo ahora tienes a Cirrus.js disponible y solo debes iniciar el objeto TCP en el plano y puerto de ejecucuón en el que lo desees usar.
 
 ## Uso rápido
 
@@ -44,164 +43,28 @@ Listo ahora tienes a Cirrus.js disponible y solo debes iniciar el objeto TCP en 
 Inicio objecto TCP en el puerto 3000 y pruebo:
 
 ```bash
-	>> curl http://localhost:3000/hello 
+	>> curl -i -H "Accept: application/json" http://localhost:4000/hello
 	"{"mensaje":"Hola Mundo"}"
 ```
+### FAQ's
 
+#### y el front end HTTP server ?
 
-## Modo de uso.
+Si vas a desarrollar una AppWeb o un sitio web que vas a necesitar un servidor web que se encargue de la concurrencia, assets, caché y demas, para ello puedes usar Apache o Nginx y configurar proxys inversos o load balancers de tal forma que sean capaces de servir archivos estáticos cuando existan o que redirija peticiones http hacia el vServer cuando se pidan datos dinámicos.
 
-Cirrus.js es más que simplemente un parseador de peticiones HTTP, te da una estructura para que organices tu código y no tengas que trabajar  en el ruteo y parametros, toda esta funcionalidad está embebida dentro del objeto wApp, el cual englobla los datos de aplicación que quieres exponer.
-
-#### Definición de rutas:
-
-Las rutas son el intermediario entre las peticiones HTTP y la lógica de negocio que se encuentra en los controlladores de la aplicacción, añdiendo rutas al router de wApp crearas la vias entre las peticiones y tu código:
-
-
-```javascript
-	wApp.router.addRoutes({"GET /users": "usersController#index"})
-```
-con la anterior sentencia estas enviando las peticiones GET dirigidas al path "/users" hacia el controlador usersController y la acción "index", igualmente puedes añadir multiples rutas al mismo tiempo:
-
-```javascript
-	wApp.router.addRoutes({"GET /users": "usersController#index", "GET /users/new": "usersController#new"})
-```
-
-##### parametros:
-
-Puedes definir parametros dentro de tus urls con el fin de darles un enfoque más REST, de tal forma que sean más limpias y tengan sentido al leerlas, para ello dentro de al URL puedes indicar cuales componentes son parametros añadiendo dos puntos (":") antes de la palabra, puedes añadir tantos parametros como desees.
-
-```javascript
-	wApp.router.addRoutes({"GET /users/:id": "usersController#show"})
-
-	// para un request "/users/20" el "20" será añadido a la lista global de parametros, a los que puedes acceder a traves de la variable params en los controladores.
-```
-
-Adicional a esta definición Cirrus.js parseara cualquier parametro extra añadido al final de la URL, siguiendo el formato definido para las Query Strings (URL?param1=value1&param2=value2) y los añadirá a la lista global de parametros.
-
-##### Soporte REST:
-
-Si deseas crear la interface para un recurso (ususarios, facturas, articulos, categorias, etc) y quieres evitarte construir las rutas para listarlos, crearlos, mostrar espeficos, editarlos, actualizarlos, etc.  Cirrus.js te permite declarar recursos y generarar automáticamente las 7 rutas REST necesarias.
-
-```javascript
-	wApp.router.addRoutes({"resource users": "users"})
-```
-esta declaración añadira automáticamente las siguientes rutas a tu aplicación:
-
-* GET /users 			=>	"usersController#index"
-* GET /users/new 		=> 	"usersControlerr#new"
-* POST /users 			=>  "usersController#create"
-* GET /users/:id    	=>	"usersCotroller#show"
-* GET /users/:id/edit 	=> "usersController#edit" 
-* PUT /users/:id      	=> "usersController#update"
-* DELETE /users/:id   	=> "usersController#delete"
-
-## Peticiones con datos en el body
-
-Puedes realizar peticiones POST o PUT que incluyan datos como parte del la petición en el body en formato URL encoded standar, estos datos serán parseados y podrás acceder a ellos desde wApp.params.body
-
-## Controladores - Añade tu código
-
-Al igual que en el modelo MVC, los controladores son los mediadores entre las peticiones y el acceso a los datos, asi tu definirás controladores para manejar tu lógica de negocios y el acceso a los datos del vServer.
-
-
-### Crear controladores:
-
-Para definir el controlador debes de añadir a wApp un objeto javascript con el nombre del controlador seguido de "Controller", dentro de el definiras metodos que contendran la lógica de negocios y que tendrán acceso a la lista de parametros de la petición y finalmente el objeto JSON que representa la respuesta.
-
-Definición del controlador
-
-```javascript
-wApp.usersController = {
-	index: function(params){
-		// tu lógica
-		return(algun_objeto_json);
-	},
-	show: function(params){
-		// tu lógica
-		return(algun_objeto_json);
-	}
-}
-```
-## Manejo de sessiones y cookies:
-
-Para guardar datos en una cookie a fin de mantener una session con un determinado cliente Cirrus.js te da la posibilidad de leer o escribir a dicha sessión desde tus controladores a traves de la función wApp.session.set(key, value):
-
-```javascript
-	wApp.usersController = {
-	createSession: function(params){
-		// tu lógica para verificar que el usuario sea válido
-		wApp.session.set("user_id", 10)
-		return(algun_objeto_json);
-	}}
-```
-En este codigo el valor del key "user_id" sera almacenado en una cookie en la cual podrás leer y escribir mientras dura la sessión del usuario.
-
-### Sessiones persistentes:
-
-Si deseas que la session quede guardada por un cierto intervalo de tiempo en el navegador, puedes indicar un expire date para la sessión, el siguiente código le indica al navegador que guarde la sessión hasta el 21 de diciembre de 2012, fecha a partir de la cual el navegador dejara de enviarnos la sessión salvo que indiquemos una nueva fecha de expiración de la misma:
-
-```javascript
-	wApp.usersController = {
-	createSession: function(params){
-		// Codigo dentro de un controlador
-		var date = new Date("2012-12-21")
-    	wApp.session.set("expires", date)
-    }}
-```
-
-### Especificar el Path:
-
-En algunos casos se desea asociar la cookie con un path particular de la aplicación ("/pedidos", "/articulos/index", etc.), para ello puedes indicar a que path quieres que vaya asociada la cookie y el navegador solo la enviara cuando se hagan request a esa ruta en particular:
-
-```javascript
-	wApp.usersController = {
-	createSession: function(params){		
-    	wApp.session.set("path", "/mi_path");
-    }}
-```
-### Leyendo la cookie:
-
-Una vez hayas escrito variables de sessión atra vez de la cookie podrás acceder a estas a traves de la funcion wApp.session.get(key):
-
-```javascript
-	wApp.usersController = {
-		show: function(params) {
-			var user_id = wApp.session.get("user_id")
-			var current_user = VRegister.find("CAJA/USERS", user_id)
-		}
-	}
-```
-
-## FAQ's
-
-### Como añado funcionalidades HTML + Javascript dentro de mi app v7 ?
-
-Puedes crear funcionalidades que se alimenten de la data de tu vServer con solo HTML + Js atacando directamente el vServer sin un servidor http standar en el medio y para ello Cirrus.js esta habilitada para peticiones JSONP para evitar la restricción que tienen los navegadores para "cross domain requests".
-
-* http://www.funcion13.com/2012/04/12/como-realizar-peticiones-ajax-cross-domain-jsonp-jquery/
-
-### y el front end HTTP server ?
-
-Si vas a desarrollar una AppWeb o un sitio web que vas a necesitar un servidor web que se encargue de la concurrencia, assets, archivos estáticos y demas, para ello puedes usar Apache o Nginx y configurar proxys inversos de tal forma que sean capaz de servir archivos estáticos cuando existan o que redirija peticiones http hacia el vServer cuando se pidan datos dinámicos.
-
-### Que relación tiene Cirrus.js con vClouden ?
-
-Cirrus.js sera el primero de muchos plugins a desarrollar para vClouden, como plugin las apps que se distribuyan usando vClouden y que añadan a Cirrus.js como dependencia, dispondrán de una carpeta para archivos html estaticos y de un setup con Nginx para recibir el trafico de la web y administrarlo, asi que el desarrollador solo tiene que ocuparse de su API.
-
-### es Cirrus.js equivalente a vModApache ?
+#### es Cirrus.js equivalente a vModApache ?
 
 No, vModApache es un modulo especializado para acceso a vServers desarrollado directamente por Velneo S.A y su función es mas parecida a las funcionalidades CGI; Cirrus.js por el contrarío pretende ser directamente un HTTP server orientado la creación de API's y que puede ser complementado con Nginx o Apache para obtener lo mejor de ambos mundos.
 
-### Consume Cirrus.js enganches al vServer?
+#### Consume Cirrus.js enganches al vServer?
 
 No, Cirrus.js corre directamente sobre las conexiones que permite el objeto TCP de v7 y no realiza una conexion VATP con el vServer.
 
-### es Cirrus.js multiplataforma ?
+#### es Cirrus.js multiplataforma ?
 
 Si claro, al correr directamente sobre el objeto TCP de v7 correra en cualquier plataforma donde el vServer tenga capacidad de ejecutarse.
 
-## Quieres contribuir ?
+### Quieres contribuir ?
 
 Para contribuir a Cirrus.js, clona el repositorio, verifica que todos los specs pasan (abre el archivo spec/SpecRunner.html), no existen dependencias y simplemente puedes revisar el código y realizar pull request al repositorio para añadir funcionalidades faltantes o corregir bugs encontrados.
 
@@ -212,7 +75,3 @@ Dispones además dentro de la suite de Jasmine.js de un apartado donde puedes te
 Cirrus.js es liberado bajo las directivas de la licencia MIT
 
 * http://www.opensource.org/licenses/MIT
-
-
-
-
