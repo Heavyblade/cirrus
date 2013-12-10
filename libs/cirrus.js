@@ -214,7 +214,7 @@ function http_parser(http_request, type) {
   function renderResponse(controller, action, wapp, type) {
       var CRLF = "\r\n";
       var jsonresp = wapp[(controller)][action](wapp.router.params);
-      
+
       type = type || "json";
       if (jsonresp.redirect_to) {type = "redirect";} //Check for redirection
       var format = type.match(/(html|json|redirect)/i) || ["json"];
@@ -242,7 +242,7 @@ function http_parser(http_request, type) {
           var verb = "HTTP/1.0 200 OK";
           var layout = jsonresp.layout || "application";
           var file = "/views/" + controller.replace("Controller", "") + "/" + action;
-          
+
           // Render without a layout
           if(jsonresp.layout != false) {
               var layoutHTML = getHTML("/layouts/" + layout)
@@ -253,7 +253,7 @@ function http_parser(http_request, type) {
           var pureHTML = getHTML(file);
           if (pureHTML.type == "template") {eval("template = " + pureHTML.template);}
           var body = pureHTML.type == "template" ?  Handlebars.VM.template(template)(jsonresp) : pureHTML.html;   
-         
+
           var full_body = layout_body.replace("#yield", body) 
           var headers = ["Content-Type: text/html; charset=utf-8"];
           return({verb: verb, body: unescape(encodeURIComponent(full_body)), headers: headers});
@@ -267,7 +267,7 @@ function http_parser(http_request, type) {
 
   function getHTML(path) {
     var records = new VRegisterList(theRoot);
-    records.setTable("cirrusdat/FILES");
+    records.setTable("cirrusdat/FILES_MEM");
     records.load("PATH", [path]);
 
     if (records.listSize() > 0) {
