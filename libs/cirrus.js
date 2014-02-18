@@ -142,6 +142,7 @@ function http_parser(http_request, type) {
            cookie: ""};
 
   // Setting Headers
+  // Delete "-" in header's names
   while(header = header_regx.exec(headers)) { req.headers[header[1]].replace("-", "" ) = header[2];}
 
   // Get the Query String
