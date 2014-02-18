@@ -142,7 +142,7 @@ function http_parser(http_request, type) {
            cookie: ""};
 
   // Setting Headers
-  while(header = header_regx.exec(headers)) { req.headers[header[1]] = header[2];}
+  while(header = header_regx.exec(headers)) { req.headers[header[1]].replace("-", "" ) = header[2];}
 
   // Get the Query String
   var params = decodeURIComponent(req.encodeParams).replace(/\+/g, " ");
@@ -160,7 +160,11 @@ function http_parser(http_request, type) {
     function Request(http_request) {
         var req = http_parser(http_request);
         wApp.router.params = req.decodeParams;
-        wApp.router.params.body = req.bodyDecoded;
+        
+        // body json
+        if ( req.headers.ContentType == "application/json" ){ wApp.router.params.body = JSON.parse(req.body); }
+        else{ wApp.router.params.body = req.bodyDecoded; }
+        
         // Set Cookie
         if(req.headers.Cookie !== undefined) { wApp.session.getFromHeader(req.headers.Cookie); }
         var memory_routes = theRoot.varToString("ROUTES");
