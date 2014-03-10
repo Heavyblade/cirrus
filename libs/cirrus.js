@@ -10,7 +10,8 @@
                 this.params[subarray[0]] = subarray[1].replace(/\+/g, " ");
             }
         },
-        routes: {},
+        routes: [],
+        rexRoutes: [],
         addRoutes: function (rutes, type) {
             if ( Object.keys(this.routes).length === 0 || type == "rest") {
                 var keys = Object.keys(rutes),
@@ -23,10 +24,11 @@
                       var basic = {},
                           key = keys[i];
                       basic[key] = rutes[key];
-                      this.routes[key.replace(/:id/g, "(\\d+)").replace(/:\w+/g, "(\\w+)")] = basic;
+                      var myRegex = new RegExp(key.replace(/:id/g, "(\\d+)").replace(/:\w+/g, "(\\w+)") + "\/?$", "i"); 
+                      this.rexRoutes.push(myRegex);
+                      this.routes.push(basic);
                     }
                 }
-                theRoot.setVar("ROUTES", JSON.stringify(this.routes));
             }
         },
         createREST: function(resource) {
@@ -41,14 +43,13 @@
           return(rest);
         },
         pointRequest: function (url) {
-            keys = Object.keys(this.routes);
-            var i = keys.length;
+            var i = this.rexRoutes.length;
             while(i--) {
-              var rutaRegExp = new RegExp((keys[i].replace(/\//g, "\\/") + "\/?$"), "i");
+              var rutaRegExp = this.rexRoutes[i];
               var match = url.match(rutaRegExp);
 
               if (match){
-                var x = this.routes[keys[i]]; // Keys from the match object
+                var x = this.routes[i]; // Keys from the match object
                 var custom_route = Object.keys(x)[0];
 
                 // extract URL params and Add it to global params
@@ -178,7 +179,7 @@ function http_parser(http_request, type) {
 
   function Response(request) {
     try {
-          if (isAsset(request.url) == null) {
+          if (isAsset(request.url) === null) {
               var actions = wApp.router.pointRequest(request.verb + " " + request.url);
               if(actions != "NOT FOUND") {
                 var controllerAction = actions.split("#");
@@ -188,8 +189,8 @@ function http_parser(http_request, type) {
               }
           } else {
               var html = getHTML(request.url).html;
-              if(html != "") {
-                var asset_type = (request.url.substr(request.url.length - 3) == "css") ? "text/css" : "application/javascript"
+              if(html !== "") {
+                var asset_type = (request.url.substr(request.url.length - 3) === "css") ? "text/css" : "application/javascript";
                 return(renderResponseAssets(html, asset_type));
               } else {
                 return("HTTP/1.0 404 NOT FOUND");
@@ -244,11 +245,11 @@ function http_parser(http_request, type) {
           var file = "/views/" + controller.replace("Controller", "") + "/" + action;
 
           // Render without a layout
-          if(jsonresp.layout != false) {
-              var layoutHTML = getHTML("/layouts/" + layout)
+          if(jsonresp.layout !== false) {
+              var layoutHTML = getHTML("/layouts/" + layout);
               if (layoutHTML.type == "template") {eval("layout_temp = " + layoutHTML.template);}
               var layout_body = layoutHTML.type == "template" ?  Handlebars.VM.template(layout_temp)(jsonresp) : layoutHTML.html;   
-          } else { var layout_body = "#yield"}
+          } else { var layout_body = "#yield";}
 
           var pureHTML = getHTML(file);
           if (pureHTML.type == "template") {eval("template = " + pureHTML.template);}

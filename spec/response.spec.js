@@ -3,7 +3,8 @@ theRoot = {}
 describe("Response Object", function(){
 
   beforeEach(function(){
-      wApp.router.routes = {};
+      wApp.router.routes = [];
+      wApp.router.rexRoutes = [];
       wApp.router.params = {}
       theRoot.vars = {};
       // Setting up an Application to test
@@ -97,7 +98,8 @@ describe("Handling HTML templates", function() {
 describe("Handling standar html request", function(){
 
   beforeEach(function(){
-      wApp.router.routes = {};
+      wApp.router.routes = [];
+      wApp.router.rexRoutes = [];
       wApp.router.params = {}
       theRoot.vars = {};
       // Setting up an Application to test
