@@ -1,6 +1,7 @@
 describe("Controller creation", function(){
   beforeEach(function(){
-    wApp.router.routes = {};
+    wApp.router.routes = [];
+    wApp.router.rexRoutes = [];
     wApp.router.params = {};
     theRoot.vars = {};
   });

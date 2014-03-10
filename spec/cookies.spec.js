@@ -11,8 +11,8 @@ var CRLF = "\r\n"
 
 describe("Cookies handling", function(){
   beforeEach(function(){
-      wApp.router.routes = {};
-      wApp.router.params = {};
+      wApp.router.routes = [];
+      wApp.router.rexRoutes = [];
       theRoot.vars = {};
       wApp.session.cookie = {}
       wApp.session.session = {}
@@ -60,7 +60,8 @@ describe("Cookies handling", function(){
 
   describe("Setting the cookie header", function(){
     beforeEach(function(){
-      wApp.router.routes = {};
+      wApp.router.routes = [];
+      wApp.router.rexRoutes = [];
       wApp.router.params = {};
       theRoot.vars = {};
       wApp.session.cookie = {session: {}}

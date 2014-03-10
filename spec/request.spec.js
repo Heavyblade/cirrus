@@ -15,7 +15,8 @@ describe("Main App", function(){
 
 describe("Request Object", function(){
   beforeEach(function(){
-    wApp.router.params = {}
+    wApp.router.routes = [];
+    wApp.router.rexRoutes = [];
     theRoot.vars = {};
   });
 
