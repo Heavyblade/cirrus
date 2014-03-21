@@ -9,6 +9,7 @@ theRoot = {
 }
 var VRegister = require('./../libs/fake_vjavascript/vregister');
 var VRegisterList = require('./../libs/fake_vjavascript/vregister_list');
+var VProcess = require('./../libs/fake_vjavascript/vprocess');
 
 // xxxxxxxxxxxxxxxxxxx Base 64 Encode Libreary xxxxxxxxxxxx
 function StringBuffer(){this.buffer=[]}StringBuffer.prototype.append=function(a){this.buffer.push(a);return this};StringBuffer.prototype.toString=function(){return this.buffer.join("")};
@@ -163,10 +164,12 @@ function http_parser(http_request, type) {
       header_regx = /(.+): (.+)/g,
       body_params_regx = /([^&]+)=([^&]+)/g,
       url_and_params = request[2].split("?"),
-      req = {verb: request[1], 
-           path: request[2], 
-           protocol: request[3], 
-           url: url_and_params[0], 
+      extension = url_and_params[0].match(/\.(\w+)$/i),
+      req = {verb: request[1],
+           path: request[2],
+           protocol: request[3],
+           url: url_and_params[0],
+           extension: (extension ? extension[1].toLowerCase() : undefined),
            encodeParams: url_and_params[1],
            decodeParams:{},
            headers: {},
@@ -207,19 +210,14 @@ function http_parser(http_request, type) {
                       "Keep-Alive: timeout=5, max=94",
                       "Connection: Keep-Alive"];
 
-  function isAsset(url) { return(url.match(/(\.css$|\.js$)/i));}
+  function isAsset(request) { 
+    return(request.extension === "js" || request.extension === "css");
+  }
 
   function Response(request) {
     try {
-          if (isAsset(request.url) === null) {
-              var actions = wApp.router.pointRequest(request.verb + " " + request.url);
-              if(actions != "NOT FOUND") {
-                var controllerAction = actions.split("#");
-                return(renderResponse(controllerAction[0], controllerAction[1], wApp, request.headers.Accept));
-              } else {
-                return("HTTP/1.0 404 NOT FOUND");
-              }
-          } else {
+          if (request.extension === "js" || request.extension === "css" ) {
+              // Assetss request handling
               var html = getHTML(request.url).html;
               if(html !== "") {
                 var asset_type = (request.url.substr(request.url.length - 3) === "css") ? "text/css" : "application/javascript";
@@ -227,11 +225,33 @@ function http_parser(http_request, type) {
               } else {
                 return("HTTP/1.0 404 NOT FOUND");
               }  
+          } else if(request.extension === "pro") {
+              // process maping handling
+              var process = wApp.router.pointRequest(request.verb + " " + request.url);
+
+              if(actions != "NOT FOUND") {
+                return(renderProcess(process, wApp.router.params));
+              } else {
+                return("HTTP/1.0 404 NOT FOUND");
+              }
+
+          } else if(request.extension === "bus") {
+              // process maping handling
+
+          } else {
+              // HTML and JSON requess
+              var actions = wApp.router.pointRequest(request.verb + " " + request.url);
+              if(actions != "NOT FOUND") {
+                var controllerAction = actions.split("#");
+                return(renderResponse(controllerAction[0], controllerAction[1], wApp, (request.extension || request.headers.Accept)));
+              } else {
+                return("HTTP/1.0 404 NOT FOUND");
+              }
           }
     } catch(e) {
       // Sending Internal Message Error with info
       var errorDesc = logError(e);
-     return(renderErrorResponse(e, errorDesc));
+      return(renderErrorResponse(e, errorDesc));
     }
   }
 
@@ -261,6 +281,27 @@ function http_parser(http_request, type) {
       return(fullResponse);
   }
 
+  function renderProcess(processId, params) {
+    var process = new VProcess(theRoot);
+    process.setProcess(processId);
+
+    var CRLF = "\r\n";
+    var verb = "HTTP/1.0 200 OK";
+
+    var keysList = Object.keys(params);
+    var i = keysList.length;
+
+    while(i--) { process.setVar(keysList[i].toUpperCase(),  params[keysList[i]]);}
+
+    process.exec();
+
+    var result = process.varToString("RESULT");
+    var headers = [("Date: " + (new Date()).toGMTString()),("Content-Length: " + result.length)];
+    headers = headers.concat(BasicHeaders).concat(["Content-Type: text/html; charset=utf-8"]);
+
+    var fullResponse = verb + CRLF + headers.join(CRLF) + CRLF + CRLF + result;
+    return(fullResponse);
+  }
 
   var Engine = {
     json: function(jsonresp, wapp) {
