@@ -131,7 +131,7 @@ describe("Handling standar html request", function(){
     var response = wApp.response(request);
     expect(response.split("\r\n\r\n")[1]).toEqual("<html><head><title>dashboard</title></head><body><div><h1>Hello World</h1></div></body></html>");
   });
-  
+
   it("should render the proper template with out a layout ", function(){
     wApp.usersController = {
       show: function(params){return({message: "Hello World", layout: false})} 
@@ -184,5 +184,16 @@ describe("Handling standar html request", function(){
     expect(response.split("\r\n\r\n")[0].split("\r\n")[0]).toEqual("HTTP/1.0 302 Found");
     expect(response.split("\r\n\r\n")[0].split("\r\n")[7]).toEqual("location: /another_page");
   });
-  
+
+});
+
+describe("Rendering process", function(){
+
+  it("Should render an exiting process", function(){});
+  it("Should render a 500 error if process doesn't exists", function(){});
+  it("should ser vars to the process before executing", function(){});
+  it("should give an empty string if result var doesn't exists", function(){});
+
+
+
 });
