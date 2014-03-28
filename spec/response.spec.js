@@ -67,7 +67,9 @@ describe("Response Object", function(){
 
   it("should properly handle the internal errors and send the response", function(){
 
-    wApp.usersController = { show: function(params){ i.dont.exist += 0 } }
+    wApp.usersController = { show: function(params){  
+      throw({message: "i is not defined"});
+    } }
     var httpGet = "GET /users/44/show?x=foo HTTP/1.1"
     var request = wApp.request(httpGet);
     var response = wApp.response(request);
@@ -193,7 +195,6 @@ describe("Rendering process", function(){
   it("Should render a 500 error if process doesn't exists", function(){});
   it("should ser vars to the process before executing", function(){});
   it("should give an empty string if result var doesn't exists", function(){});
-
 
 
 });

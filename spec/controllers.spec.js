@@ -34,7 +34,7 @@ describe("Logging Errors", function(){
 
   it("should be able to show to me the error message and the stacktrace if is needed", function(){
     try {
-      i.dont.exist += 0
+      throw({message: "i is not defined"});
     } catch(e) {
       expect(wApp.logError(e)).toEqual("i is not defined");
     }

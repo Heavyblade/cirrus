@@ -24,9 +24,9 @@
                       var basic = {},
                           key = keys[i];
                       basic[key] = rutes[key];
-                      var myRegex = new RegExp(key.replace(/:id/g, "(\\d+)").replace(/:\w+/g, "(\\w+)") + "\/?$", "i"); 
-                      this.rexRoutes.push(myRegex);
-                      this.routes.push(basic);
+                      var myRegex = new RegExp(key.replace(/:\w+/g, "([\\w\\W]+)") + "\/?$", "i"); 
+                      this.rexRoutes.unshift(myRegex);
+                      this.routes.unshift(basic);
                     }
                 }
             }
@@ -43,8 +43,8 @@
           return(rest);
         },
         pointRequest: function (url) {
-            var i = this.rexRoutes.length;
-            while(i--) {
+            var z = this.rexRoutes.length;
+            for(i=0; i < z; i++) {
               var rutaRegExp = this.rexRoutes[i];
               var match = url.match(rutaRegExp);
 
@@ -58,7 +58,7 @@
                   var requestVars = url.match(rutaRegExp);
                   requestVars.shift();
                   var z = requestParams.length;
-                  while(z--) { var param = requestParams[z]; this.params[param.replace(":", "")]=requestVars[requestParams.indexOf(param)];}
+                  while(z--) { var param = requestParams[z]; this.params[param.replace(":", "")]=decodeURIComponent(requestVars[requestParams.indexOf(param)]);}
                 }
                 // if match returns "controller#method"
                 return(x[custom_route]);
@@ -166,8 +166,6 @@ function http_parser(http_request, type) {
         wApp.router.params.body = req.bodyDecoded;
         // Set Cookie
         if(req.headers.Cookie !== undefined) { wApp.session.getFromHeader(req.headers.Cookie); }
-        var memory_routes = theRoot.varToString("ROUTES");
-        if (memory_routes !== "") { wApp.router.routes = JSON.parse(memory_routes); }
         return(req);
     }
 
@@ -268,12 +266,12 @@ function http_parser(http_request, type) {
     if (result === "") {
         var pResult = process.result();
         if ((process.objectInfo().outputType() === 2) && (pResult.size() > 0)) {
-            result = JSON.stringify(vRegisterListToJSON(pResult));
+            result = JSON.stringify(vRegisterListToJSON(pResult, params.fields));
         } else if (process.objectInfo().outputType() === 1) {
             var list = new VRegisterList(theRoot);
             list.setTable(pResult.tableInfo().idRef());
             list.append(pResult);
-            result = JSON.stringify(vRegisterListToJSON(list));
+            result = JSON.stringify(vRegisterListToJSON(list, params.fields));
         }
     }
 
@@ -297,7 +295,7 @@ function http_parser(http_request, type) {
     while(i--) { query.setVar(keysList[i].toUpperCase(),  params[keysList[i]]);}
 
     if (query.exec()) {
-       var jsonResp = JSON.stringify(vRegisterListToJSON(query.result()));
+       var jsonResp = JSON.stringify(vRegisterListToJSON(query.result(), params.fields));
     }
     var headers = [("Date: " + (new Date()).toGMTString()),("Content-Length: " + jsonResp.length)];
     headers = headers.concat(BasicHeaders).concat(["Content-Type: application/json; charset=utf-8"]);
@@ -306,14 +304,24 @@ function http_parser(http_request, type) {
     return(fullResponse);
   }
 
-  function vRegisterListToJSON(vregisterlist) {
+  function vRegisterListToJSON(vregisterlist, neededFields) {
       var table = vregisterlist.tableInfo();
       var nFields = nFields2 = table.fieldCount();
       var i = vregisterlist.size();
       var result = [];
 
+      neededFields = fields.toUpperCase().split(",");
+
       var fields = [];
-      while(nFields--) { fields.push({fieldName: table.fieldId(nFields), fieldType: table.fieldType(nFields)}); }
+
+      // Selecting fields to be mapped
+      if (neededFields === undefined) {
+        while(nFields--) { fields.push({fieldName: table.fieldId(nFields), fieldType: table.fieldType(nFields)}); }
+      } else {
+        while(nFields--) { 
+          if ( neededFields.indexOf(table.fieldId(nFields)) > -1 ) { fields.push({fieldName: table.fieldId(nFields), fieldType: table.fieldType(nFields)}); }
+         }
+      }
 
       var nFields = table.fieldCount();
       while(i--) {

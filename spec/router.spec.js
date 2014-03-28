@@ -25,9 +25,8 @@ describe("Router Component", function(){
   it("should be able to add a route with params", function(){
     wApp.router.addRoutes({"GET /some/:param/resource": "controller#action"});
     var routes =  wApp.router.routes;
-    console.log(routes);
     expect(routes.length).toEqual(1);
-    expect(wApp.router.rexRoutes[0]).toEqual(new RegExp("GET /some/(\\w+)/resource\/?$", "i"));
+    expect(wApp.router.rexRoutes[0]).toEqual(new RegExp("GET /some/([\\w\\W]+)/resource\/?$", "i"));
   });
 
   it("should point to me the properly controller#action", function(){
@@ -46,6 +45,14 @@ describe("Router Component", function(){
     expect(wApp.router.params.id).toEqual("23");
     expect(wApp.router.params.userid).toEqual("42");
   });
+  
+  it("should be able to handle non words params on url", function() {
+    wApp.router.addRoutes({"GET /some/:param/action": "controller1#action1"});
+    var routing = wApp.router.pointRequest("GET /some/@23/action");
+    expect(wApp.router.params.param).toEqual("@23");
+    var routing = wApp.router.pointRequest("GET /some/cristianvg2003%40gmail.com/action");
+    expect(wApp.router.params.param).toEqual("cristianvg2003@gmail.com");
+  });
 
   it("should able to add alpha numeric vars to params scope", function(){
     wApp.router.addRoutes({"GET /some/:cosa": "controller1#action1"});
@@ -53,10 +60,20 @@ describe("Router Component", function(){
     expect(wApp.router.params.cosa).toEqual("cristian");
   });
 
-  it("should point me to the last coincidence", function(){
+  it("should point me to the last coincidence on repited routes", function(){
     wApp.router.addRoutes({"GET /some/:param/resource": "controller1#action1",
                       "GET /some/:param/resource": "controller2#action2"});
     var routing = wApp.router.pointRequest("GET /some/23/resource");
+    expect(routing).toEqual("controller2#action2");
+  });
+
+  it("should point me to the first coincidence on similar routes", function(){
+    wApp.router.addRoutes({"GET /user/action": "controller1#action1",
+                      "GET /user/:id": "controller2#action2"});
+    var routing = wApp.router.pointRequest("GET /user/action");
+    expect(routing).toEqual("controller1#action1");
+
+    var routing = wApp.router.pointRequest("GET /user/g");
     expect(routing).toEqual("controller2#action2");
   });
 
@@ -87,7 +104,7 @@ describe("Router Component", function(){
     expect(routing.length).toEqual(8);
   });
 
-  it("should be able to behave differen depending on HTTP verb", function(){
+  it("should be able to behave different depending on HTTP verb", function(){
     wApp.router.addRoutes({"resource users": "users"});
     wApp.usersController = {
       index: function(params) { return({method: "I'm Index"});},
@@ -125,5 +142,21 @@ describe("Router Component", function(){
     };
     var response = wApp.response(wApp.request("GET /some_url.txt HTTP/1.0\r\n\r\n"));
     expect(response.split("\n\r\n")[1]).toEqual(JSON.stringify({method: "I'm Index 2"}));
+  });
+
+  it("should map a .pro route to a process", function(){
+    wApp.router.addRoutes({"GET /some_url.pro": "box/process"});
+    var process = wApp.router.pointRequest("GET /some_url.pro");
+    expect(process).toEqual("box/process");
+    var process = wApp.router.pointRequest("GET /some_url.pro/");
+    expect(process).toEqual("box/process");
+  });
+
+  it("should map a .bus route to a process", function(){
+    wApp.router.addRoutes({"GET /some_url.bus": "box/query"});
+    var process = wApp.router.pointRequest("GET /some_url.bus");
+    expect(process).toEqual("box/query");
+    var process = wApp.router.pointRequest("GET /some_url.bus/");
+    expect(process).toEqual("box/query");
   });
 });
