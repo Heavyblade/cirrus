@@ -134,14 +134,26 @@ describe("Router Component", function(){
     expect(response.split("\n\r\n")[1]).toEqual(JSON.stringify({method: "I'm Index"}));
   });
 
-  it("should be able to handle file extensions", function(){
-    wApp.router.addRoutes({"GET /some_url": "statiController#index", "GET /some_url.txt": "statiController#index2"});
+  it("should be able to point request with out extension", function(){
+    wApp.router.addRoutes({"GET /some_url": "statiController#index"});
     wApp.statiController = {
-      index: function(params) { return({method: "I'm Index"});},
-      index2: function(params) { return({method: "I'm Index 2"});}
+      index: function(params) { return({method: "I'm Index"});}
     };
-    var response = wApp.response(wApp.request("GET /some_url.txt HTTP/1.0\r\n\r\n"));
-    expect(response.split("\n\r\n")[1]).toEqual(JSON.stringify({method: "I'm Index 2"}));
+    var response = wApp.response(wApp.request("GET /some_url.json HTTP/1.0\r\n\r\n"));
+    expect(response.split("\n\r\n")[1]).toEqual(JSON.stringify({method: "I'm Index"}));
+  });
+
+
+  it("Should be able to point to the proper asset resource with extension", function(){
+    wApp.usersController = {
+      show: function(params){return({message: "Hello World"})},
+    }
+    wApp.router.addRoutes({"GET /users/:userid/show": "usersController#show"});
+
+    var httpGet = "GET /users/44/show.html HTTP/1.1\r\n";
+    var request = wApp.request(httpGet);
+    var response = wApp.response(request);
+    expect(response.split("\r\n\r\n")[1]).toEqual("<html><head></head><body><div><h1>Hello World</h1></div></body></html>");
   });
 
   it("should map a .pro route to a process", function(){
