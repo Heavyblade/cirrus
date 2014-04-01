@@ -39,24 +39,31 @@ describe("Request Object", function(){
   });
 
   it("should be able to handle a HTTP request with headers", function(){
-    var httpGet = "GET /some/path/toresource?foo=bar&hello=world HTTP/1.0\r\nContent-Type: application/json\r\nConnection: Keep-Alive\r\n\r\n"
+    var httpGet = "GET /some/path/toresource?foo=bar&hello=world HTTP/1.0\r\nContent-Type: application/x-www-form-urlencoded\r\nConnection: Keep-Alive\r\n\r\n"
     var request = wApp.request(httpGet);
     expect(request.encodeParams).toEqual("foo=bar&hello=world");
     expect(wApp.router.params.foo).toEqual("bar");
     expect(wApp.router.params.hello).toEqual("world");
-    expect(request.headers["Content-Type"]).toEqual("application/json");
+    expect(request.headers["Content-Type"]).toEqual("application/x-www-form-urlencoded");
     expect(request.headers["Connection"]).toEqual("Keep-Alive");
   });
 
   it("should be able to handle HTTP post with body", function () {
-    var httpGet = "POST /some/path/toresource?foo=bar&hello=world HTTP/1.0\r\nContent-Type: application/json\r\nConnection: Keep-Alive\r\n\r\nname=john&lastname=doe\r\n" 
+    var httpGet = "POST /some/path/toresource?foo=bar&hello=world HTTP/1.0\r\nContent-Type: application/x-www-form-urlencoded\r\nConnection: Keep-Alive\r\n\r\nname=john&lastname=doe\r\n" 
     var request = wApp.request(httpGet);
     expect(request.body).toEqual("name=john&lastname=doe");
     expect(wApp.router.params.body.name).toEqual("john");
-  })
+  });
+
+  it("should be able to handle HTTP post with body on JSON format", function () {
+    var httpGet = "POST /some/path/toresource?foo=bar&hello=world HTTP/1.0\r\nContent-Type: application/json\r\nConnection: Keep-Alive\r\n\r\n{\"name\":\"john\",\"lastname\":\"doe\"}\r\n" 
+    var request = wApp.request(httpGet);
+    expect(request.body).toEqual("{\"name\":\"john\",\"lastname\":\"doe\"}");
+    expect(wApp.router.params.body.name).toEqual("john");
+  });
 
   it("should be able to handel blank spaces in body params", function(){
-    var httpGet = "POST /some/path/toresource?foo=bar&hello=world HTTP/1.0\r\nContent-Type: application/json\r\nConnection: Keep-Alive\r\n\r\nname=john&lastname=doe+perez\r\n" 
+    var httpGet = "POST /some/path/toresource?foo=bar&hello=world HTTP/1.0\r\nContent-Type: application/x-www-form-urlencoded\r\nConnection: Keep-Alive\r\n\r\nname=john&lastname=doe+perez\r\n" 
     var request = wApp.request(httpGet);
     expect(request.body).toEqual("name=john&lastname=doe perez");
     expect(wApp.router.params.body.name).toEqual("john");

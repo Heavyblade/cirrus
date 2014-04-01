@@ -146,7 +146,7 @@ function http_parser(http_request, type) {
 
   // Setting Headers
   // Delete "-" in header's names
-  while(header = header_regx.exec(headers)) { req.headers[header[1]].replace("-", "" ) = header[2];}
+  while(header = header_regx.exec(headers)) { req.headers[header[1]] = header[2];}
 
   // Get the Query String
   var params = decodeURIComponent(req.encodeParams).replace(/\+/g, " ");
@@ -164,11 +164,11 @@ function http_parser(http_request, type) {
     function Request(http_request) {
         var req = http_parser(http_request);
         wApp.router.params = req.decodeParams;
-        
+
         // body json
-        if ( req.headers.ContentType == "application/json" ){ wApp.router.params.body = JSON.parse(req.body); }
+        if ( req.headers["Content-Type"] === "application/json" && req.body){ wApp.router.params.body = JSON.parse(req.body); }
         else{ wApp.router.params.body = req.bodyDecoded; }
-        
+
         // Set Cookie
         if(req.headers.Cookie !== undefined) { wApp.session.getFromHeader(req.headers.Cookie); }
         return(req);
@@ -210,7 +210,7 @@ function http_parser(http_request, type) {
 
           } else {
               // HTML and JSON request
-              var actions = wApp.router.pointRequest(request.verb + " " + request.url);
+              var actions = wApp.router.pointRequest(request.verb + " " + request.url.split(".")[0]);
               if(actions != "NOT FOUND") {
                 var controllerAction = actions.split("#");
                 return(renderResponse(controllerAction[0], controllerAction[1], wApp, (request.extension || request.headers.Accept)));
