@@ -20,6 +20,128 @@ function Base64DecodeEnumerator(a){this._input=a;this._index=-1;this._buffer=[]}
 Base64DecodeEnumerator.prototype={current:64,moveNext:function(){if(0<this._buffer.length)return this.current=this._buffer.shift(),!0;if(this._index>=this._input.length-1)return this.current=64,!1;var a=Base64.codex.indexOf(this._input.charAt(++this._index)),c=Base64.codex.indexOf(this._input.charAt(++this._index)),b=Base64.codex.indexOf(this._input.charAt(++this._index)),d=Base64.codex.indexOf(this._input.charAt(++this._index)),e=(b&3)<<6|d;this.current=a<<2|c>>4;64!=b&&this._buffer.push((c&15)<<
 4|b>>2);64!=d&&this._buffer.push(e);return!0}};
 
+function renderProcess(processId, params) {
+  var process = new VProcess(theRoot);
+  process.setProcess(processId);
+
+  var CRLF = "\r\n";
+  var verb = "HTTP/1.0 200 OK";
+
+  var keysList = Object.keys(params);
+  var i = keysList.length;
+
+  while(i--) { process.setVar(keysList[i].toUpperCase(),  params[keysList[i]]);}
+
+  process.exec();
+
+  var result = process.varToString("RESULT");
+
+  // If the var result is empty try to render the output
+  if (result === "") {
+      var pResult = process.result();
+      if ((process.objectInfo().outputType() === 2) && (pResult.size() > 0)) {
+          result = JSON.stringify(vRegisterListToJSON(pResult, params.fields));
+      } else if (process.objectInfo().outputType() === 1) {
+          var list = new VRegisterList(theRoot);
+          list.setTable(pResult.tableInfo().idRef());
+          list.append(pResult);
+          result = JSON.stringify(vRegisterListToJSON(list, params.fields));
+      }
+  }
+
+  var headers = [("Date: " + (new Date()).toGMTString()),("Content-Length: " + result.length)];
+  headers = headers.concat(BasicHeaders).concat(["Content-Type: text/html; charset=utf-8"]);
+
+  var fullResponse = verb + CRLF + headers.join(CRLF) + CRLF + CRLF + result;
+  return(fullResponse);
+}
+
+function renderQuery(queryId, params) {
+  var query = new VQuery(theRoot);
+  query.setQuery(processId);
+
+  var CRLF = "\r\n";
+  var verb = "HTTP/1.0 200 OK";
+
+  var keysList = Object.keys(params);
+  var i = keysList.length;
+
+  while(i--) { query.setVar(keysList[i].toUpperCase(),  params[keysList[i]]);}
+
+  if (query.exec()) {
+     var jsonResp = JSON.stringify(vRegisterListToJSON(query.result(), params.fields));
+  }
+  var headers = [("Date: " + (new Date()).toGMTString()),("Content-Length: " + jsonResp.length)];
+  headers = headers.concat(BasicHeaders).concat(["Content-Type: application/json; charset=utf-8"]);
+
+  var fullResponse = verb + CRLF + headers.join(CRLF) + CRLF + CRLF + jsonResp;
+  return(fullResponse);
+}
+
+function vRegisterListToJSON(vregisterlist, neededFields) {
+    var table = vregisterlist.tableInfo();
+    var nFields = nFields2 = table.fieldCount();
+    var i = vregisterlist.size();
+    var result = [];
+
+    neededFields = fields.toUpperCase().split(",");
+
+    var fields = [];
+
+    // Selecting fields to be mapped
+    if (neededFields === undefined) {
+      while(nFields--) { fields.push({fieldName: table.fieldId(nFields), fieldType: table.fieldType(nFields)}); }
+    } else {
+      while(nFields--) { 
+        if ( neededFields.indexOf(table.fieldId(nFields)) > -1 ) { fields.push({fieldName: table.fieldId(nFields), fieldType: table.fieldType(nFields)}); }
+       }
+    }
+
+    var nFields = table.fieldCount();
+    while(i--) {
+      var record = vregisterlist.readAt(i);
+      var z = nFields2;
+      var recordJSON = {};
+      while(z--) {
+          recordJSON[fields[z].fieldName] = mapField(fields[z].fieldType, fields[z].fieldName, record);
+      }
+      result.push(recordJSON);
+    }
+    return(result);
+}
+
+function mapField(type, fieldName, record) {
+  type = parseInt(type);
+  switch (type) {
+    case 0:
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+    case 5:
+       var result = record.fieldToString(fieldName);
+       break;
+    case 6:
+       var result = record.fieldToDouble(fieldName);
+       break;
+    case 7:
+       var result = record.fieldToDate(fieldName);
+       break;
+    case 8:
+       var result = record.fieldToTime(fieldName);
+       break;
+    case 9:
+       var result = record.fieldToDateTime(fieldName);
+       break;
+    case 10:
+       var result = record.fieldToBool(fieldName);
+       break;
+    default:
+       var result = record.fieldToString(fieldName);
+  }
+  return(result);
+}
+
 var Handlebars={};
 (function(b,l){b.VERSION="1.0.0-rc.4";b.COMPILER_REVISION=3;b.REVISION_CHANGES={1:"<= 1.0.rc.2",2:"== 1.0.0-rc.3",3:">= 1.0.0-rc.4"};b.helpers={};b.partials={};var k=Object.prototype.toString;b.registerHelper=function(a,c,d){if("[object Object]"===k.call(a)){if(d||c)throw new b.Exception("Arg not supported with multiple helpers");b.Utils.extend(this.helpers,a)}else d&&(c.not=d),this.helpers[a]=c};b.registerPartial=function(a,c){"[object Object]"===k.call(a)?b.Utils.extend(this.partials,a):this.partials[a]=
 c};b.registerHelper("helperMissing",function(a){if(2===arguments.length)return l;throw Error("Could not find property '"+a+"'");});b.registerHelper("blockHelperMissing",function(a,c){var d=c.inverse||function(){},e=c.fn,f=k.call(a);"[object Function]"===f&&(a=a.call(this));return!0===a?e(this):!1===a||null==a?d(this):"[object Array]"===f?0<a.length?b.helpers.each(a,c):d(this):e(a)});b.K=function(){};b.createFrame=Object.create||function(a){b.K.prototype=a;a=new b.K;b.K.prototype=null;return a};b.logger=
@@ -282,128 +404,6 @@ function http_parser(http_request, type) {
       if (wApp.session.changed) {headers.push(wApp.session.setInHeader());}
       var fullResponse = rendered.verb + CRLF + headers.join(CRLF) + CRLF + CRLF + rendered.body;
       return(fullResponse);
-  }
-
-  function renderProcess(processId, params) {
-    var process = new VProcess(theRoot);
-    process.setProcess(processId);
-
-    var CRLF = "\r\n";
-    var verb = "HTTP/1.0 200 OK";
-
-    var keysList = Object.keys(params);
-    var i = keysList.length;
-
-    while(i--) { process.setVar(keysList[i].toUpperCase(),  params[keysList[i]]);}
-
-    process.exec();
-
-    var result = process.varToString("RESULT");
-
-    // If the var result is empty try to render the output
-    if (result === "") {
-        var pResult = process.result();
-        if ((process.objectInfo().outputType() === 2) && (pResult.size() > 0)) {
-            result = JSON.stringify(vRegisterListToJSON(pResult, params.fields));
-        } else if (process.objectInfo().outputType() === 1) {
-            var list = new VRegisterList(theRoot);
-            list.setTable(pResult.tableInfo().idRef());
-            list.append(pResult);
-            result = JSON.stringify(vRegisterListToJSON(list, params.fields));
-        }
-    }
-
-    var headers = [("Date: " + (new Date()).toGMTString()),("Content-Length: " + result.length)];
-    headers = headers.concat(BasicHeaders).concat(["Content-Type: text/html; charset=utf-8"]);
-
-    var fullResponse = verb + CRLF + headers.join(CRLF) + CRLF + CRLF + result;
-    return(fullResponse);
-  }
-
-  function renderQuery(queryId, params) {
-    var query = new VQuery(theRoot);
-    query.setQuery(processId);
-
-    var CRLF = "\r\n";
-    var verb = "HTTP/1.0 200 OK";
-
-    var keysList = Object.keys(params);
-    var i = keysList.length;
-
-    while(i--) { query.setVar(keysList[i].toUpperCase(),  params[keysList[i]]);}
-
-    if (query.exec()) {
-       var jsonResp = JSON.stringify(vRegisterListToJSON(query.result(), params.fields));
-    }
-    var headers = [("Date: " + (new Date()).toGMTString()),("Content-Length: " + jsonResp.length)];
-    headers = headers.concat(BasicHeaders).concat(["Content-Type: application/json; charset=utf-8"]);
-
-    var fullResponse = verb + CRLF + headers.join(CRLF) + CRLF + CRLF + jsonResp;
-    return(fullResponse);
-  }
-
-  function vRegisterListToJSON(vregisterlist, neededFields) {
-      var table = vregisterlist.tableInfo();
-      var nFields = nFields2 = table.fieldCount();
-      var i = vregisterlist.size();
-      var result = [];
-
-      neededFields = fields.toUpperCase().split(",");
-
-      var fields = [];
-
-      // Selecting fields to be mapped
-      if (neededFields === undefined) {
-        while(nFields--) { fields.push({fieldName: table.fieldId(nFields), fieldType: table.fieldType(nFields)}); }
-      } else {
-        while(nFields--) { 
-          if ( neededFields.indexOf(table.fieldId(nFields)) > -1 ) { fields.push({fieldName: table.fieldId(nFields), fieldType: table.fieldType(nFields)}); }
-         }
-      }
-
-      var nFields = table.fieldCount();
-      while(i--) {
-        var record = vregisterlist.readAt(i);
-        var z = nFields2;
-        var recordJSON = {};
-        while(z--) {
-            recordJSON[fields[z].fieldName] = mapField(fields[z].fieldType, fields[z].fieldName, record);
-        }
-        result.push(recordJSON);
-      }
-      return(result);
-  }
-
-  function mapField(type, fieldName, record) {
-    type = parseInt(type);
-    switch (type) {
-      case 0:
-      case 1:
-      case 2:
-      case 3:
-      case 4:
-      case 5:
-         var result = record.fieldToString(fieldName);
-         break;
-      case 6:
-         var result = record.fieldToDouble(fieldName);
-         break;
-      case 7:
-         var result = record.fieldToDate(fieldName);
-         break;
-      case 8:
-         var result = record.fieldToTime(fieldName);
-         break;
-      case 9:
-         var result = record.fieldToDateTime(fieldName);
-         break;
-      case 10:
-         var result = record.fieldToBool(fieldName);
-         break;
-      default:
-         var result = record.fieldToString(fieldName);
-    }
-    return(result);
   }
 
   var Engine = {
