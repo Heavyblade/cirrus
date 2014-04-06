@@ -75,8 +75,30 @@ describe("Response Object", function(){
     var response = wApp.response(request);
     var expectedResponse = JSON.stringify({message: "i is not defined"})
 
-    expect(response.split("\r\n")[0]).toEqual("HTTP/1.0 500  INTERNAL SERVER ERROR")
-    expect(response.split("\r\n\r\n")[1]).toEqual(expectedResponse);
+    expect(response.split("\r\n")[0]).toEqual("HTTP/1.0 500 INTERNAL SERVER ERROR");
+  });
+
+  it("should send the allowed verbs when options action is requested", function(){
+    var httpGet = "OPTIONS / HTTP/1.0"
+    var request = wApp.request(httpGet);
+    var response = wApp.response(request);
+    expect(response.split("\r\n")[0]).toEqual("HTTP/1.0 200 OK")
+    expect(response.split("\r\n")[1]).toEqual("Allow: HEAD,GET,PUT,DELETE,OPTIONS");
+  });
+
+  it("should render custom response code and message when present", function(){
+      wApp.usersController = { show: function(params){return({hello: "world", responseCode: {code: "700", message: "CUSTOM MESSAGE"}});} };
+      var httpGet = "GET /users/44/show?x=foo HTTP/1.1";
+      var request = wApp.request(httpGet);
+      var response = wApp.response(request);
+      expect(response.split("\r\n")[0]).toEqual("HTTP/1.0 700 CUSTOM MESSAGE");
+  });
+  
+  it("should render with standar OK message when no present", function(){
+    var httpGet = "GET /users/44/show?x=foo HTTP/1.1";
+    var request = wApp.request(httpGet);
+    var response = wApp.response(request);
+    expect(response.split("\r\n")[0]).toEqual("HTTP/1.0 200 OK");
   });
 
 });
