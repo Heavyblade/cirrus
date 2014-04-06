@@ -281,8 +281,8 @@ function http_parser(http_request, type) {
   var split_request = http_request.split("\r\n\r\n"); //split header from body
   var response = /(HTTP\/1\.[1|0]) (\d{3}) (.+)/;
 
-  var request = split_request[0].match(/^(GET|POST|PUT|DELETE|UPDATE) (.+) (.+)[\r\n]?/),
-      headers = split_request[0].replace(/^(GET|POST|PUT|DELETE|UPDATE) (.+) (.+)[\r\n]?/, ""),
+  var request = split_request[0].match(/^(GET|POST|PUT|DELETE|UPDATE|OPTIONS) (.+) (.+)[\r\n]?/),
+      headers = split_request[0].replace(/^(GET|POST|PUT|DELETE|UPDATE|OPTIONS) (.+) (.+)[\r\n]?/, ""),
       header_regx = /(.+): (.+)/g,
       body_params_regx = /([^&]+)=([^&]+)/g,
       url_and_params = request[2].split("?"),
@@ -354,15 +354,25 @@ function http_parser(http_request, type) {
               // process maping handling
               var process = wApp.router.pointRequest(request.verb + " " + request.url);
 
-              if(actions != "NOT FOUND") {
+              if(process != "NOT FOUND") {
                 return(renderProcess(process, wApp.router.params));
               } else {
                 return("HTTP/1.0 404 NOT FOUND");
               }
 
           } else if(request.extension === "bus") {
-              // process maping handling
 
+              // query maping handling
+              var query = wApp.router.pointRequest(request.verb + " " + request.url);
+
+              if(query != "NOT FOUND") {
+                return(renderQuery(query, wApp.router.params));
+              } else {
+                return("HTTP/1.0 404 NOT FOUND");
+              }
+
+          } else if(request.verb === "OPTIONS") {
+                return("HTTP/1.0 200 OK\r\nAllow: HEAD,GET,PUT,DELETE,OPTIONS\r\n\r\n");
           } else {
               // HTML and JSON request
               var actions = wApp.router.pointRequest(request.verb + " " + request.url.split(".")[0]);
@@ -408,7 +418,7 @@ function http_parser(http_request, type) {
 
   var Engine = {
     json: function(jsonresp, wapp) {
-          var verb = "HTTP/1.0 200 OK";
+          var verb = jsonresp.responseCode !== undefined && jsonresp.responseCode.code !== undefined && jsonresp.responseCode.message !== undefined ? ("HTTP/1.0 " + jsonresp.responseCode.code + " " + jsonresp.responseCode.message) : "HTTP/1.0 200 OK";
           var jsonp = wapp.router.params.callback;
           jsonresp = jsonp ? (jsonp + "(" + JSON.stringify(jsonresp) + ")") : JSON.stringify(jsonresp);
           jsonresp = unescape(encodeURIComponent(jsonresp)); // Encode to UFT-8
@@ -471,7 +481,7 @@ function http_parser(http_request, type) {
       jsonresp = jsonp ? (jsonp + "(" + JSON.stringify(jsonresp) + ")") : JSON.stringify(jsonresp);
       jsonresp = unescape(encodeURIComponent(jsonresp)); // Encode to UFT-8
 
-      var resp = "HTTP/1.0 500  INTERNAL SERVER ERROR" + CRLF + BasicHeaders.join(CRLF) + CRLF + CRLF + jsonresp;
+      var resp = "HTTP/1.0 500 INTERNAL SERVER ERROR" + CRLF + BasicHeaders.join(CRLF) + CRLF + CRLF + jsonresp;
       return(resp);
   }
 module.exports = wApp;
