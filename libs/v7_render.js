@@ -36,7 +36,7 @@ function renderProcess(processId, params) {
 
 function renderQuery(queryId, params) {
   var query = new VQuery(theRoot);
-  query.setQuery(processId);
+  query.setQuery(queryId);
 
   var CRLF = "\r\n";
   var verb = "HTTP/1.0 200 OK";
