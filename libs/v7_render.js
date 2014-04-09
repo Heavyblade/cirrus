@@ -62,23 +62,22 @@ function vRegisterListToJSON(vregisterlist, neededFields) {
     var i = vregisterlist.size();
     var result = [];
 
-    neededFields = fields.toUpperCase().split(",");
-
     var fields = [];
 
     // Selecting fields to be mapped
     if (neededFields === undefined) {
       while(nFields--) { fields.push({fieldName: table.fieldId(nFields), fieldType: table.fieldType(nFields)}); }
     } else {
+      neededFields = neededFields.toUpperCase().split(",");
       while(nFields--) { 
         if ( neededFields.indexOf(table.fieldId(nFields)) > -1 ) { fields.push({fieldName: table.fieldId(nFields), fieldType: table.fieldType(nFields)}); }
        }
     }
 
-    var nFields = table.fieldCount();
+    var nFields = fields.length;
     while(i--) {
       var record = vregisterlist.readAt(i);
-      var z = nFields2;
+      var z = nFields;
       var recordJSON = {};
       while(z--) {
           recordJSON[fields[z].fieldName] = mapField(fields[z].fieldType, fields[z].fieldName, record);
