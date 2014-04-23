@@ -82,8 +82,8 @@ describe("Response Object", function(){
     var httpGet = "OPTIONS / HTTP/1.0"
     var request = wApp.request(httpGet);
     var response = wApp.response(request);
-    expect(response.split("\r\n")[0]).toEqual("HTTP/1.0 200 OK")
-    expect(response.split("\r\n")[1]).toEqual("Allow: HEAD,GET,PUT,DELETE,OPTIONS");
+    expect(response.split("\r\n")[0]).toEqual("HTTP/1.0 204 OK");
+    expect(response.split("\r\n")[3]).toEqual("Access-Control-Allow-Methods: GET, POST, PUT, HEAD, OPTIONS, DELETE");
   });
 
   it("should render custom response code and message when present", function(){
@@ -92,6 +92,7 @@ describe("Response Object", function(){
       var request = wApp.request(httpGet);
       var response = wApp.response(request);
       expect(response.split("\r\n")[0]).toEqual("HTTP/1.0 700 CUSTOM MESSAGE");
+      expect(response.split("\r\n\r\n")[1]).toEqual(JSON.stringify({hello: "world"}));
   });
   
   it("should render with standar OK message when no present", function(){

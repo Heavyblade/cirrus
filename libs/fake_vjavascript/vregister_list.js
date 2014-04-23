@@ -22,6 +22,7 @@ function VRegisterList(theRoot) {
   }
   this.records = []
   this.listSize = function() { return(this.records.length) }
+  this.size = function() { return(this.listSize()); }
   this.readAt = function(position) { return(this.records[position]); }
 }
 
