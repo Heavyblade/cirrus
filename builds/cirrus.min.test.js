@@ -278,7 +278,6 @@ c,d,e,f,g){e={helpers:e,partials:f,data:g};if(a===l)throw new b.Exception("The p
 // xxxxxxxxxxxxxxxxxxxxxxxxx HTTP Parser xxxxxxxxxxxxxx
 function http_parser(http_request, type) {
   var split_request = http_request.split("\r\n\r\n"); //split header from body
-  var response = /(HTTP\/1\.[1|0]) (\d{3}) (.+)/;
 
   var request = split_request[0].match(/^(GET|POST|PUT|DELETE|UPDATE|OPTIONS) (.+) (.+)[\r\n]?/),
       headers = split_request[0].replace(/^(GET|POST|PUT|DELETE|UPDATE|OPTIONS) (.+) (.+)[\r\n]?/, ""),

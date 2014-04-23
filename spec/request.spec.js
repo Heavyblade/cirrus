@@ -70,5 +70,15 @@ describe("Request Object", function(){
     expect(wApp.router.params.body.lastname).toEqual("doe perez");
   });
 
+  it("should handle url and emails data on params", function() {
+    wApp.router.addRoutes({"resource user": "user"});
+    var httpGet = ("PUT /user/javier.quiros%40langreanadesoftware.es?key=appkey&nombre=VERDAD&alias=g2&foto=g HTTP/1.0\r\n\r\n");
+    var request = wApp.request(httpGet);
+    expect(request.url).toEqual("/user/javier.quiros%40langreanadesoftware.es");
+
+    var routing = wApp.router.pointRequest("PUT /user/javier.quiros%40langreanadesoftware.es");
+    expect(wApp.router.params.id).toEqual("javier.quiros@langreanadesoftware.es");
+  });
+
 });
 
