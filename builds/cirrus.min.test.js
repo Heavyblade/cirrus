@@ -332,7 +332,8 @@ function http_parser(http_request, type) {
   var BasicHeaders =[ "Server: Velneo v7",
                       "transfer-coding: chunked",	
                       "Keep-Alive: timeout=5, max=94",
-                      "Connection: Keep-Alive"];
+                      "Connection: Keep-Alive"
+                    ];
 
   function isAsset(request) { 
     return(request.extension === "js" || request.extension === "css");
@@ -360,7 +361,6 @@ function http_parser(http_request, type) {
               }
 
           } else if(request.extension === "bus") {
-
               // query maping handling
               var query = wApp.router.pointRequest(request.verb + " " + request.url);
 
@@ -371,7 +371,12 @@ function http_parser(http_request, type) {
               }
 
           } else if(request.verb === "OPTIONS") {
-                return("HTTP/1.0 200 OK\r\nAllow: HEAD,GET,PUT,DELETE,OPTIONS\r\n\r\n");
+                var CRLF = "\r\n";
+                var headers = [ "Access-Control-Allow-Origin: *",
+                                "Access-Control-Allow-Headers: DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type",
+                                "Access-Control-Allow-Methods: GET, POST, PUT, HEAD, OPTIONS, DELETE"];
+
+                return("HTTP/1.0 204 OK" + CRLF + headers.join(CRLF) + CRLF + CRLF);
           } else {
               // HTML and JSON request
               var actions = wApp.router.pointRequest(request.verb + " " + request.url.split(".")[0]);
@@ -418,6 +423,7 @@ function http_parser(http_request, type) {
   var Engine = {
     json: function(jsonresp, wapp) {
           var verb = jsonresp.responseCode !== undefined && jsonresp.responseCode.code !== undefined && jsonresp.responseCode.message !== undefined ? ("HTTP/1.0 " + jsonresp.responseCode.code + " " + jsonresp.responseCode.message) : "HTTP/1.0 200 OK";
+          delete(jsonresp.responseCode);
           var jsonp = wapp.router.params.callback;
           jsonresp = jsonp ? (jsonp + "(" + JSON.stringify(jsonresp) + ")") : JSON.stringify(jsonresp);
           jsonresp = unescape(encodeURIComponent(jsonresp)); // Encode to UFT-8
