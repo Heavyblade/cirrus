@@ -52,6 +52,8 @@ describe("Router Component", function(){
     expect(wApp.router.params.param).toEqual("@23");
     var routing = wApp.router.pointRequest("GET /some/cristianvg2003%40gmail.com/action");
     expect(wApp.router.params.param).toEqual("cristianvg2003@gmail.com");
+    var routing = wApp.router.pointRequest("GET /some/cristianvg2003@gmail.com/action");
+    expect(wApp.router.params.param).toEqual("cristianvg2003@gmail.com");
   });
 
   it("should able to add alpha numeric vars to params scope", function(){
