@@ -6,7 +6,7 @@ function VProcess(theRoot) {
   };
 
   this.exec = function(thread, cola) {
-    this.vars.RESULT = JSON.stringify({hello: world});
+    this.vars.RESULT = JSON.stringify({hello: "world"});
   };
 
   this.result = function(){};

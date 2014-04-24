@@ -214,7 +214,9 @@ describe("Handling standar html request", function(){
 
 describe("Rendering process", function(){
 
-  it("Should render an exiting process", function(){});
+  it("Should render an exiting process", function(){
+  });
+
   it("Should render a 500 error if process doesn't exists", function(){});
   it("should ser vars to the process before executing", function(){});
   it("should give an empty string if result var doesn't exists", function(){});

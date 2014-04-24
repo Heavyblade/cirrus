@@ -118,7 +118,11 @@
     request: Request,
     response: Response,
     logError: logError,
-    getHTML: getHTML
+    getHTML: getHTML,
+    vRegisterListToJSON: vRegisterListToJSON,
+    renderProcess: renderProcess,
+    renderQuery: renderQuery,
+    mapField: mapField
   };
 
 // xxxxxxxxxxxxxxxxxxxxxxxxx HTTP Parser xxxxxxxxxxxxxx
