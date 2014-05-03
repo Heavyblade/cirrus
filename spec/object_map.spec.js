@@ -93,10 +93,9 @@ describe("Mapping v7 objects", function(){
   });
  
   it("should try to render a JSON array string if the out put is an vRegisterList object", function(){
-      VProcess.exec = function(thread, cola) {}
-  });
-
-  it("should render a JSON objet representing one object if the VRegiserList", function(){
+      var result = wApp.renderProcess("MY_PROCESS", {});
+      var body = result.split("\r\n\r\n")[1];
+      expect(body).toEqual(JSON.stringify({hello: "world"}));
   });
 
 });

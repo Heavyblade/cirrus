@@ -1,4 +1,4 @@
-function VProcess(theRoot) {
+VProcess = function(theRoot) {
   this.vars = {};
 
   this.setProcess = function(id_process){
@@ -19,5 +19,5 @@ function VProcess(theRoot) {
    return(this.vars[key]);
   };
 
-}
+};
 module.exports = VProcess;
