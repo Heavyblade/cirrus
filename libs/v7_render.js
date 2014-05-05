@@ -1,10 +1,12 @@
 function renderProcess(processId, params) {
   var process = new VProcess(theRoot);
+  var fields = params.fields;
   process.setProcess(processId);
 
   var CRLF = "\r\n";
   var verb = "HTTP/1.0 200 OK";
   delete(params.body);
+  delete(params.fields);
   var keysList = Object.keys(params);
   var i = keysList.length;
 
@@ -18,12 +20,12 @@ function renderProcess(processId, params) {
   if (result === "") {
       var pResult = process.result();
       if ((process.objectInfo().outputType() === 2) && (pResult.size() > 0)) {
-          result = JSON.stringify(vRegisterListToJSON(pResult, params.fields));
+          result = JSON.stringify(vRegisterListToJSON(pResult, fields));
       } else if (process.objectInfo().outputType() === 1) {
           var list = new VRegisterList(theRoot);
           list.setTable(pResult.tableInfo().idRef());
           list.append(pResult);
-          result = JSON.stringify(vRegisterListToJSON(list, params.fields));
+          result = JSON.stringify(vRegisterListToJSON(list, fields));
       }
   }
 
@@ -36,19 +38,21 @@ function renderProcess(processId, params) {
 
 function renderQuery(queryId, params) {
   var query = new VQuery(theRoot);
+  var fields = params.fields;
   query.setQuery(queryId);
 
   var CRLF = "\r\n";
   var verb = "HTTP/1.0 200 OK";
 
   delete(params.body);
+  delete(params.fields);
   var keysList = Object.keys(params);
   var i = keysList.length;
 
   while(i--) { query.setVar(keysList[i].toUpperCase(),  params[keysList[i]]);}
 
   if (query.exec()) {
-     var jsonResp = JSON.stringify(vRegisterListToJSON(query.result(), params.fields));
+     var jsonResp = JSON.stringify(vRegisterListToJSON(query.result(), fields));
   }
   var headers = [("Date: " + (new Date()).toGMTString()),("Content-Length: " + jsonResp.length)];
   headers = headers.concat(BasicHeaders).concat(["Content-Type: application/json; charset=utf-8"]);
