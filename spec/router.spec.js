@@ -26,7 +26,7 @@ describe("Router Component", function(){
     wApp.router.addRoutes({"GET /some/:param/resource": "controller#action"});
     var routes =  wApp.router.routes;
     expect(routes.length).toEqual(1);
-    expect(wApp.router.rexRoutes[0]).toEqual(new RegExp("GET /some/([\\w\\W]+)/resource\/?$", "i"));
+    expect(wApp.router.rexRoutes[0]).toEqual(new RegExp("GET /some/([\\w]+)/resource\/?$", "i"));
   });
 
   it("should point to me the properly controller#action", function(){
@@ -46,16 +46,6 @@ describe("Router Component", function(){
     expect(wApp.router.params.userid).toEqual("42");
   });
   
-  it("should be able to handle non words params on url", function() {
-    wApp.router.addRoutes({"GET /some/:param/action": "controller1#action1"});
-    var routing = wApp.router.pointRequest("GET /some/@23/action");
-    expect(wApp.router.params.param).toEqual("@23");
-    var routing = wApp.router.pointRequest("GET /some/cristianvg2003%40gmail.com/action");
-    expect(wApp.router.params.param).toEqual("cristianvg2003@gmail.com");
-    var routing = wApp.router.pointRequest("GET /some/cristianvg2003@gmail.com/action");
-    expect(wApp.router.params.param).toEqual("cristianvg2003@gmail.com");
-  });
-
   it("should able to add alpha numeric vars to params scope", function(){
     wApp.router.addRoutes({"GET /some/:cosa": "controller1#action1"});
     var routing = wApp.router.pointRequest("GET /some/cristian");

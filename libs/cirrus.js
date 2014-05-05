@@ -24,7 +24,7 @@
                       var basic = {},
                           key = keys[i];
                       basic[key] = rutes[key];
-                      var myRegex = new RegExp(key.replace(/:\w+/g, "([\\w\\W]+)") + "\/?$", "i"); 
+                      var myRegex = new RegExp(key.replace(/:\w+/g, "([\\w]+)") + "\/?$", "i"); 
                       this.rexRoutes.unshift(myRegex);
                       this.routes.unshift(basic);
                     }

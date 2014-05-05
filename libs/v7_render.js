@@ -4,7 +4,7 @@ function renderProcess(processId, params) {
 
   var CRLF = "\r\n";
   var verb = "HTTP/1.0 200 OK";
-
+  delete(params.body);
   var keysList = Object.keys(params);
   var i = keysList.length;
 
@@ -41,6 +41,7 @@ function renderQuery(queryId, params) {
   var CRLF = "\r\n";
   var verb = "HTTP/1.0 200 OK";
 
+  delete(params.body);
   var keysList = Object.keys(params);
   var i = keysList.length;
 
