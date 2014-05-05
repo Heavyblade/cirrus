@@ -26,7 +26,7 @@ function renderProcess(processId, params) {
 
   var CRLF = "\r\n";
   var verb = "HTTP/1.0 200 OK";
-
+  delete(params.body);
   var keysList = Object.keys(params);
   var i = keysList.length;
 
@@ -63,6 +63,7 @@ function renderQuery(queryId, params) {
   var CRLF = "\r\n";
   var verb = "HTTP/1.0 200 OK";
 
+  delete(params.body);
   var keysList = Object.keys(params);
   var i = keysList.length;
 
@@ -178,7 +179,7 @@ c,d,e,f,g){e={helpers:e,partials:f,data:g};if(a===l)throw new b.Exception("The p
                       var basic = {},
                           key = keys[i];
                       basic[key] = rutes[key];
-                      var myRegex = new RegExp(key.replace(/:\w+/g, "([\\w\\W]+)") + "\/?$", "i"); 
+                      var myRegex = new RegExp(key.replace(/:\w+/g, "([\\w]+)") + "\/?$", "i"); 
                       this.rexRoutes.unshift(myRegex);
                       this.routes.unshift(basic);
                     }
