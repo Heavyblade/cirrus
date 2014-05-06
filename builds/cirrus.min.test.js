@@ -183,7 +183,7 @@ c,d,e,f,g){e={helpers:e,partials:f,data:g};if(a===l)throw new b.Exception("The p
                       var basic = {},
                           key = keys[i];
                       basic[key] = rutes[key];
-                      var myRegex = new RegExp(key.replace(/:\w+/g, "([\\w]+)") + "\/?$", "i"); 
+                      var myRegex = new RegExp(key.replace(/:\w+/g, "([\\w@\.]+)") + "\/?$", "i"); 
                       this.rexRoutes.unshift(myRegex);
                       this.routes.unshift(basic);
                     }

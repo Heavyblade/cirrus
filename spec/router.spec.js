@@ -26,7 +26,23 @@ describe("Router Component", function(){
     wApp.router.addRoutes({"GET /some/:param/resource": "controller#action"});
     var routes =  wApp.router.routes;
     expect(routes.length).toEqual(1);
-    expect(wApp.router.rexRoutes[0]).toEqual(new RegExp("GET /some/([\\w]+)/resource\/?$", "i"));
+    expect(wApp.router.rexRoutes[0]).toEqual(new RegExp("GET /some/([\\w@\.]+)/resource\/?$", "i"));
+  });
+
+
+  it("should be able to handle emails inside the params", function(){
+    wApp.router.addRoutes({"GET /some/:param/resource": "controller1#action1"});
+    var routing = wApp.router.pointRequest("GET /some/cristianvg2003@gmail.com/resource");
+    expect(routing).toEqual("controller1#action1");
+    expect(wApp.router.params.param).toEqual("cristianvg2003@gmail.com");
+  });
+
+  it("should not allow to manage emails at the end", function(){
+    wApp.router.addRoutes({"GET /some/:param1/action/:param2": "controller1#action1"});
+    var routing = wApp.router.pointRequest("GET /some/10/action/cristianvg2003@gmail.com");
+    expect(routing).toEqual("controller1#action1");
+    expect(wApp.router.params.param2).toEqual("cristianvg2003@gmail.com");
+    expect(wApp.router.params.param1).toEqual("10");
   });
 
   it("should point to me the properly controller#action", function(){
@@ -88,6 +104,14 @@ describe("Router Component", function(){
     expect(router[4]).toEqual("GET /users/:id/edit");
     expect(router[5]).toEqual("PUT /users/:id");
     expect(router[6]).toEqual("DELETE /users/:id");
+  });
+  
+  it("Should respect REST routes when adding some email", function(){
+    wApp.router.addRoutes({"resource users": "users"});
+    expect(wApp.router.pointRequest("GET /users/10")).toEqual("usersController#show");
+    expect(wApp.router.pointRequest("GET /users/10/edit")).toEqual("usersController#edit");
+    expect(wApp.router.pointRequest("GET /users/cristian_vg2003@gmail.com/edit")).toEqual("usersController#edit");
+    expect(wApp.router.params.id).toEqual("cristian_vg2003@gmail.com");
   });
 
   it("should add to router routes REST routes", function() {
