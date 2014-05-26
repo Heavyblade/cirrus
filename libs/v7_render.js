@@ -93,33 +93,63 @@ function vRegisterListToJSON(vregisterlist, neededFields) {
 }
 
 function mapField(type, fieldName, record) {
-  type = parseInt(type);
-  switch (type) {
+  var intType = parseInt(type);
+  var result;
+  switch (intType) {
     case 0:
+       result = record.fieldToString(fieldName);
+       break;
     case 1:
+       result = record.fieldToString(fieldName);
+       break;
     case 2:
+       result = record.fieldToString(fieldName);
+       break;
     case 3:
+       result = record.fieldToString(fieldName);
+       break;
     case 4:
+       result = record.fieldToString(fieldName);
+       break;
     case 5:
-       var result = record.fieldToString(fieldName);
+       result = record.fieldToString(fieldName);
        break;
     case 6:
-       var result = record.fieldToDouble(fieldName);
+       result = record.fieldToDouble(fieldName);
        break;
     case 7:
-       var result = record.fieldToDate(fieldName);
+       result = record.fieldToDate(fieldName);
        break;
     case 8:
-       var result = record.fieldToTime(fieldName);
+       result = record.fieldToTime(fieldName);
        break;
     case 9:
-       var result = record.fieldToDateTime(fieldName);
+       result = record.fieldToDateTime(fieldName);
        break;
     case 10:
-       var result = record.fieldToBool(fieldName);
+       result = record.fieldToBool(fieldName);
+       break;
+    case 11:
+       result = "";
+       break;
+    case 12:
+       result = "";
+       break;
+    case 13:
+       result = "";
+       break;
+    case 14:
+       result = "";
+       break;
+    case 15:
+       result = "";
+       break;
+    case 18:
+       result = "";
        break;
     default:
-       var result = record.fieldToString(fieldName);
+       result = record.fieldToString(fieldName);
+       break;
   }
   return(result);
 }

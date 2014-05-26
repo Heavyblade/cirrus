@@ -115,33 +115,63 @@ function vRegisterListToJSON(vregisterlist, neededFields) {
 }
 
 function mapField(type, fieldName, record) {
-  type = parseInt(type);
-  switch (type) {
+  var intType = parseInt(type);
+  var result;
+  switch (intType) {
     case 0:
+       result = record.fieldToString(fieldName);
+       break;
     case 1:
+       result = record.fieldToString(fieldName);
+       break;
     case 2:
+       result = record.fieldToString(fieldName);
+       break;
     case 3:
+       result = record.fieldToString(fieldName);
+       break;
     case 4:
+       result = record.fieldToString(fieldName);
+       break;
     case 5:
-       var result = record.fieldToString(fieldName);
+       result = record.fieldToString(fieldName);
        break;
     case 6:
-       var result = record.fieldToDouble(fieldName);
+       result = record.fieldToDouble(fieldName);
        break;
     case 7:
-       var result = record.fieldToDate(fieldName);
+       result = record.fieldToDate(fieldName);
        break;
     case 8:
-       var result = record.fieldToTime(fieldName);
+       result = record.fieldToTime(fieldName);
        break;
     case 9:
-       var result = record.fieldToDateTime(fieldName);
+       result = record.fieldToDateTime(fieldName);
        break;
     case 10:
-       var result = record.fieldToBool(fieldName);
+       result = record.fieldToBool(fieldName);
+       break;
+    case 11:
+       result = "";
+       break;
+    case 12:
+       result = "";
+       break;
+    case 13:
+       result = "";
+       break;
+    case 14:
+       result = "";
+       break;
+    case 15:
+       result = "";
+       break;
+    case 18:
+       result = "";
        break;
     default:
-       var result = record.fieldToString(fieldName);
+       result = record.fieldToString(fieldName);
+       break;
   }
   return(result);
 }
@@ -281,7 +311,8 @@ c,d,e,f,g){e={helpers:e,partials:f,data:g};if(a===l)throw new b.Exception("The p
     vRegisterListToJSON: vRegisterListToJSON,
     renderProcess: renderProcess,
     renderQuery: renderQuery,
-    mapField: mapField
+    mapField: mapField,
+    getType: getType
   };
 
 // xxxxxxxxxxxxxxxxxxxxxxxxx HTTP Parser xxxxxxxxxxxxxx
@@ -337,6 +368,91 @@ function http_parser(http_request, type) {
         return(req);
     }
 
+    function getType(str){
+      isInteger = /^\d*$/i;
+      isCommaFloat = /^\d*,\d*$/i;
+      isPointFloat = /^\d*\.\d*$/i;
+      isCurrencyComma = /^\d{1,3}(\.\d{3})*(\,\d*)?$/g;
+      isCurrencyPoint = /^\d{1,3}(\,\d{3})*(\.\d*)?$/g;
+      isBool = /(true|false)/;
+
+      // 10/12/2012, 1/5/12
+      isPureDatedmy = /^\d{1,2}[\/-]\d{1,2}[\/-]\d{2,4}$/;
+
+      // 2012/12/10, 2012-12-10 
+      isPureDateymd = /^\d{4}[\/-]\d{1,2}[\/-]\d{1,2}$/;
+
+      /* Date time */
+
+      // Local String => "5/25/2014 9:05:34 PM"
+      isDateTime = /^\d{1,2}[\/-]\d{1,2}[\/-]\d{2,4} \d{1,2}:\d{1,2}:\d{1,2} \w\w$/;
+
+      // UTC => "Mon, 26 May 2014 02:05:34 GMT"
+      isDateTimeUTC = /\w*, \d* \w* \d{2,4} \d{1,2}:\d{1,2}:\d{1,2} \w\w\w$/;
+
+      // ISO string => "2014-05-26T02:25:07.850Z"
+      isDateTimeISO = /\d{2,4}-\d{1,2}-\d{1,2}T\d{1,2}:\d{1,2}:\d{1,2}\.\d*Z$/;
+
+      if (str.match(isInteger)) {console.log("integer\r\n");return(parseInt(str));}
+      if (str.match(isCurrencyComma)) {console.log("CurrencyComma\r\n");return(parseFloat(str.replace(/\./g, "").replace(",", ".")));}
+      if (str.match(isCurrencyPoint)) {console.log("CurrencyPoint\r\n");return(parseFloat(str.replace(/\,/g, "")));}
+      if (str.match(isCommaFloat)) {console.log("isCommaFloat\r\n");return(parseFloat(str.replace(",", ".")));}
+      if (str.match(isPointFloat)) {console.log("isPointFloat\r\n");return(parseFloat(str));}
+      if (str.match(isBool)) {return(str == "true" ? true : false);}
+      if (str.match(isPureDatedmy)) {
+          var params1 = str.split("/");
+          var params2 = str.split("-");
+          var params = params1.length > 1 ? params1 : params2;
+          var date = new Date(parseInt(params[2]), (parseInt(params[1])-1), parseInt(params[0]));
+          return(date);
+      }
+      if (str.match(isPureDateymd)) {
+          var params1 = str.split("/");
+          var params2 = str.split("-");
+          var params = params1.length > 1 ? params1 : params2;
+          var date = new Date(parseInt(params[0]), (parseInt(params[1])-1), parseInt(params[2]));
+          return(date);
+      }
+      if (str.match(isDateTime)) {
+          var params = str.split(" ");
+          var dayParts = params[0].split("/");
+          var hourParts = params[1].split(":");
+          var hora = params[2].match(/am/i) ? parseInt(hourParts[0]) :(parseInt(hourParts[0]) + 12);
+          var date = new Date(parseInt(dayParts[2]), (parseInt(dayParts[0])-1), parseInt(dayParts[1]), hora, parseInt(hourParts[1]), parseInt(hourParts[2]));
+          return(date);
+      }
+
+      if(str.match(isDateTimeUTC)) {
+        var months = {"Jan": 1, "Feb": 2, "Mar": 3, "Apr": 4, "May": 5, "Jun": 6, "Jul": 7, "Aug": 8, "Sep": 9, "Oct": 10, "Nov": 11, "Dec": 12};
+        var params = str.split(",")[1].split(" ");
+        var day = parseInt(params[0]);
+        var month = months[params[1]];
+        var year = parseInt(params[2]);
+        var hour = parseInt(parmas[3].split(":")[0]);
+        var minute = parseInt(parmas[3].split(":")[1]);
+        var second = parseInt(parmas[3].split(":")[2]);
+
+        var date = new Date(year, month, day, hour, minute, second);
+        return(date);
+      }
+
+      if(str.match(isDateTimeISO)) {
+        var params = str.split("T");
+        var params1 = params[0];
+        var params2 = params[1].split(".")[0];
+        var year = parseInt(param1.split("-")[0]);
+        var month = parseInt(param1.split("-")[1]);
+        var day = parseInt(param1.split("-")[2]);
+        var hour = parseInt(param2.split(":")[0]);
+        var minute = parseInt(param2.split(":")[1]);
+        var second = parseInt(param2.split(":")[2]);
+
+        var date = new Date(year, month, day, hour, minute, second);
+        return(date);
+      }
+
+      return(str);
+    }
 // xxxxxxxxxxxxxxxxxxxx Response Object xxxxxxxxxxxxxxxxxxx
   var BasicHeaders =[ "Server: Velneo v7",
                       "transfer-coding: chunked",	
