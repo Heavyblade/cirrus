@@ -10,7 +10,7 @@ function renderProcess(processId, params) {
   var keysList = Object.keys(params);
   var i = keysList.length;
 
-  while(i--) { process.setVar(keysList[i].toUpperCase(),  params[keysList[i]]);}
+  while(i--) { process.setVar(keysList[i].toUpperCase(),  wApp.getType(params[keysList[i]]) );}
 
   process.exec();
 
@@ -49,7 +49,7 @@ function renderQuery(queryId, params) {
   var keysList = Object.keys(params);
   var i = keysList.length;
 
-  while(i--) { query.setVar(keysList[i].toUpperCase(),  params[keysList[i]]);}
+  while(i--) { query.setVar(keysList[i].toUpperCase(),  wApp.getType(params[keysList[i]]));}
 
   if (query.exec()) {
      var jsonResp = JSON.stringify(vRegisterListToJSON(query.result(), fields));

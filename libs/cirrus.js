@@ -1,6 +1,7 @@
 //xxxxxxxxxxxxxxxxxxx Main Application Definition xxxxxxxxx
   wApp = {
     // System Router
+    version: "1.2.1",
     router: {
         params: {body: {}},
         parse_params: function(array) {
@@ -193,22 +194,22 @@ function http_parser(http_request, type) {
       // 2012/12/10, 2012-12-10 
       isPureDateymd = /^\d{4}[\/-]\d{1,2}[\/-]\d{1,2}$/;
 
-      /* Date time */
+      /* DateTime */
 
       // Local String => "5/25/2014 9:05:34 PM"
       isDateTime = /^\d{1,2}[\/-]\d{1,2}[\/-]\d{2,4} \d{1,2}:\d{1,2}:\d{1,2} \w\w$/;
 
       // UTC => "Mon, 26 May 2014 02:05:34 GMT"
-      isDateTimeUTC = /\w*, \d* \w* \d{2,4} \d{1,2}:\d{1,2}:\d{1,2} \w\w\w$/;
+      isDateTimeUTC = /^\w*, \d* \w* \d{2,4} \d{1,2}:\d{1,2}:\d{1,2} \w\w\w$/;
 
       // ISO string => "2014-05-26T02:25:07.850Z"
-      isDateTimeISO = /\d{2,4}-\d{1,2}-\d{1,2}T\d{1,2}:\d{1,2}:\d{1,2}\.\d*Z$/;
+      isDateTimeISO = /^\d{2,4}-\d{1,2}-\d{1,2}T\d{1,2}:\d{1,2}:\d{1,2}\.\d*Z$/;
 
-      if (str.match(isInteger)) {console.log("integer\r\n");return(parseInt(str));}
-      if (str.match(isCurrencyComma)) {console.log("CurrencyComma\r\n");return(parseFloat(str.replace(/\./g, "").replace(",", ".")));}
-      if (str.match(isCurrencyPoint)) {console.log("CurrencyPoint\r\n");return(parseFloat(str.replace(/\,/g, "")));}
-      if (str.match(isCommaFloat)) {console.log("isCommaFloat\r\n");return(parseFloat(str.replace(",", ".")));}
-      if (str.match(isPointFloat)) {console.log("isPointFloat\r\n");return(parseFloat(str));}
+      if (str.match(isInteger)) {return(parseInt(str));}
+      if (str.match(isCurrencyComma)) {return(parseFloat(str.replace(/\./g, "").replace(",", ".")));}
+      if (str.match(isCurrencyPoint)) {return(parseFloat(str.replace(/\,/g, "")));}
+      if (str.match(isCommaFloat)) {return(parseFloat(str.replace(",", ".")));}
+      if (str.match(isPointFloat)) {return(parseFloat(str));}
       if (str.match(isBool)) {return(str == "true" ? true : false);}
       if (str.match(isPureDatedmy)) {
           var params1 = str.split("/");
@@ -251,12 +252,12 @@ function http_parser(http_request, type) {
         var params = str.split("T");
         var params1 = params[0];
         var params2 = params[1].split(".")[0];
-        var year = parseInt(param1.split("-")[0]);
-        var month = parseInt(param1.split("-")[1]);
-        var day = parseInt(param1.split("-")[2]);
-        var hour = parseInt(param2.split(":")[0]);
-        var minute = parseInt(param2.split(":")[1]);
-        var second = parseInt(param2.split(":")[2]);
+        var year = parseInt(params1.split("-")[0]);
+        var month = parseInt(params1.split("-")[1]) - 1 ;
+        var day = parseInt(params1.split("-")[2]);
+        var hour = parseInt(params2.split(":")[0]);
+        var minute = parseInt(params2.split(":")[1]);
+        var second = parseInt(params2.split(":")[2]);
 
         var date = new Date(year, month, day, hour, minute, second);
         return(date);
