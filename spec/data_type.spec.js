@@ -74,7 +74,18 @@ describe("Data Type matching for params", function(){
         var asDate = new Date(2014, 4, 25, 9, 5, 34);
         expect(wApp.getType(param)).toEqual(asDate);
      });
-  
+
   });
 
+  it("should parce an ISO date", function(){
+      var param = "2014-05-26T02:25:07.850Z";
+      var asDate = new Date(2014, 4, 26, 2, 25, 7);
+      expect(wApp.getType(param)).toEqual(asDate);
+  });
+  
+  it("should parce an ISO date 24 hours", function(){
+      var param = "2014-05-26T20:25:07.850Z";
+      var asDate = new Date(2014, 4, 26, 20, 25, 7);
+      expect(wApp.getType(param)).toEqual(asDate);
+  });
 });
