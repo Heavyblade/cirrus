@@ -24,7 +24,7 @@ describe("Cookies handling", function(){
       }
       wApp.router.addRoutes({"GET /users/:userid/show": "usersController#show"});
 
-      var cookie = wApp.cookie_name + "=" + Base64.encode(encodeURIComponent(JSON.stringify({name: "JhonDoe", spaces: "Jhon Doe"}))) + ";";
+      var cookie = wApp.session.cookie_name + "=" + Base64.encode(encodeURIComponent(JSON.stringify({name: "JhonDoe", spaces: "Jhon Doe"}))) + ";";
       var httpGet = "GET /some/path/toresource?foo=bar&hello=world HTTP/1.0\r\nContent-Type: application/json\r\nConnection: Keep-Alive\r\nCookie: " + cookie + "\r\n\r\n"
       var request = wApp.request(httpGet);
   });

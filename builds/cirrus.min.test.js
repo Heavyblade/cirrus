@@ -290,7 +290,7 @@ c,d,e,f,g){e={helpers:e,partials:f,data:g};if(a===l)throw new b.Exception("The p
           return("set-Cookie: " + cookie);
       },
       getFromHeader: function(cookie) { 
-        var regexp = new RegExp(wApp.cookie_name + "=(\\w+)\\;?");
+        var regexp = new RegExp(wApp.session.cookie_name + "=(\\w+)\\;?");
         var myCookie = {},
             cookie_name = wApp.cookie_name;
 
