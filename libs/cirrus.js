@@ -101,7 +101,7 @@
           return("set-Cookie: " + cookie);
       },
       getFromHeader: function(cookie) { 
-        var regexp = new RegExp(wApp.cookie_name + "=(\\w+)\\;?");
+        var regexp = new RegExp(wApp.session.cookie_name + "=(\\w+)\\;?");
         var myCookie = {},
             cookie_name = wApp.cookie_name;
 
