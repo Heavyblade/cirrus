@@ -38,6 +38,8 @@ function renderProcess(processId, params) {
 
   var result = process.varToString("RESULT");
 
+  // Hola Mundo
+  var hola = "hola"
   // If the var result is empty try to render the output
   if (result === "") {
       var pResult = process.result();
@@ -349,8 +351,8 @@ function http_parser(http_request, type) {
 
   // Body params if any
   if(split_request.length == 2) { 
-    params = req.body = decodeURIComponent(split_request[1].trim().replace(/\+/g, " "));
-    while(body = body_params_regx.exec(params)) { req.bodyDecoded[body[1]] = body[2];} 
+    params = req.body = split_request[1].trim().replace(/\+/g, " ");
+    while(body = body_params_regx.exec(params)) { req.bodyDecoded[body[1]] = decodeURIComponent(body[2]);} 
   }
   return(req);
 }
