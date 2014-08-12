@@ -68,6 +68,14 @@ describe("Router Component", function(){
     expect(wApp.router.params.cosa).toEqual("cristian");
   });
 
+  it("should be able to handle & symbol on the query string param", function(){
+    wApp.router.addRoutes({"GET /some": "Controller1#action1"});
+    var httpGet = "GET /some?var1=1&var2=%262 HTTP/1.1";
+    var request = wApp.request(httpGet);
+    expect(wApp.router.params.var1).toEqual("1");
+    expect(wApp.router.params.var2).toEqual("&2");
+  });
+
   it("should point me to the last coincidence on repited routes", function(){
     wApp.router.addRoutes({"GET /some/:param/resource": "controller1#action1",
                       "GET /some/:param/resource": "controller2#action2"});
