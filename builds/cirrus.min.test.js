@@ -344,8 +344,8 @@ function http_parser(http_request, type) {
   while(header = header_regx.exec(headers)) { req.headers[header[1]] = header[2];}
 
   // Get the Query String
-  var params = decodeURIComponent(req.encodeParams).replace(/\+/g, " ");
-  if(req.encodeParams) { while(param = body_params_regx.exec(params)) {req.decodeParams[param[1]] = param[2];} }
+  var params = req.encodeParams
+  if(req.encodeParams) { while(param = body_params_regx.exec(params)) {req.decodeParams[param[1]] = decodeURIComponent(param[2]).replace(/\+/g, " ");} }
 
   // Body params if any
   if(split_request.length == 2) { 
