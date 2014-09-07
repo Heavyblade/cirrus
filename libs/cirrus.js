@@ -406,7 +406,7 @@ function http_parser(http_request, type) {
         var template = record.fieldToString("COMPILED");
     } else {
         // TODO check what happens when two calls to load
-        records.load("NAME", ["NOT_VIEW"]);
+        records.load("NAME", ["NOTVIEW"]);
         var html =  records.readAt(0).fieldToString("BODY");
         var template = "";
         var type = "html";
