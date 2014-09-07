@@ -7,5 +7,5 @@
 "/layouts/dashboard": {"content": "<html><head><title>dashboard</title></head><body>#yield</body></html>", "tipo": "2"},
 "/public/css/application.css": {"content": "body {backgrund-color}", "tipo": "1"},
 "/public/css/application.js": {"content": "function(){alert('hello world')}", "tipo": "1"},
-"NOT_VIEW": {"content": "<div><h1>There is not view for this action</h1></div>", "tipo": "1"}
+"NOTVIEW": {"content": "<div><h1>There is not view for this action</h1></div>", "tipo": "1"}
 }
