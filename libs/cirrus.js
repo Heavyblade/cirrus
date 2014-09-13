@@ -156,12 +156,12 @@ function http_parser(http_request, type) {
 
   // Get the Query String
   var params = req.encodeParams
-  if(req.encodeParams) { while(param = body_params_regx.exec(params)) {req.decodeParams[param[1]] = decodeURIComponent(param[2]).replace(/\+/g, " ");} }
+  if(req.encodeParams) { while(param = body_params_regx.exec(params)) {req.decodeParams[param[1]] = wApp.getType(decodeURIComponent(param[2]).replace(/\+/g, " "));} }
 
   // Body params if any
   if(split_request.length == 2) { 
     params = req.body = split_request[1].trim().replace(/\+/g, " ");
-    while(body = body_params_regx.exec(params)) { req.bodyDecoded[body[1]] = decodeURIComponent(body[2]);} 
+    while(body = body_params_regx.exec(params)) { req.bodyDecoded[body[1]] = wApp.getType(decodeURIComponent(body[2]));} 
   }
   return(req);
 }

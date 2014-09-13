@@ -72,7 +72,7 @@ describe("Router Component", function(){
     wApp.router.addRoutes({"GET /some": "Controller1#action1"});
     var httpGet = "GET /some?var1=1&var2=%262 HTTP/1.1";
     var request = wApp.request(httpGet);
-    expect(wApp.router.params.var1).toEqual("1");
+    expect(wApp.router.params.var1).toEqual(1);
     expect(wApp.router.params.var2).toEqual("&2");
   });
 
