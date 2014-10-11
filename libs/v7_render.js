@@ -1,4 +1,5 @@
 function renderProcess(processId, params) {
+  importClass("VProcess");
   var process = new VProcess(theRoot);
   var fields = params.fields;
   process.setProcess(processId);
@@ -16,8 +17,6 @@ function renderProcess(processId, params) {
 
   var result = process.varToString("RESULT");
 
-  // Hola Mundo
-  var hola = "hola"
   // If the var result is empty try to render the output
   if (result === "") {
       var pResult = process.result();
@@ -39,6 +38,7 @@ function renderProcess(processId, params) {
 }
 
 function renderQuery(queryId, params) {
+  importClass("VQuery");
   var query = new VQuery(theRoot);
   var fields = params.fields;
   query.setQuery(queryId);

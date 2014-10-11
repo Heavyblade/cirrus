@@ -113,7 +113,7 @@
           this.session = myCookie.session;
         }
         return(myCookie[cookie_name]);
-      }      
+      }
     },
     params: function(){return(this.router.params);},
     request: Request,
@@ -128,43 +128,42 @@
   };
 
 // xxxxxxxxxxxxxxxxxxxxxxxxx HTTP Parser xxxxxxxxxxxxxx
-function http_parser(http_request, type) {
-  var split_request = http_request.split("\r\n\r\n"); //split header from body
-  var response = /(HTTP\/1\.[1|0]) (\d{3}) (.+)/;
+    function http_parser(http_request, type) {
+      var split_request = http_request.split("\r\n\r\n"); //split header from body
 
-  var request = split_request[0].match(/^(GET|POST|PUT|DELETE|UPDATE|OPTIONS) (.+) (.+)[\r\n]?/),
-      headers = split_request[0].replace(/^(GET|POST|PUT|DELETE|UPDATE|OPTIONS) (.+) (.+)[\r\n]?/, ""),
-      header_regx = /(.+): (.+)/g,
-      body_params_regx = /([^&]+)=([^&]+)/g,
-      url_and_params = request[2].split("?"),
-      extension = url_and_params[0].match(/\.(\w+)$/i),
-      req = {verb: request[1],
-           path: request[2],
-           protocol: request[3],
-           url: url_and_params[0],
-           extension: (extension ? extension[1].toLowerCase() : undefined),
-           encodeParams: url_and_params[1],
-           decodeParams:{},
-           headers: {},
-           body: {},
-           bodyDecoded: {},
-           cookie: ""};
+      var request = split_request[0].match(/^(GET|POST|PUT|DELETE|UPDATE|OPTIONS) (.+) (.+)[\r\n]?/),
+          headers = split_request[0].replace(/^(GET|POST|PUT|DELETE|UPDATE|OPTIONS) (.+) (.+)[\r\n]?/, ""),
+          header_regx = /(.+): (.+)/g,
+          body_params_regx = /([^&]+)=([^&]+)/g,
+          url_and_params = request[2].split("?"),
+          extension = url_and_params[0].match(/\.(\w+)$/i),
+          req = {verb: request[1],
+               path: request[2],
+               protocol: request[3],
+               url: url_and_params[0],
+               extension: (extension ? extension[1].toLowerCase() : undefined),
+               encodeParams: url_and_params[1],
+               decodeParams:{},
+               headers: {},
+               body: {},
+               bodyDecoded: {},
+               cookie: ""};
 
-  // Setting Headers
-  // Delete "-" in header's names
-  while(header = header_regx.exec(headers)) { req.headers[header[1]] = header[2];}
+      // Setting Headers
+      // Delete "-" in header's names
+      while(header = header_regx.exec(headers)) { req.headers[header[1]] = header[2];}
 
-  // Get the Query String
-  var params = req.encodeParams
-  if(req.encodeParams) { while(param = body_params_regx.exec(params)) {req.decodeParams[param[1]] = wApp.getType(decodeURIComponent(param[2]).replace(/\+/g, " "));} }
+      // Get the Query String
+      var params = req.encodeParams
+      if(req.encodeParams) { while(param = body_params_regx.exec(params)) {req.decodeParams[param[1]] = wApp.getType(decodeURIComponent(param[2]).replace(/\+/g, " "));} }
 
-  // Body params if any
-  if(split_request.length == 2) { 
-    params = req.body = split_request[1].trim().replace(/\+/g, " ");
-    while(body = body_params_regx.exec(params)) { req.bodyDecoded[body[1]] = wApp.getType(decodeURIComponent(body[2]));} 
-  }
-  return(req);
-}
+      // Body params if any
+      if(split_request.length == 2) { 
+        params = req.body = split_request[1].trim().replace(/\+/g, " ");
+        while(body = body_params_regx.exec(params)) { req.bodyDecoded[body[1]] = wApp.getType(decodeURIComponent(body[2]));} 
+      }
+      return(req);
+    }
 
 // xxxxxxxxxxxxxxxxxxxxxxxxx Request Object xxxxxxxxxxxxxx
     function Request(http_request) {
@@ -308,6 +307,7 @@ function http_parser(http_request, type) {
               }
 
           } else if(request.verb === "OPTIONS") {
+                // CORS request
                 var CRLF = "\r\n";
                 var headers = [ "Access-Control-Allow-Origin: *",
                                 "Access-Control-Allow-Headers: DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type",
@@ -315,7 +315,7 @@ function http_parser(http_request, type) {
 
                 return("HTTP/1.0 204 OK" + CRLF + headers.join(CRLF) + CRLF + CRLF);
           } else {
-              // HTML and JSON request
+              // HTML or JSON request
               var actions = wApp.router.pointRequest(request.verb + " " + request.url.split(".")[0]);
               if(actions != "NOT FOUND") {
                 var controllerAction = actions.split("#");
