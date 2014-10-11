@@ -168,16 +168,18 @@ function http_parser(http_request, type) {
 
 // xxxxxxxxxxxxxxxxxxxxxxxxx Request Object xxxxxxxxxxxxxx
     function Request(http_request) {
-        var req = http_parser(http_request);
-        wApp.router.params = req.decodeParams;
-
-        // body json
-        if ( req.headers["Content-Type"] === "application/json" && req.body){ wApp.router.params.body = JSON.parse(req.body); }
-        else{ wApp.router.params.body = req.bodyDecoded; }
-
-        // Set Cookie
-        if(req.headers.Cookie !== undefined) { wApp.session.getFromHeader(req.headers.Cookie); }
-        return(req);
+      try
+          var req = http_parser(http_request);
+          wApp.router.params = req.decodeParams;
+  
+          // body json
+          if ( req.headers["Content-Type"] === "application/json" && req.body){ wApp.router.params.body = JSON.parse(req.body); }
+          else{ wApp.router.params.body = req.bodyDecoded; }
+  
+          // Set Cookie
+          if(req.headers.Cookie !== undefined) { wApp.session.getFromHeader(req.headers.Cookie); }
+          return(req);
+        catch(e){return(e);} // Capturamos el error de parseo del JSON
     }
 
     function getType(str){
@@ -278,6 +280,9 @@ function http_parser(http_request, type) {
 
   function Response(request) {
     try {
+          // Comprobamos que si se ha producido un error en el parseo de la petición
+          if (request.name == "SyntaxError") throw request;
+          
           if (request.extension === "js" || request.extension === "css" ) {
               // Assetss request handling
               var html = getHTML(request.url).html;
@@ -326,8 +331,14 @@ function http_parser(http_request, type) {
           }
     } catch(e) {
       // Sending Internal Message Error with info
-      var errorDesc = logError(e);
-      return(renderErrorResponse(e, errorDesc));
+      switch(e.name) {
+		    case "SyntaxError":				
+			    return renderErrorResponse(e, "Unable to parse JSON string");
+			    break;
+		    default:				
+          var errorDesc = logError(e);
+          return(renderErrorResponse(e, errorDesc));
+		  }
     }
   }
 
