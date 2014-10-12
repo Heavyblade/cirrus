@@ -168,7 +168,7 @@ function http_parser(http_request, type) {
 
 // xxxxxxxxxxxxxxxxxxxxxxxxx Request Object xxxxxxxxxxxxxx
     function Request(http_request) {
-      try
+      try{
           var req = http_parser(http_request);
           wApp.router.params = req.decodeParams;
   
@@ -179,7 +179,7 @@ function http_parser(http_request, type) {
           // Set Cookie
           if(req.headers.Cookie !== undefined) { wApp.session.getFromHeader(req.headers.Cookie); }
           return(req);
-        catch(e){return(e);} // Capturamos el error de parseo del JSON
+        }catch(e){return(e);} // Capturamos el error de parseo del JSON
     }
 
     function getType(str){
