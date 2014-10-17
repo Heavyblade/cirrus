@@ -44,8 +44,6 @@ function renderProcess(processId, params) {
 
   var result = process.varToString("RESULT");
 
-  // Hola Mundo
-  var hola = "hola"
   // If the var result is empty try to render the output
   if (result === "") {
       var pResult = process.result();
