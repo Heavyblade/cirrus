@@ -14,7 +14,7 @@ new compressor.minify({
 new compressor.minify({
     type: 'gcc',
     language: 'ECMASCRIPT5',
-    fileIn: ['libs/v7_render.js', 'libs/handlebars_vm.js', 'libs/cirrus.js'],
+    fileIn: ['libs/v7_render.js', 'libs/cirrus.js'],
     fileOut: 'builds/cirrus.min.js',
     callback: function(err){
                 var fs = require('fs');
