@@ -197,7 +197,7 @@ c,d,e,f,g){e={helpers:e,partials:f,data:g};if(a===l)throw new b.Exception("The p
 //xxxxxxxxxxxxxxxxxxx Main Application Definition xxxxxxxxx
   wApp = {
     // System Router
-    version: "1.2.1",
+    version: "1.3",
     router: {
         params: {body: {}},
         parse_params: function(array) {

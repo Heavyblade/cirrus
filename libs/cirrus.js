@@ -1,7 +1,7 @@
 //xxxxxxxxxxxxxxxxxxx Main Application Definition xxxxxxxxx
   wApp = {
     // System Router
-    version: "1.2.1",
+    version: "1.3",
     router: {
         params: {body: {}},
         parse_params: function(array) {
