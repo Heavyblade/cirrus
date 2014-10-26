@@ -89,8 +89,8 @@
           if (Object.keys(this.session).length !== 0) {
             expires = this.session.expires;
             path = this.session.path;
-            this.session.expires = null;
-            this.session.path = null;
+            delete(this.session.expires);
+            delete(this.session.path);
             encoded = Base64.encode(encodeURIComponent(JSON.stringify(this.session)));
           }
 
@@ -371,7 +371,7 @@
   var Engine = {
     json: function(jsonresp, wapp) {
           var verb = jsonresp.responseCode !== undefined && jsonresp.responseCode.code !== undefined && jsonresp.responseCode.message !== undefined ? ("HTTP/1.0 " + jsonresp.responseCode.code + " " + jsonresp.responseCode.message) : "HTTP/1.0 200 OK";
-          jsonresp.responseCode = null;
+          delete(jsonresp.responseCode);
           var jsonp = wapp.router.params.callback;
           jsonresp = jsonp ? (jsonp + "(" + JSON.stringify(jsonresp) + ")") : JSON.stringify(jsonresp);
           jsonresp = unescape(encodeURIComponent(jsonresp)); // Encode to UFT-8

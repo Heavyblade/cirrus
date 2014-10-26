@@ -285,8 +285,8 @@ c,d,e,f,g){e={helpers:e,partials:f,data:g};if(a===l)throw new b.Exception("The p
           if (Object.keys(this.session).length !== 0) {
             expires = this.session.expires;
             path = this.session.path;
-            delete this.session.expires;
-            delete this.session.path;
+            delete(this.session.expires);
+            delete(this.session.path);
             encoded = Base64.encode(encodeURIComponent(JSON.stringify(this.session)));
           }
 
