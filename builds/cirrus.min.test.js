@@ -378,7 +378,7 @@ c,d,e,f,g){e={helpers:e,partials:f,data:g};if(a===l)throw new b.Exception("The p
     }
 
     function getType(str){
-      isInteger = /^\d*$/i;
+      isInteger = /^[1-9]\d*$/i;
       isCommaFloat = /^\d*,\d*$/i;
       isPointFloat = /^\d*\.\d*$/i;
       isCurrencyComma = /^\d{1,3}(\.\d{3})*(\,\d*)?$/g;

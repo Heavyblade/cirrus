@@ -182,7 +182,7 @@
     }
 
     function getType(str){
-      isInteger = /^\d*$/i;
+      isInteger = /^[1-9]\d*$/i;
       isCommaFloat = /^\d*,\d*$/i;
       isPointFloat = /^\d*\.\d*$/i;
       isCurrencyComma = /^\d{1,3}(\.\d{3})*(\,\d*)?$/g;
