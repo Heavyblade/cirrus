@@ -477,7 +477,7 @@ c,d,e,f,g){e={helpers:e,partials:f,data:g};if(a===l)throw new b.Exception("The p
     try {
           // Comprobamos que si se ha producido un error en el parseo de la petición
           if (request.name == "SyntaxError") throw request;
-          
+
           if (request.extension === "js" || request.extension === "css" ) {
               // Assetss request handling
               var html = getHTML(request.url).html;
@@ -553,7 +553,7 @@ c,d,e,f,g){e={helpers:e,partials:f,data:g};if(a===l)throw new b.Exception("The p
 
       type = type || "json";
       if (jsonresp.redirect_to) {type = "redirect";} //Check for redirection
-      var format = type.match(/(html|json|redirect)/i) || ["json"];
+      var format = type.match(/(html|xml|json|redirect)/i) || ["json"];
       var rendered = Engine[format[0]](jsonresp, wapp, controller, action);
 
       var headers = [("Date: " + (new Date()).toGMTString()),("Content-Length: " + (rendered.body ? rendered.body.length: "0"))];
@@ -598,6 +598,18 @@ c,d,e,f,g){e={helpers:e,partials:f,data:g};if(a===l)throw new b.Exception("The p
           var verb = "HTTP/1.0 302 Found";
           var headers = ["location: " + jsonresp.redirect_to];
           return({verb: verb, body: "", headers: headers});
+    },
+    xml: function(jsonresp) {
+          var verb    = "HTTP/1.0 200 OK",
+              headers = ["Content-Type: text/xml; charset=UTF-8"],
+              xmlResp;
+
+          if (jsonresp.xml) {
+            xmlResp = unescape(encodeURIComponent(jsonresp.xml));  
+          } else {
+            xmlResp = "<?xml version='1.0' encoding='UTF-8'?><error version='1.0'>The JSON object should have xml key</error>";
+          };
+          return({verb: verb, body: xmlResp, headers: headers});
     }
   };
 
