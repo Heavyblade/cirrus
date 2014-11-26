@@ -434,8 +434,7 @@
         var template = record.fieldToString("COMPILED");
     } else {
         // TODO check what happens when two calls to load
-        records.load("NAME", ["NOTVIEW"]);
-        var html =  records.readAt(0).fieldToString("BODY");
+        var html = "<div><h1>There is not view for this action</h1></div>"
         var template = "";
         var type = "html";
     }

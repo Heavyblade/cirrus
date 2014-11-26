@@ -432,32 +432,32 @@ c,d,e,f,g){e={helpers:e,partials:f,data:g};if(a===l)throw new b.Exception("The p
       }
 
       if(str.match(isDateTimeUTC)) {
-        var months = {"Jan": 1, "Feb": 2, "Mar": 3, "Apr": 4, "May": 5, "Jun": 6, "Jul": 7, "Aug": 8, "Sep": 9, "Oct": 10, "Nov": 11, "Dec": 12};
-        var params = str.split(",")[1].split(" ");
-        var day = parseInt(params[0]);
-        var month = months[params[1]];
-        var year = parseInt(params[2]);
-        var hour = parseInt(parmas[3].split(":")[0]);
-        var minute = parseInt(parmas[3].split(":")[1]);
-        var second = parseInt(parmas[3].split(":")[2]);
+          var months = {"Jan": 1, "Feb": 2, "Mar": 3, "Apr": 4, "May": 5, "Jun": 6, "Jul": 7, "Aug": 8, "Sep": 9, "Oct": 10, "Nov": 11, "Dec": 12};
+          var params = str.split(",")[1].split(" ");
+          var day = parseInt(params[0]);
+          var month = months[params[1]];
+          var year = parseInt(params[2]);
+          var hour = parseInt(parmas[3].split(":")[0]);
+          var minute = parseInt(parmas[3].split(":")[1]);
+          var second = parseInt(parmas[3].split(":")[2]);
 
-        var date = new Date(year, month, day, hour, minute, second);
-        return(date);
+          var date = new Date(year, month, day, hour, minute, second);
+          return(date);
       }
 
       if(str.match(isDateTimeISO)) {
-        var params = str.split("T");
-        var params1 = params[0];
-        var params2 = params[1].split(".")[0];
-        var year = parseInt(params1.split("-")[0]);
-        var month = parseInt(params1.split("-")[1]) - 1 ;
-        var day = parseInt(params1.split("-")[2]);
-        var hour = parseInt(params2.split(":")[0]);
-        var minute = parseInt(params2.split(":")[1]);
-        var second = parseInt(params2.split(":")[2]);
+          var params = str.split("T");
+          var params1 = params[0];
+          var params2 = params[1].split(".")[0];
+          var year = parseInt(params1.split("-")[0]);
+          var month = parseInt(params1.split("-")[1]) - 1 ;
+          var day = parseInt(params1.split("-")[2]);
+          var hour = parseInt(params2.split(":")[0]);
+          var minute = parseInt(params2.split(":")[1]);
+          var second = parseInt(params2.split(":")[2]);
 
-        var date = new Date(year, month, day, hour, minute, second);
-        return(date);
+          var date = new Date(year, month, day, hour, minute, second);
+          return(date);
       }
 
       return(str);
@@ -528,13 +528,13 @@ c,d,e,f,g){e={helpers:e,partials:f,data:g};if(a===l)throw new b.Exception("The p
     } catch(e) {
       // Sending Internal Message Error with info
       switch(e.name) {
-		    case "SyntaxError":				
-			    return renderErrorResponse(e, "Unable to parse JSON string");
-			    break;
-		    default:				
-          var errorDesc = logError(e);
-          return(renderErrorResponse(e, errorDesc));
-		  }
+        case "SyntaxError":
+              return renderErrorResponse(e, "Unable to parse JSON string");
+              break;
+        default:
+              var errorDesc = logError(e);
+              return(renderErrorResponse(e, errorDesc));
+      }
     }
   }
 
@@ -549,7 +549,7 @@ c,d,e,f,g){e={helpers:e,partials:f,data:g};if(a===l)throw new b.Exception("The p
 
   function renderResponse(controller, action, wapp, type) {
       var CRLF = "\r\n";
-      var jsonresp = wapp[(controller)][action](wapp.router.params);
+      var jsonresp = wapp[controller][action](wapp.router.params);
 
       type = type || "json";
       if (jsonresp.redirect_to) {type = "redirect";} //Check for redirection
@@ -575,7 +575,8 @@ c,d,e,f,g){e={helpers:e,partials:f,data:g};if(a===l)throw new b.Exception("The p
           return({verb: verb, body: jsonresp, headers: headers});
     },
     html: function(jsonresp, wapp, controller, action) {
-          var verb = "HTTP/1.0 200 OK";
+          var verb = "HTTP/1.0 200 OK",
+              full_body;
           if (typeof(jsonresp) == "object") {
               var layout = jsonresp.layout || "application";
               var file = "/views/" + controller.replace("Controller", "") + "/" + action;
@@ -591,9 +592,9 @@ c,d,e,f,g){e={helpers:e,partials:f,data:g};if(a===l)throw new b.Exception("The p
               if (pureHTML.type == "template") {eval("template = " + pureHTML.template);}
               var body = pureHTML.type == "template" ?  Handlebars.VM.template(template)(jsonresp) : pureHTML.html;   
 
-              var full_body = layout_body.replace("#yield", body)
+              full_body = layout_body.replace("#yield", body)
           } else {
-              var full_body = jsonresp;
+              full_body = jsonresp;
           }
           var headers = ["Content-Type: text/html; charset=utf-8"];
           return({verb: verb, body: unescape(encodeURIComponent(full_body)), headers: headers});
@@ -629,8 +630,7 @@ c,d,e,f,g){e={helpers:e,partials:f,data:g};if(a===l)throw new b.Exception("The p
         var template = record.fieldToString("COMPILED");
     } else {
         // TODO check what happens when two calls to load
-        records.load("NAME", ["NOTVIEW"]);
-        var html =  records.readAt(0).fieldToString("BODY");
+        var html = "<div><h1>There is not view for this action</h1></div>"
         var template = "";
         var type = "html";
     }
