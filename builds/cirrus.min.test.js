@@ -576,28 +576,27 @@ c,d,e,f,g){e={helpers:e,partials:f,data:g};if(a===l)throw new b.Exception("The p
     },
     html: function(jsonresp, wapp, controller, action) {
           var verb = "HTTP/1.0 200 OK";
-          var layout = jsonresp.layout || "application";
-          var file = "/views/" + controller.replace("Controller", "") + "/" + action;
+          if (typeof(jsonresp) == "object") {
+              var layout = jsonresp.layout || "application";
+              var file = "/views/" + controller.replace("Controller", "") + "/" + action;
 
-          // Render without a layout
-          if(jsonresp.layout !== false) {
-              var layoutHTML = getHTML("/layouts/" + layout);
-              if (layoutHTML.type == "template") {eval("layout_temp = " + layoutHTML.template);}
-              var layout_body = layoutHTML.type == "template" ?  Handlebars.VM.template(layout_temp)(jsonresp) : layoutHTML.html;   
-          } else { var layout_body = "#yield";}
+              // Render without a layout
+              if(jsonresp.layout !== false) {
+                  var layoutHTML = getHTML("/layouts/" + layout);
+                  if (layoutHTML.type == "template") {eval("layout_temp = " + layoutHTML.template);}
+                  var layout_body = layoutHTML.type == "template" ?  Handlebars.VM.template(layout_temp)(jsonresp) : layoutHTML.html;   
+              } else { var layout_body = "#yield";}
 
-          var pureHTML = getHTML(file);
-          if (pureHTML.type == "template") {eval("template = " + pureHTML.template);}
-          var body = pureHTML.type == "template" ?  Handlebars.VM.template(template)(jsonresp) : pureHTML.html;   
+              var pureHTML = getHTML(file);
+              if (pureHTML.type == "template") {eval("template = " + pureHTML.template);}
+              var body = pureHTML.type == "template" ?  Handlebars.VM.template(template)(jsonresp) : pureHTML.html;   
 
-          var full_body = layout_body.replace("#yield", body) 
+              var full_body = layout_body.replace("#yield", body)
+          } else {
+              var full_body = jsonresp;
+          }
           var headers = ["Content-Type: text/html; charset=utf-8"];
           return({verb: verb, body: unescape(encodeURIComponent(full_body)), headers: headers});
-    },
-    redirect: function(jsonresp) {
-          var verb = "HTTP/1.0 302 Found";
-          var headers = ["location: " + jsonresp.redirect_to];
-          return({verb: verb, body: "", headers: headers});
     },
     xml: function(jsonresp) {
           var verb    = "HTTP/1.0 200 OK",
@@ -607,9 +606,14 @@ c,d,e,f,g){e={helpers:e,partials:f,data:g};if(a===l)throw new b.Exception("The p
           if (jsonresp.xml) {
             xmlResp = unescape(encodeURIComponent(jsonresp.xml));  
           } else {
-            xmlResp = "<?xml version='1.0' encoding='UTF-8'?><error version='1.0'>The JSON object should have xml key</error>";
+            xmlResp = "<?xml version='1.0' encoding='UTF-8'?><error version='1.0'>The JSON object should have an xml key</error>";
           };
           return({verb: verb, body: xmlResp, headers: headers});
+    },
+    redirect: function(jsonresp) {
+          var verb = "HTTP/1.0 302 Found";
+          var headers = ["location: " + jsonresp.redirect_to];
+          return({verb: verb, body: "", headers: headers});
     }
   };
 
