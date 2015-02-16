@@ -366,11 +366,15 @@ c,d,e,f,g){e={helpers:e,partials:f,data:g};if(a===l)throw new b.Exception("The p
       try{
           var req = http_parser(http_request);
           wApp.router.params = req.decodeParams;
-  
+
           // body json
           if ( req.headers["Content-Type"] === "application/json" && req.body){ wApp.router.params.body = JSON.parse(req.body); }
+
+          // body XML
+          else if ( req.headers["Content-Type"] === "text/xml" && req.body){ wApp.router.params.body = req.body; }
+
           else{ wApp.router.params.body = req.bodyDecoded; }
-  
+
           // Set Cookie
           if(req.headers.Cookie !== undefined) { wApp.session.getFromHeader(req.headers.Cookie); }
           return(req);
@@ -402,7 +406,7 @@ c,d,e,f,g){e={helpers:e,partials:f,data:g};if(a===l)throw new b.Exception("The p
       // ISO string => "2014-05-26T02:25:07.850Z"
       isDateTimeISO = /^\d{2,4}-\d{1,2}-\d{1,2}T\d{1,2}:\d{1,2}:\d{1,2}\.\d*Z$/;
 
-      if (str.match(isInteger)) {return(parseInt(str));}
+      if (str.match(isInteger)) {return(parseInt(str, 10));}
       if (str.match(isCurrencyComma)) {return(parseFloat(str.replace(/\./g, "").replace(",", ".")));}
       if (str.match(isCurrencyPoint)) {return(parseFloat(str.replace(/\,/g, "")));}
       if (str.match(isCommaFloat)) {return(parseFloat(str.replace(",", ".")));}
