@@ -56,18 +56,24 @@ describe("Request Object", function(){
   });
 
   it("should be able to handle HTTP post with body on JSON format", function () {
-    var httpGet = "POST /some/path/toresource?foo=bar&hello=world HTTP/1.0\r\nContent-Type: application/json\r\nConnection: Keep-Alive\r\n\r\n{\"name\":\"john\",\"lastname\":\"doe\"}\r\n" 
+    var httpGet = "POST /some/path/toresource?foo=bar&hello=world HTTP/1.0\r\nContent-Type: application/json\r\nConnection: Keep-Alive\r\n\r\n{\"name\":\"john\",\"lastname\":\"doe\"}\r\n";
     var request = wApp.request(httpGet);
     expect(request.body).toEqual("{\"name\":\"john\",\"lastname\":\"doe\"}");
     expect(wApp.router.params.body.name).toEqual("john");
   });
 
-  it("should be able to handel blank spaces in body params", function(){
-    var httpGet = "POST /some/path/toresource?foo=bar&hello=world HTTP/1.0\r\nContent-Type: application/x-www-form-urlencoded\r\nConnection: Keep-Alive\r\n\r\nname=john&lastname=doe+perez\r\n" 
+  it("should be able to handle blank spaces in body params", function(){
+    var httpGet = "POST /some/path/toresource?foo=bar&hello=world HTTP/1.0\r\nContent-Type: application/x-www-form-urlencoded\r\nConnection: Keep-Alive\r\n\r\nname=john&lastname=doe+perez\r\n";
     var request = wApp.request(httpGet);
     expect(request.body).toEqual("name=john&lastname=doe perez");
     expect(wApp.router.params.body.name).toEqual("john");
     expect(wApp.router.params.body.lastname).toEqual("doe perez");
+  });
+
+  it("should be able to handle xml body post", function() {
+    var httpGet = "POST /some/path/toresource?foo=bar&hello=world HTTP/1.0\r\nContent-Type: text/xml\r\nConnection: Keep-Alive\r\n\r\n<xml><node1>text</node2></xml>\r\n";
+    var request = wApp.request(httpGet);
+    expect(wApp.router.params.body).toEqual("<xml><node1>text</node2></xml>");
   });
 
 });
