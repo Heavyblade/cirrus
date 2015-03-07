@@ -94,12 +94,29 @@ describe("Response Object", function(){
       expect(response.split("\r\n")[0]).toEqual("HTTP/1.0 700 CUSTOM MESSAGE");
       expect(response.split("\r\n\r\n")[1]).toEqual(JSON.stringify({hello: "world"}));
   });
-  
+
   it("should render with standar OK message when no present", function(){
-    var httpGet = "GET /users/44/show?x=foo HTTP/1.1";
-    var request = wApp.request(httpGet);
-    var response = wApp.response(request);
-    expect(response.split("\r\n")[0]).toEqual("HTTP/1.0 200 OK");
+      var httpGet = "GET /users/44/show?x=foo HTTP/1.1";
+      var request = wApp.request(httpGet);
+      var response = wApp.response(request);
+      expect(response.split("\r\n")[0]).toEqual("HTTP/1.0 200 OK");
+  });
+
+  it("should be able to perform a before filter", function() {
+      wApp.usersController.before = function(params) {
+           params.current_user = 20;
+           params.current_user_email = "johndoe@gmail.com";
+           return(params);
+      };
+
+      wApp.usersController.show = function(params) {
+           return(params);
+      };
+
+      var httpGet = "GET /users/44/show?x=foo HTTP/1.1";
+      var request = wApp.request(httpGet);
+      var response = wApp.response(request);
+      expect(JSON.parse(response.split("\r\n\r\n")[1]).current_user).toEqual(20);
   });
 
 });
@@ -141,7 +158,7 @@ describe("Handling standar html request", function(){
   });
 
   it("should render te proper template for the controller#action", function(){
-    var httpGet = "GET /users/44/show HTTP/1.1\r\nAccept: text/html"
+    var httpGet = "GET /users/44/show HTTP/1.1\r\nAccept: text/html";
     var request = wApp.request(httpGet);
     var response = wApp.response(request);
     expect(response.split("\r\n\r\n")[1]).toEqual("<html><head></head><body><div><h1>Hello World</h1></div></body></html>");
@@ -151,24 +168,38 @@ describe("Handling standar html request", function(){
     wApp.usersController = {
       show: function(params){return({message: "Hello World", layout: "dashboard"})} 
     }
-    var httpGet = "GET /users/44/show HTTP/1.1\r\nAccept: text/html"
+    var httpGet = "GET /users/44/show HTTP/1.1\r\nAccept: text/html";
     var request = wApp.request(httpGet);
     var response = wApp.response(request);
     expect(response.split("\r\n\r\n")[1]).toEqual("<html><head><title>dashboard</title></head><body><div><h1>Hello World</h1></div></body></html>");
+  });
+
+  it("should be able to render the layout by passing the session info", function() {
+    wApp.usersController = {
+      show: function(params){ 
+            wApp.session.set("hola", "mundo");
+            return({message: "Hello World", layout: "template"});
+      } 
+    }
+    var httpGet = "GET /users/44/show HTTP/1.1\r\nAccept: text/html";
+    var request = wApp.request(httpGet);
+    var response = wApp.response(request);
+    expect(response.split("\r\n\r\n")[1]).toEqual("<html><head><title>template</title></head><body>mundo<div><h1>Hello World</h1></div></body></html>");
+  
   });
 
   it("should render the proper template with out a layout ", function(){
     wApp.usersController = {
       show: function(params){return({message: "Hello World", layout: false})} 
     }
-    var httpGet = "GET /users/44/show HTTP/1.1\r\nAccept: text/html"
+    var httpGet = "GET /users/44/show HTTP/1.1\r\nAccept: text/html";
     var request = wApp.request(httpGet);
     var response = wApp.response(request);
     expect(response.split("\r\n\r\n")[1]).toEqual("<div><h1>Hello World</h1></div>");
   });
 
   it("should render te proper template for the controller#action", function(){
-    var httpGet = "GET /users/44/template HTTP/1.1\r\nAccept: text/html"
+    var httpGet = "GET /users/44/template HTTP/1.1\r\nAccept: text/html";
     var request = wApp.request(httpGet);
     var response = wApp.response(request);
     expect(response.split("\r\n\r\n")[1]).toEqual("<html><head></head><body><div><h1>Hello Template</h1></div></body></html>");

@@ -298,31 +298,21 @@
           } else if(request.extension === "pro") {
               // process maping handling
               var process = wApp.router.pointRequest(request.verb + " " + request.url);
-
-              if(process != "NOT FOUND") {
-                return(renderProcess(process, wApp.router.params));
-              } else {
-                return("HTTP/1.0 404 NOT FOUND");
-              }
+              return( process != "NOT FOUND" ? renderProcess(process, wApp.router.params) : "HTTP/1.0 404 NOT FOUND" );
 
           } else if(request.extension === "bus") {
               // query maping handling
               var query = wApp.router.pointRequest(request.verb + " " + request.url);
-
-              if(query != "NOT FOUND") {
-                return(renderQuery(query, wApp.router.params));
-              } else {
-                return("HTTP/1.0 404 NOT FOUND");
-              }
+              return(query != "NOT FOUND" ? renderQuery(query, wApp.router.params) : "HTTP/1.0 404 NOT FOUND");
 
           } else if(request.verb === "OPTIONS") {
-                // CORS request
-                var CRLF = "\r\n";
-                var headers = [ "Access-Control-Allow-Origin: *",
-                                "Access-Control-Allow-Headers: DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type",
-                                "Access-Control-Allow-Methods: GET, POST, PUT, HEAD, OPTIONS, DELETE"];
+              // CORS request
+              var CRLF = "\r\n";
+              var headers = [ "Access-Control-Allow-Origin: *",
+                              "Access-Control-Allow-Headers: DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type",
+                              "Access-Control-Allow-Methods: GET, POST, PUT, HEAD, OPTIONS, DELETE"];
 
-                return("HTTP/1.0 204 OK" + CRLF + headers.join(CRLF) + CRLF + CRLF);
+              return("HTTP/1.0 204 OK" + CRLF + headers.join(CRLF) + CRLF + CRLF);
           } else {
               // HTML or JSON request
               var actions = wApp.router.pointRequest(request.verb + " " + request.url.split(".")[0]);
@@ -357,6 +347,11 @@
 
   function renderResponse(controller, action, wapp, type) {
       var CRLF = "\r\n";
+
+      if ( wapp[controller].before !== undefined ) {
+          wapp.router.params = wapp[controller].before(wapp.router.params);
+      }
+
       var jsonresp = wapp[controller][action](wapp.router.params);
 
       type = type || "json";
@@ -389,18 +384,21 @@
               var layout = jsonresp.layout || "application";
               var file = "/views/" + controller.replace("Controller", "") + "/" + action;
 
-              // Render without a layout
               if(jsonresp.layout !== false) {
                   var layoutHTML = getHTML("/layouts/" + layout);
-                  if (layoutHTML.type == "template") {eval("layout_temp = " + layoutHTML.template);}
-                  var layout_body = layoutHTML.type == "template" ?  Handlebars.VM.template(layout_temp)(jsonresp) : layoutHTML.html;   
-              } else { var layout_body = "#yield";}
+                  if (layoutHTML.type === "template") {eval("layout_temp = " + layoutHTML.template);}
+                  jsonresp.session = wApp.session.session;
+                  var layout_body = layoutHTML.type === "template" ?  Handlebars.VM.template(layout_temp)(jsonresp) : layoutHTML.html;
+              } else { 
+                  // Render without a layout
+                  var layout_body = "#yield";
+              }
 
               var pureHTML = getHTML(file);
-              if (pureHTML.type == "template") {eval("template = " + pureHTML.template);}
-              var body = pureHTML.type == "template" ?  Handlebars.VM.template(template)(jsonresp) : pureHTML.html;   
+              if (pureHTML.type === "template") {eval("template = " + pureHTML.template);}
+              var body = pureHTML.type === "template" ?  Handlebars.VM.template(template)(jsonresp) : pureHTML.html;
 
-              full_body = layout_body.replace("#yield", body)
+              full_body = layout_body.replace("#yield", body);
           } else {
               full_body = jsonresp;
           }
