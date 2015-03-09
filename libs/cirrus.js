@@ -16,7 +16,7 @@
         addRoutes: function (rutes, type) {
             if ( Object.keys(this.routes).length === 0 || type == "rest") {
                 var keys = Object.keys(rutes),
-                    i = keys.length;
+                    i    = keys.length;
                 while(i--) {
                     if(keys[i].split(" ")[0] == "resource") {
                       var rest = this.createREST(keys[i].split(" ")[1]);
@@ -34,20 +34,20 @@
         },
         createREST: function(resource) {
           var rest = {};
-          rest["GET /" + resource] = resource + "Controller#index";
-          rest["GET /" + resource + "/new"] = resource + "Controller#new";
-          rest["POST /" + resource] = resource + "Controller#create";
-          rest["GET /" + resource + "/:id"] = resource + "Controller#show";
+          rest["GET /" + resource]               = resource + "Controller#index";
+          rest["GET /" + resource + "/new"]      = resource + "Controller#new";
+          rest["POST /" + resource]              = resource + "Controller#create";
+          rest["GET /" + resource + "/:id"]      = resource + "Controller#show";
           rest["GET /" + resource + "/:id/edit"] = resource + "Controller#edit";
-          rest["PUT /" + resource + "/:id"] = resource + "Controller#update";
-          rest["DELETE /" + resource + "/:id"] = resource + "Controller#delete";
+          rest["PUT /" + resource + "/:id"]      = resource + "Controller#update";
+          rest["DELETE /" + resource + "/:id"]   = resource + "Controller#delete";
           return(rest);
         },
         pointRequest: function (url) {
             var z = this.rexRoutes.length;
             for(i=0; i < z; i++) {
-              var rutaRegExp = this.rexRoutes[i];
-              var match = url.match(rutaRegExp);
+              var rutaRegExp  = this.rexRoutes[i],
+                   match      = url.match(rutaRegExp);
 
               if (match){
                 var x = this.routes[i]; // Keys from the match object
@@ -131,23 +131,23 @@
     function http_parser(http_request, type) {
       var split_request = http_request.split("\r\n\r\n"); //split header from body
 
-      var request = split_request[0].match(/^(GET|POST|PUT|DELETE|UPDATE|OPTIONS) (.+) (.+)[\r\n]?/),
-          headers = split_request[0].replace(/^(GET|POST|PUT|DELETE|UPDATE|OPTIONS) (.+) (.+)[\r\n]?/, ""),
-          header_regx = /(.+): (.+)/g,
+      var request          = split_request[0].match(/^(GET|POST|PUT|DELETE|UPDATE|OPTIONS) (.+) (.+)[\r\n]?/),
+          headers          = split_request[0].replace(/^(GET|POST|PUT|DELETE|UPDATE|OPTIONS) (.+) (.+)[\r\n]?/, ""),
+          header_regx      = /(.+): (.+)/g,
           body_params_regx = /([^&]+)=([^&]+)/g,
-          url_and_params = request[2].split("?"),
-          extension = url_and_params[0].match(/\.(\w+)$/i),
-          req = {verb: request[1],
-               path: request[2],
-               protocol: request[3],
-               url: url_and_params[0],
-               extension: (extension ? extension[1].toLowerCase() : undefined),
+          url_and_params   = request[2].split("?"),
+          extension        = url_and_params[0].match(/\.(\w+)$/i),
+          req = {verb:       request[1],
+               path:         request[2],
+               protocol:     request[3],
+               url:          url_and_params[0],
+               extension:    (extension ? extension[1].toLowerCase() : undefined),
                encodeParams: url_and_params[1],
-               decodeParams:{},
-               headers: {},
-               body: {},
-               bodyDecoded: {},
-               cookie: ""};
+               decodeParams: {},
+               headers:      {},
+               body:         {},
+               bodyDecoded:  {},
+               cookie:       ""};
 
       // Setting Headers
       // Delete "-" in header's names
@@ -186,29 +186,29 @@
     }
 
     function getType(str){
-      isInteger = /^[1-9]\d*$/i;
-      isCommaFloat = /^\d*,\d*$/i;
-      isPointFloat = /^\d*\.\d*$/i;
-      isCurrencyComma = /^\d{1,3}(\.\d{3})*(\,\d*)?$/g;
-      isCurrencyPoint = /^\d{1,3}(\,\d{3})*(\.\d*)?$/g;
-      isBool = /(true|false)/;
+      var isInteger       = /^[1-9]\d*$/i,
+          isCommaFloat    = /^\d*,\d*$/i,
+          isPointFloat    = /^\d*\.\d*$/i,
+          isCurrencyComma = /^\d{1,3}(\.\d{3})*(\,\d*)?$/g,
+          isCurrencyPoint = /^\d{1,3}(\,\d{3})*(\.\d*)?$/g,
+          isBool = /(true|false)/,
 
-      // 10/12/2012, 1/5/12
-      isPureDatedmy = /^\d{1,2}[\/-]\d{1,2}[\/-]\d{2,4}$/;
+          // 10/12/2012, 1/5/12
+          isPureDatedmy = /^\d{1,2}[\/-]\d{1,2}[\/-]\d{2,4}$/,
 
-      // 2012/12/10, 2012-12-10 
-      isPureDateymd = /^\d{4}[\/-]\d{1,2}[\/-]\d{1,2}$/;
+          // 2012/12/10, 2012-12-10 
+          isPureDateymd = /^\d{4}[\/-]\d{1,2}[\/-]\d{1,2}$/,
 
-      /* DateTime */
+          /* DateTime */
 
-      // Local String => "5/25/2014 9:05:34 PM"
-      isDateTime = /^\d{1,2}[\/-]\d{1,2}[\/-]\d{2,4} \d{1,2}:\d{1,2}:\d{1,2} \w\w$/;
+          // Local String => "5/25/2014 9:05:34 PM"
+          isDateTime = /^\d{1,2}[\/-]\d{1,2}[\/-]\d{2,4} \d{1,2}:\d{1,2}:\d{1,2} \w\w$/,
 
-      // UTC => "Mon, 26 May 2014 02:05:34 GMT"
-      isDateTimeUTC = /^\w*, \d* \w* \d{2,4} \d{1,2}:\d{1,2}:\d{1,2} \w\w\w$/;
+          // UTC => "Mon, 26 May 2014 02:05:34 GMT"
+          isDateTimeUTC = /^\w*, \d* \w* \d{2,4} \d{1,2}:\d{1,2}:\d{1,2} \w\w\w$/,
 
-      // ISO string => "2014-05-26T02:25:07.850Z"
-      isDateTimeISO = /^\d{2,4}-\d{1,2}-\d{1,2}T\d{1,2}:\d{1,2}:\d{1,2}\.\d*Z$/;
+          // ISO string => "2014-05-26T02:25:07.850Z"
+          isDateTimeISO = /^\d{2,4}-\d{1,2}-\d{1,2}T\d{1,2}:\d{1,2}:\d{1,2}\.\d*Z$/;
 
       if (str.match(isInteger)) {return(parseInt(str, 10));}
       if (str.match(isCurrencyComma)) {return(parseFloat(str.replace(/\./g, "").replace(",", ".")));}
@@ -328,7 +328,6 @@
       switch(e.name) {
         case "SyntaxError":
               return renderErrorResponse(e, "Unable to parse JSON string");
-              break;
         default:
               var errorDesc = logError(e);
               return(renderErrorResponse(e, errorDesc));
@@ -337,9 +336,10 @@
   }
 
   function renderResponseAssets(string, type) {
-      var CRLF = "\r\n";
-      var verb = "HTTP/1.0 200 OK";
-      var headers = [("Date: " + (new Date()).toGMTString()),("Content-Length: " + string.length)];
+      var CRLF    = "\r\n",
+          verb    = "HTTP/1.0 200 OK",
+          headers = [("Date: " + (new Date()).toGMTString()),("Content-Length: " + string.length)];
+
       headers = headers.concat(BasicHeaders).concat([("Content-Type: " + type)]);
       var fullResponse = verb + CRLF + headers.join(CRLF) + CRLF + CRLF + string;
       return(fullResponse);
@@ -411,10 +411,10 @@
               xmlResp;
 
           if (jsonresp.xml) {
-            xmlResp = unescape(encodeURIComponent(jsonresp.xml));  
+              xmlResp = unescape(encodeURIComponent(jsonresp.xml));  
           } else {
-            xmlResp = "<?xml version='1.0' encoding='UTF-8'?><error version='1.0'>The JSON object should have an xml key</error>";
-          };
+              xmlResp = "<?xml version='1.0' encoding='UTF-8'?><error version='1.0'>The JSON object should have an xml key</error>";
+          }
           return({verb: verb, body: xmlResp, headers: headers});
     },
     redirect: function(jsonresp) {
@@ -436,9 +436,9 @@
         var template = record.fieldToString("COMPILED");
     } else {
         // TODO check what happens when two calls to load
-        var html = "<div><h1>There is not view for this action</h1></div>"
+        var html     = "<div><h1>There is not view for this action</h1></div>";
         var template = "";
-        var type = "html";
+        var type     = "html";
     }
     return({html: html, type: type, template: template});  
   }

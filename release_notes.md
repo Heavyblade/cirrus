@@ -3,6 +3,6 @@
 * Añadida capacidad de renderizar XML.
 * Añadida capacidad de renderiza xml directo del controller.
 * Añadido fix para renderiza directo error cuando no hay vista.
-* Capacidad de recibir requests xml
+* Capacidad de recibir requests POST con xml en el body
 * Layouts reciben informacion sobre la session
 * inclusion de before filters en controllers
