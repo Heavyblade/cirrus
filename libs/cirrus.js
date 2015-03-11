@@ -352,7 +352,8 @@
           wapp.router.params = wapp[controller].before(wapp.router.params);
       }
 
-      var jsonresp = wapp[controller][action](wapp.router.params);
+      var redirect_before = wapp.router.params.redirect_to != undefined,
+          jsonresp = redirect_before ? wapp.router.params : wapp[controller][action](wapp.router.params);
 
       type = type || "json";
       if (jsonresp.redirect_to) {type = "redirect";} //Check for redirection
