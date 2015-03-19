@@ -352,7 +352,7 @@
           wapp.router.params = wapp[controller].before(wapp.router.params);
       }
 
-      var redirect_before = wapp.router.params.redirect_to != undefined,
+      var redirect_before = wapp.router.params.redirect_to !== undefined,
           jsonresp = redirect_before ? wapp.router.params : wapp[controller][action](wapp.router.params);
 
       type = type || "json";
@@ -384,6 +384,8 @@
           if (typeof(jsonresp) == "object") {
               var layout = jsonresp.layout || "application";
               var file = "/views/" + controller.replace("Controller", "") + "/" + action;
+              jsonresp.controller = controller;
+              jsonresp.action = action;
 
               if(jsonresp.layout !== false) {
                   var layoutHTML = getHTML("/layouts/" + layout);
