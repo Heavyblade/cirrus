@@ -198,6 +198,7 @@ c,d,e,f,g){e={helpers:e,partials:f,data:g};if(a===l)throw new b.Exception("The p
   wApp = {
     // System Router
     version: "1.3",
+    config: { filesTable: "cirrusdat/FILES_MEM" },
     router: {
         params: {body: {}},
         parse_params: function(array) {
@@ -625,7 +626,7 @@ c,d,e,f,g){e={helpers:e,partials:f,data:g};if(a===l)throw new b.Exception("The p
 
   function getHTML(path) {
     var records = new VRegisterList(theRoot);
-    records.setTable("cirrusdat/FILES_MEM");
+    records.setTable(wApp.config.filesTable);
     records.load("PATH", [path]);
 
     if (records.listSize() > 0) {
