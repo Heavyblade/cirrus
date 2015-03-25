@@ -44,7 +44,7 @@ describe("Flash session handling", function() {
   });
 
   it("should be able to handle flash keys from cookie and reset it", function() {
-      var cookie = wApp.session.cookie_name + "=" + Base64.encode(JSON.stringify({flash: {notice: 'Hola Mundo'}})) + ";";
+      var cookie = wApp.session.cookie_name + "=" + Base64.encode(encodeURIComponent(JSON.stringify({flash: {notice: "Hola Mundo"}}))) + ";";
       var httpGet = "GET /users/20/show HTTP/1.0\r\nContent-Type: application/json\r\nConnection: Keep-Alive\r\nCookie: " + cookie + "\r\n\r\n";
       var request = wApp.request(httpGet);
       expect(wApp.session.getFlash("notice")).toEqual("Hola Mundo");
