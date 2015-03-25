@@ -77,14 +77,13 @@
       flashGet: {},
       flashSet: {},
       setFlash: function(key, value) {
+        this.changed = true;
         this.flashSet[key] = value;
         return(true);
       },
-
       getFlash: function(key) {
         return(this.flashGet[key]);
       },
-
       changed: false,
       set: function (key, value) {
         this.changed = true;
