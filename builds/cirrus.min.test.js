@@ -270,6 +270,17 @@ c,d,e,f,g){e={helpers:e,partials:f,data:g};if(a===l)throw new b.Exception("The p
       cookie: {session: {}},
       session: {},
       flash: {},
+      flashGet: {},
+      flashSet: {},
+      setFlash: function(key, value) {
+        this.flashSet[key] = value;
+        return(true);
+      },
+
+      getFlash: function(key) {
+        return(this.flashGet[key]);
+      },
+
       changed: false,
       set: function (key, value) {
         this.changed = true;
@@ -284,8 +295,9 @@ c,d,e,f,g){e={helpers:e,partials:f,data:g};if(a===l)throw new b.Exception("The p
           var path;
           var encoded = "";
 
-          if (Object.keys(this.flash).length > 0) {
-              this.session.flash = this.flash;
+          if (Object.keys(this.flashSet).length > 0) {
+              this.session.flash = this.flashSet;
+              this.flashSet = {};
           }
 
           if (Object.keys(this.session).length !== 0) {
