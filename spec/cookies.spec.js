@@ -35,7 +35,7 @@ describe("Flash session handling", function() {
 
       wApp.router.addRoutes({"GET /users/:userid/show": "usersController#show"});
       var httpGet = "GET /users/20/show HTTP/1.0\r\nContent-Type: application/json\r\nConnection: Keep-Alive\r\n\r\n";
-      wApp.session.flash["notice"] = "Hola Mundo";
+      wApp.session.setFlash("notice", "Hola Mundo");
       var request = wApp.request(httpGet);
       var cookie = wApp.session.setInHeader();
 
@@ -43,6 +43,12 @@ describe("Flash session handling", function() {
       expect(cookie).toEqual("set-Cookie: " + expected_cookie);
   });
 
+  it("should be able to handle flash keys from cookie and reset it", function() {
+      var cookie = wApp.session.cookie_name + "=" + Base64.encode(JSON.stringify({flash: {notice: 'Hola Mundo'}})) + ";";
+      var httpGet = "GET /users/20/show HTTP/1.0\r\nContent-Type: application/json\r\nConnection: Keep-Alive\r\nCookie: " + cookie + "\r\n\r\n";
+      var request = wApp.request(httpGet);
+      expect(wApp.session.getFlash("notice")).toEqual("Hola Mundo");
+  });
 
 });
 
