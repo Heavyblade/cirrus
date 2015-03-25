@@ -73,6 +73,7 @@
       cookie_name: "v7App",
       cookie: {session: {}},
       session: {},
+      flash: {},
       changed: false,
       set: function (key, value) {
         this.changed = true;
@@ -85,7 +86,11 @@
       setInHeader: function() {
           var expires;
           var path;
-          var enconded = "";
+          var encoded = "";
+
+          if (Object.keys(this.flash).length > 0) {
+              this.session.flash = this.flash;
+          }
 
           if (Object.keys(this.session).length !== 0) {
             expires = this.session.expires;

@@ -269,6 +269,7 @@ c,d,e,f,g){e={helpers:e,partials:f,data:g};if(a===l)throw new b.Exception("The p
       cookie_name: "v7App",
       cookie: {session: {}},
       session: {},
+      flash: {},
       changed: false,
       set: function (key, value) {
         this.changed = true;
@@ -281,7 +282,11 @@ c,d,e,f,g){e={helpers:e,partials:f,data:g};if(a===l)throw new b.Exception("The p
       setInHeader: function() {
           var expires;
           var path;
-          var enconded = "";
+          var encoded = "";
+
+          if (Object.keys(this.flash).length > 0) {
+              this.session.flash = this.flash;
+          }
 
           if (Object.keys(this.session).length !== 0) {
             expires = this.session.expires;
