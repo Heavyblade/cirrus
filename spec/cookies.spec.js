@@ -7,16 +7,54 @@ function Base64DecodeEnumerator(a){this._input=a;this._index=-1;this._buffer=[]}
 Base64DecodeEnumerator.prototype={current:64,moveNext:function(){if(0<this._buffer.length)return this.current=this._buffer.shift(),!0;if(this._index>=this._input.length-1)return this.current=64,!1;var a=Base64.codex.indexOf(this._input.charAt(++this._index)),c=Base64.codex.indexOf(this._input.charAt(++this._index)),b=Base64.codex.indexOf(this._input.charAt(++this._index)),d=Base64.codex.indexOf(this._input.charAt(++this._index)),e=(b&3)<<6|d;this.current=a<<2|c>>4;64!=b&&this._buffer.push((c&15)<<
 4|b>>2);64!=d&&this._buffer.push(e);return!0}};
 
-var CRLF = "\r\n"
+var CRLF = "\r\n";
+
+describe("Flash session handling", function() {
+  beforeEach(function(){
+      theRoot.vars          = {};
+      wApp.router.routes    = [];
+      wApp.router.rexRoutes = [];
+      wApp.session.cookie   = {};
+      wApp.session.session  = {};
+      wApp.session.changed  = false;
+
+      // Setting up an Application to test
+      wApp.usersController = {
+        show: function(params){return({hello: "world", id: wApp.router.params.userid, x: wApp.router.params.x})}
+      };
+
+      wApp.router.addRoutes({"GET /users/:userid/show": "usersController#show"});
+  });
+
+
+  it("it should set the flash in the session", function() {
+      // Setting up an Application to test
+      wApp.usersController = {
+        show: function(params){ wApp.session.flash["notice"] = "Hola Mundo" ; return({}); }
+      };
+
+      wApp.router.addRoutes({"GET /users/:userid/show": "usersController#show"});
+      var httpGet = "GET /users/20/show HTTP/1.0\r\nContent-Type: application/json\r\nConnection: Keep-Alive\r\n\r\n";
+      wApp.session.flash["notice"] = "Hola Mundo";
+      var request = wApp.request(httpGet);
+      var cookie = wApp.session.setInHeader();
+
+      var expected_cookie = wApp.session.cookie_name + "=" + Base64.encode(encodeURIComponent(JSON.stringify({flash: {notice: "Hola Mundo"}})));
+      expect(cookie).toEqual("set-Cookie: " + expected_cookie);
+  });
+
+
+});
 
 describe("Cookies handling", function(){
   beforeEach(function(){
+      theRoot.vars = {};
       wApp.router.routes = [];
       wApp.router.rexRoutes = [];
-      theRoot.vars = {};
-      wApp.session.cookie = {}
-      wApp.session.session = {}
-      wApp.session.changed = false
+      wApp.session.cookie = {};
+      wApp.session.session = {};
+      wApp.session.flash = {};
+      wApp.session.changed = false;
 
       // Setting up an Application to test
       wApp.usersController = {
@@ -56,7 +94,12 @@ describe("Cookies handling", function(){
       var request = wApp.request(httpGet);
 
       expect(Object.keys(wApp.session.cookie).length).toEqual(0);
-  })
+  });
+
+  it("should be able to add the flash objects to the session", function() {
+      
+    
+  });
 
   describe("Setting the cookie header", function(){
     beforeEach(function(){
