@@ -126,9 +126,15 @@
         var matched_cookie = cookie.match(regexp);
         if(matched_cookie) {
           myCookie[cookie_name] = matched_cookie[1];
-          myCookie.session = JSON.parse(decodeURIComponent(Base64.decode(myCookie[cookie_name])));
+          a = Base64.decode(myCookie[cookie_name]);
+          b = decodeURIComponent(a);
+          myCookie.session = JSON.parse(b.replace(/\0/g, ''));
           this.cookie = myCookie; // raw cookie + session
           this.session = myCookie.session;
+          if (this.session.flash !== undefined) {
+              this.flashGet = this.session.flash;
+              delete(this.session.flash);
+          }
         }
         return(myCookie[cookie_name]);
       }
