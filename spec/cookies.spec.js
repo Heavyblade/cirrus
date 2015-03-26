@@ -43,11 +43,21 @@ describe("Flash session handling", function() {
       expect(cookie).toEqual("set-Cookie: " + expected_cookie);
   });
 
-  it("should be able to handle flash keys from cookie and reset it", function() {
+  it("should be able to handle flash keys from cookie and make it avaliable", function() {
       var cookie = wApp.session.cookie_name + "=" + Base64.encode(encodeURIComponent(JSON.stringify({flash: {notice: "Hola Mundo"}}))) + ";";
       var httpGet = "GET /users/20/show HTTP/1.0\r\nContent-Type: application/json\r\nConnection: Keep-Alive\r\nCookie: " + cookie + "\r\n\r\n";
       var request = wApp.request(httpGet);
       expect(wApp.session.getFlash("notice")).toEqual("Hola Mundo");
+  });
+
+  it("should should no pass the flash data again to the client", function() {
+      var cookie = wApp.session.cookie_name + "=" + Base64.encode(encodeURIComponent(JSON.stringify({flash: {notice: "Hola Mundo"}}))) + ";";
+      var httpGet = "GET /users/20/show HTTP/1.0\r\nContent-Type: application/json\r\nConnection: Keep-Alive\r\nCookie: " + cookie + "\r\n\r\n";
+      var request = wApp.request(httpGet);
+
+      var cookie = wApp.session.setInHeader();
+      expect(wApp.session.changed).toBe(false);
+      expect(cookie).toEqual("set-Cookie: " + wApp.session.cookie_name + "=");
   });
 
 });
