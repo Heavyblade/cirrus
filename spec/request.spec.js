@@ -38,6 +38,12 @@ describe("Request Object", function(){
     expect(wApp.router.params.sentence).toEqual("one sentence space")
   });
 
+  it("should be able to handle change HTTP method via _method param", function() {
+    var httpGet = "GET /some/path/toresource?_method=put HTTP/1.0\r\n\r\n"
+    var request = wApp.request(httpGet);
+    expect(request.verb).toEqual("PUT");
+  });
+
   it("should be able to handle a HTTP request with headers", function(){
     var httpGet = "GET /some/path/toresource?foo=bar&hello=world HTTP/1.0\r\nContent-Type: application/x-www-form-urlencoded\r\nConnection: Keep-Alive\r\n\r\n"
     var request = wApp.request(httpGet);

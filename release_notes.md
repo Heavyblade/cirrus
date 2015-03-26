@@ -7,3 +7,4 @@
 * Layouts reciben informacion sobre la session
 * inclusion de before filters en controllers
 * Inclusión de funcionalidad Flash
+* Soporte para métodos PUT y DELETE en forms HTML via parametro _method

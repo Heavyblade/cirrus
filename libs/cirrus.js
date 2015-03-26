@@ -185,6 +185,12 @@
         params = req.body = split_request[1].trim().replace(/\+/g, " ");
         while(body = body_params_regx.exec(params)) { req.bodyDecoded[body[1]] = wApp.getType(decodeURIComponent(body[2]));} 
       }
+
+      // check for method en params
+      if (req.decodeParams._method != undefined && req.decodeParams._method.match(/^(PUT|DELETE)$/i)) {
+          req.verb = req.decodeParams._method.toUpperCase();
+      }
+
       return(req);
     }
 
