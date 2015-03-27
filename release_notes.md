@@ -8,3 +8,8 @@
 * inclusion de before filters en controllers
 * Inclusión de funcionalidad Flash
 * Soporte para métodos PUT y DELETE en forms HTML via parametro _method
+* Fix de bug que impide jsons de más de 1 nivel en session
+
+## Pendiente
+
+* Enriquecer filtros
