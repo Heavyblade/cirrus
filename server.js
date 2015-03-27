@@ -22,6 +22,6 @@ net.createServer(function(sock) {
         sock.write(wApp.response(request));
 
     });
-}).listen(PORT, HOST);
+}).listen(process.env.PORT || 5000);
 
 console.log('Server listening on ' + HOST +':'+ PORT);
