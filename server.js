@@ -1,4 +1,4 @@
-var wApp = require("./builds/cirrus.min.test.js")
+var wApp = require("./builds/cirrus.min.test.js");
 var net = require('net');
 
 // xxxxxxxxxxxxxxxxxxxxxxx Application xxxxxxxxxxxxxxxxxxxxxxx
@@ -8,19 +8,20 @@ wApp.usersController = {
 }
 wApp.router.addRoutes({"GET /users/:userid/show": "usersController#show"});
 
-
 // xxxxxxxxxxxxxxxxxxxxxxx setup a tcp server xxxxxxxxxxxxxxxxxxxxxxx
 // Nota: solo funciona en local o conexiones muy rápidas
 
-var server = net.createServer(function (socket) {
-  var request = "";
-  socket.addListener("connect", function () {
-    socket.on('data', function(data) {
-        console.log(data.toString());
-        socket.end("HTTP/1.0 200 OK\r\n\r\n<h1>Hola</h1>");
-    });
-  });
+var HOST = '127.0.0.1';
+var PORT = 5000;
 
-});
-console.log("Server UP and running on localhost:5000");
-server.listen((process.env.PORT || 5001), '127.0.0.1');
+net.createServer(function(sock) {
+    sock.on('data', function(data) {
+
+        wApp.router.params = {};
+        request = wApp.request(data.toString());
+        sock.write(wApp.response(request));
+
+    });
+}).listen(PORT, HOST);
+
+console.log('Server listening on ' + HOST +':'+ PORT);
