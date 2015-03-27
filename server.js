@@ -11,7 +11,7 @@ wApp.router.addRoutes({"GET /users/:userid/show": "usersController#show"});
 // xxxxxxxxxxxxxxxxxxxxxxx setup a tcp server xxxxxxxxxxxxxxxxxxxxxxx
 // Nota: solo funciona en local o conexiones muy rápidas
 
-var HOST = '127.0.0.1';
+var HOST = '0.0.0.0';
 var PORT = 5000;
 
 net.createServer(function(sock) {
