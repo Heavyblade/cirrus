@@ -415,11 +415,12 @@
               var file = "/views/" + controller.replace("Controller", "") + "/" + action;
               jsonresp.controller = controller;
               jsonresp.action = action;
+              jsonresp.session = wApp.session.session;
+              jsonresp.flash = wApp.session.flashGet;
 
               if(jsonresp.layout !== false) {
                   var layoutHTML = getHTML("/layouts/" + layout);
                   if (layoutHTML.type === "template") {eval("layout_temp = " + layoutHTML.template);}
-                  jsonresp.session = wApp.session.session;
                   var layout_body = layoutHTML.type === "template" ?  Handlebars.VM.template(layout_temp)(jsonresp) : layoutHTML.html;
               } else { 
                   // Render without a layout
