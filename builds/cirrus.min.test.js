@@ -380,14 +380,15 @@ c,d,e,f,g){e={helpers:e,partials:f,data:g};if(a===l)throw new b.Exception("The p
       // Body params if any
       if(split_request.length == 2) { 
         params = req.body = split_request[1].trim().replace(/\+/g, " ");
-        while(body = body_params_regx.exec(params)) { req.bodyDecoded[body[1]] = wApp.getType(decodeURIComponent(body[2]));} 
+        while(body = body_params_regx.exec(params)) {
+          // check for method en params
+          if (body[1] == "_method" && decodeURIComponent(body[2]).match(/^(PUT|DELETE)$/i)) {
+              req.verb = decodeURIComponent(body[2]).toUpperCase();
+          } else {
+              req.bodyDecoded[body[1]] = wApp.getType(decodeURIComponent(body[2]));
+          }
+        } 
       }
-
-      // check for method en params
-      if (req.decodeParams._method != undefined && req.decodeParams._method.match(/^(PUT|DELETE)$/i)) {
-          req.verb = req.decodeParams._method.toUpperCase();
-      }
-
       return(req);
     }
 
