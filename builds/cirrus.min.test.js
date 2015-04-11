@@ -329,6 +329,7 @@ c,d,e,f,g){e={helpers:e,partials:f,data:g};if(a===l)throw new b.Exception("The p
           if (this.session.flash !== undefined) {
               this.flashGet = this.session.flash;
               delete(this.session.flash);
+              this.changed = true;
           }
         }
         return(myCookie[cookie_name]);

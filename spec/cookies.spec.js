@@ -56,7 +56,7 @@ describe("Flash session handling", function() {
       var request = wApp.request(httpGet);
 
       var cookie = wApp.session.setInHeader();
-      expect(wApp.session.changed).toBe(false);
+      expect(wApp.session.changed).toBe(true);
       expect(cookie).toEqual("set-Cookie: " + wApp.session.cookie_name + "=");
   });
 
