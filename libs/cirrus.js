@@ -319,10 +319,10 @@
 
           if (request.extension === "js" || request.extension === "css" ) {
               // Assetss request handling
-              var html = getHTML(request.url).html;
-              if(html !== "") {
+              var record = getHTML(request.url);
+              if(record.html !== "") {
                 var asset_type = (request.url.substr(request.url.length - 3) === "css") ? "text/css" : "application/javascript";
-                return(renderResponseAssets(html, asset_type));
+                return(renderResponseAssets(record, asset_type));
               } else {
                 return("HTTP/1.0 404 NOT FOUND");
               }  
@@ -366,10 +366,15 @@
     }
   }
 
-  function renderResponseAssets(string, type) {
+  function renderResponseAssets(record, type) {
       var CRLF    = "\r\n",
           verb    = "HTTP/1.0 200 OK",
+          string  = record.html,
           headers = [("Date: " + (new Date()).toGMTString()),("Content-Length: " + string.length)];
+      if (record.useCache) {
+          headers.push("Cache-Control: max-age=" + record.maxAge);
+          headers.push("ETag: " + record.eTag);
+      }
 
       headers = headers.concat(BasicHeaders).concat([("Content-Type: " + type)]);
       var fullResponse = verb + CRLF + headers.join(CRLF) + CRLF + CRLF + string;
@@ -465,17 +470,24 @@
     records.load("PATH", [path]);
 
     if (records.listSize() > 0) {
-        var record = records.readAt(0); 
-        var html =  record.fieldToString("BODY");
-        var type =  record.fieldToString("TIPO") == "1" ? "html" : "template";
-        var template = record.fieldToString("COMPILED");
+        var record = records.readAt(0),
+            html =  record.fieldToString("BODY"),
+            type =  record.fieldToString("TIPO") == "1" ? "html" : "template",
+            template = record.fieldToString("COMPILED"),
+            useCache = record.fieldToBool("CACHE"),
+            maxAge   = record.fieldToInteger("MAX_AGE"),
+            eTag     = record.fieldToString("E_TAG");
+
     } else {
         // TODO check what happens when two calls to load
-        var html     = "<div><h1>There is not view for this action</h1></div>";
-        var template = "";
-        var type     = "html";
+        var html     = "<div><h1>There is not view for this action</h1></div>",
+            template = "",
+            type     = "html",
+            useCache = false,
+            maxAge   = 0,
+            eTag     = "";
     }
-    return({html: html, type: type, template: template});  
+    return({html: html, type: type, template: template, useCache: useCache, maxAge: maxAge, eTag: eTag});
   }
 
   function logError(e) { return(e.lineNumber === undefined) ? e.message : (e.message + ". In Line Number: " + e.lineNumber); }

@@ -11,6 +11,10 @@ function VRegister(theRoot) {
     return(this.fields[field]);
   };
 
+  this.fieldToInteger = function(field) {
+    return(this.fields[field]);
+  };
+
   this.setField = function(field, value) {
     this.fields[field] = value;
   };
