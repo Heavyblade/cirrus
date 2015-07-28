@@ -8,8 +8,8 @@ wApp.usersController = {
 };
 
 wApp.router.addRoutes({"GET /users/:userid/show": "usersController#show"});
+// xxxxxxxxxxxxxxxx setup a TCP server xxxxxxxxxxxxxxxxxxxxxxx
 
-// xxxxxxxxxxxxxxxx setup a tcp server xxxxxxxxxxxxxxxxxxxxxxx
 var HOST = '0.0.0.0';
 var PORT = 5000;
 
