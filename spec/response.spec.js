@@ -67,7 +67,7 @@ describe("Response Object", function(){
 
   it("should properly handle the internal errors and send the response", function(){
 
-    wApp.usersController = { show: function(params){  
+    wApp.usersController = { show: function(params){
       throw({message: "i is not defined"});
     } }
     var httpGet = "GET /users/44/show?x=foo HTTP/1.1"
@@ -124,13 +124,13 @@ describe("Response Object", function(){
 describe("Handling HTML templates", function() {
 
   it("should be able to take the HTML from a path", function(){
-    var path = "users/show"
+    var path = "/users/show"
     var result = wApp.getHTML(path);
     expect(result.type).toEqual("html");
   });
 
   it("should be able to render a template from path", function(){
-    var path = "users/showtemp"
+    var path = "/users/showtemp"
     var result = wApp.getHTML(path);
     expect(result.type).toEqual("template");
   });
@@ -150,7 +150,7 @@ describe("Handling standar html request", function(){
         template: function(params){return({message: "Hello Template"})},
         edit: function(params){return({message: "Hello Template"})}
       }
-      wApp.router.addRoutes({"GET /users/:userid/show": "usersController#show", 
+      wApp.router.addRoutes({"GET /users/:userid/show": "usersController#show",
                              "GET /users/:userid/template": "usersController#template",
                              "GET /users/:userid/edit": "usersController#edit",
                             });
@@ -166,7 +166,7 @@ describe("Handling standar html request", function(){
 
   it("shoul render the proper template in a custom layout", function(){
     wApp.usersController = {
-      show: function(params){return({message: "Hello World", layout: "dashboard"})} 
+      show: function(params){return({message: "Hello World", layout: "dashboard"})}
     }
     var httpGet = "GET /users/44/show HTTP/1.1\r\nAccept: text/html";
     var request = wApp.request(httpGet);
@@ -176,21 +176,21 @@ describe("Handling standar html request", function(){
 
   it("should be able to render the layout by passing the session info", function() {
     wApp.usersController = {
-      show: function(params){ 
+      show: function(params){
             wApp.session.set("hola", "mundo");
             return({message: "Hello World", layout: "template"});
-      } 
+      }
     }
     var httpGet = "GET /users/44/show HTTP/1.1\r\nAccept: text/html";
     var request = wApp.request(httpGet);
     var response = wApp.response(request);
     expect(response.split("\r\n\r\n")[1]).toEqual("<html><head><title>template</title></head><body>mundo<div><h1>Hello World</h1></div></body></html>");
-  
+
   });
 
   it("should render the proper template with out a layout ", function(){
     wApp.usersController = {
-      show: function(params){return({message: "Hello World", layout: false})} 
+      show: function(params){return({message: "Hello World", layout: false})}
     }
     var httpGet = "GET /users/44/show HTTP/1.1\r\nAccept: text/html";
     var request = wApp.request(httpGet);
@@ -209,7 +209,7 @@ describe("Handling standar html request", function(){
     var httpGet = "GET /users/44/edit HTTP/1.1\r\nAccept: text/html"
     var request = wApp.request(httpGet);
     var response = wApp.response(request);
-    var resp = "<html><head></head><body><div><h1>There is not view for this action</h1></div></body></html>" 
+    var resp = "<html><head></head><body><div><h1>There is not view for this action</h1></div></body></html>"
     expect(response.split("\r\n\r\n")[1]).toEqual(resp);
   });
 
@@ -232,7 +232,7 @@ describe("Handling standar html request", function(){
 
   it("should redirect to another page when needed", function(){
     wApp.usersController = {
-      show: function(params){return({message: "Hello World", redirect_to: "/another_page"})} 
+      show: function(params){return({message: "Hello World", redirect_to: "/another_page"})}
     }
     var httpGet = "GET /users/44/show HTTP/1.1\r\nAccept: text/html"
     var request = wApp.request(httpGet);

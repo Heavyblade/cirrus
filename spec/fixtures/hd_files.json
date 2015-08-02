@@ -1,0 +1,12 @@
+{
+"D://cirrus/users/show.html": {"content": "<div><h1>Hello World</h1></div>", "tipo": "1"},
+"D://cirrus/users/showtemp.html.hbs": {"content": "<div><h1>{{ message }}</h1></div>", "tipo": "2"},
+"D://cirrus/views/users/show.html": {"content": "<div><h1>Hello World</h1></div>", "tipo": "1"},
+"D://cirrus/views/users/template.html.hbs": {"content": "<div><h1>{{ message }}</h1></div>", "tipo": "2"},
+"D://cirrus/layouts/application.html": {"content": "<html><head></head><body>#yield</body></html>", "tipo": "2"},
+"D://cirrus/layouts/dashboard.html": {"content": "<html><head><title>dashboard</title></head><body>#yield</body></html>", "tipo": "2"},
+"D://cirrus/layouts/template.html.hbs": {"content": "<html><head><title>template</title></head><body>{{session.hola}}#yield</body></html>", "tipo": "2"},
+"D://cirrus/public/css/application.css": {"content": "body {backgrund-color}", "tipo": "1"},
+"D://cirrus/public/css/application.js": {"content": "function(){alert('hello world')}", "tipo": "1"},
+"NOTVIEW": {"content": "<div><h1>There is not view for this action</h1></div>", "tipo": "1"}
+}
