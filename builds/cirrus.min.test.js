@@ -12,9 +12,10 @@ function importClass(klass) {
     return(klass);
 };
 
-var VRegister = require('./../libs/fake_vjavascript/vregister');
+var VRegister     = require('./../libs/fake_vjavascript/vregister');
 var VRegisterList = require('./../libs/fake_vjavascript/vregister_list');
-var VProcess = require('./../libs/fake_vjavascript/vprocess');
+var VProcess      = require('./../libs/fake_vjavascript/vprocess');
+var VTextFile     = require('./../libs/fake_vjavascript/vtextfile');
 
 // xxxxxxxxxxxxxxxxxxx Base 64 Encode Libreary xxxxxxxxxxxx
 function StringBuffer(){this.buffer=[]}StringBuffer.prototype.append=function(a){this.buffer.push(a);return this};StringBuffer.prototype.toString=function(){return this.buffer.join("")};
@@ -198,7 +199,7 @@ c,d,e,f,g){e={helpers:e,partials:f,data:g};if(a===l)throw new b.Exception("The p
   wApp = {
     // System Router
     version: "1.3",
-    config: { filesTable: "cirrusdat/FILES_MEM" },
+    config: { filesTable: "cirrusdat/FILES_MEM", root_path: "D://cirrus" },
     router: {
         params: {body: {}},
         parse_params: function(array) {
@@ -222,7 +223,7 @@ c,d,e,f,g){e={helpers:e,partials:f,data:g};if(a===l)throw new b.Exception("The p
                       var basic = {},
                           key = keys[i];
                       basic[key] = rutes[key];
-                      var myRegex = new RegExp(key.replace(/:\w+/g, "([\\w@\.]+)") + "\/?$", "i"); 
+                      var myRegex = new RegExp(key.replace(/:\w+/g, "([\\w@\.]+)") + "\/?$", "i");
                       this.rexRoutes.unshift(myRegex);
                       this.routes.unshift(basic);
                     }
@@ -313,7 +314,7 @@ c,d,e,f,g){e={helpers:e,partials:f,data:g};if(a===l)throw new b.Exception("The p
 
           return("set-Cookie: " + cookie);
       },
-      getFromHeader: function(cookie) { 
+      getFromHeader: function(cookie) {
         var regexp = new RegExp(wApp.session.cookie_name + "=(\\w+)\\;?");
         var myCookie = {},
             cookie_name = wApp.cookie_name;
@@ -378,7 +379,7 @@ c,d,e,f,g){e={helpers:e,partials:f,data:g};if(a===l)throw new b.Exception("The p
       if(req.encodeParams) { while(param = body_params_regx.exec(params)) {req.decodeParams[param[1]] = wApp.getType(decodeURIComponent(param[2]).replace(/\+/g, " "));} }
 
       // Body params if any
-      if(split_request.length == 2) { 
+      if(split_request.length == 2) {
         params = req.body = split_request[1].trim().replace(/\+/g, " ");
         while(body = body_params_regx.exec(params)) {
           // check for method en params
@@ -387,7 +388,7 @@ c,d,e,f,g){e={helpers:e,partials:f,data:g};if(a===l)throw new b.Exception("The p
           } else {
               req.bodyDecoded[body[1]] = wApp.getType(decodeURIComponent(body[2]));
           }
-        } 
+        }
       }
       return(req);
     }
@@ -423,7 +424,7 @@ c,d,e,f,g){e={helpers:e,partials:f,data:g};if(a===l)throw new b.Exception("The p
           // 10/12/2012, 1/5/12
           isPureDatedmy = /^\d{1,2}[\/-]\d{1,2}[\/-]\d{2,4}$/,
 
-          // 2012/12/10, 2012-12-10 
+          // 2012/12/10, 2012-12-10
           isPureDateymd = /^\d{4}[\/-]\d{1,2}[\/-]\d{1,2}$/,
 
           /* DateTime */
@@ -499,12 +500,12 @@ c,d,e,f,g){e={helpers:e,partials:f,data:g};if(a===l)throw new b.Exception("The p
     }
 // xxxxxxxxxxxxxxxxxxxx Response Object xxxxxxxxxxxxxxxxxxx
   var BasicHeaders =[ "Server: Velneo v7",
-                      "transfer-coding: chunked",	
+                      "transfer-coding: chunked",
                       "Keep-Alive: timeout=5, max=94",
                       "Connection: Keep-Alive"
                     ];
 
-  function isAsset(request) { 
+  function isAsset(request) {
     return(request.extension === "js" || request.extension === "css");
   }
 
@@ -521,7 +522,7 @@ c,d,e,f,g){e={helpers:e,partials:f,data:g};if(a===l)throw new b.Exception("The p
                 return(renderResponseAssets(record, asset_type));
               } else {
                 return("HTTP/1.0 404 NOT FOUND");
-              }  
+              }
           } else if(request.extension === "pro") {
               // process maping handling
               var process = wApp.router.pointRequest(request.verb + " " + request.url);
@@ -623,15 +624,16 @@ c,d,e,f,g){e={helpers:e,partials:f,data:g};if(a===l)throw new b.Exception("The p
 
               if(jsonresp.layout !== false) {
                   var layoutHTML = getHTML("/layouts/" + layout);
-                  if (layoutHTML.type === "template") {eval("layout_temp = " + layoutHTML.template);}
+                  if (layoutHTML.type === "template") {eval("layout_temp = " + layoutHTML.html)}
+
                   var layout_body = layoutHTML.type === "template" ?  Handlebars.VM.template(layout_temp)(jsonresp) : layoutHTML.html;
-              } else { 
+              } else {
                   // Render without a layout
                   var layout_body = "#yield";
               }
 
               var pureHTML = getHTML(file);
-              if (pureHTML.type === "template") {eval("template = " + pureHTML.template);}
+              if (pureHTML.type === "template") {eval("template = " + pureHTML.html);}
               var body = pureHTML.type === "template" ?  Handlebars.VM.template(template)(jsonresp) : pureHTML.html;
 
               full_body = layout_body.replace("#yield", body);
@@ -647,7 +649,7 @@ c,d,e,f,g){e={helpers:e,partials:f,data:g};if(a===l)throw new b.Exception("The p
               xmlResp;
 
           if (jsonresp.xml) {
-              xmlResp = unescape(encodeURIComponent(jsonresp.xml));  
+              xmlResp = unescape(encodeURIComponent(jsonresp.xml));
           } else {
               xmlResp = "<?xml version='1.0' encoding='UTF-8'?><error version='1.0'>The JSON object should have an xml key</error>";
           }
@@ -661,29 +663,18 @@ c,d,e,f,g){e={helpers:e,partials:f,data:g};if(a===l)throw new b.Exception("The p
   };
 
   function getHTML(path) {
-    var records = new VRegisterList(theRoot);
-    records.setTable(wApp.config.filesTable);
-    records.load("PATH", [path]);
+      importClass( "VTextFile" );
+      importClass( "VFile" );
 
-    if (records.listSize() > 0) {
-        var record = records.readAt(0),
-            html =  record.fieldToString("BODY"),
-            type =  record.fieldToString("TIPO") == "1" ? "html" : "template",
-            template = record.fieldToString("COMPILED"),
-            useCache = record.fieldToBool("CACHE"),
-            maxAge   = record.fieldToInteger("MAX_AGE"),
-            eTag     = record.fieldToString("E_TAG");
+      var extension = path.split(".")[path.split(".").length-1].match(/(css|js|html)/i) == null ? ".html" : "";
+      path += extension;
 
-    } else {
-        // TODO check what happens when two calls to load
-        var html     = "<div><h1>There is not view for this action</h1></div>",
-            template = "",
-            type     = "html",
-            useCache = false,
-            maxAge   = 0,
-            eTag     = "";
-    }
-    return({html: html, type: type, template: template, useCache: useCache, maxAge: maxAge, eTag: eTag});
+      var file     = new VTextFile( wApp.config.root_path + path ),
+          file_hbs = new VTextFile( wApp.config.root_path + path + ".hbs" ),
+          html     = file.exists() ? file.readAll() : ( file_hbs.exists() ? file_hbs.readAll() : "<div><h1>There is not view for this action</h1></div>" ),
+          type     = file_hbs.exists() ? "template" : "html";
+
+      return({html: html, type: type});
   }
 
   function logError(e) { return(e.lineNumber === undefined) ? e.message : (e.message + ". In Line Number: " + e.lineNumber); }
