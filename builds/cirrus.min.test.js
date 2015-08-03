@@ -16,6 +16,7 @@ var VRegister     = require('./../libs/fake_vjavascript/vregister');
 var VRegisterList = require('./../libs/fake_vjavascript/vregister_list');
 var VProcess      = require('./../libs/fake_vjavascript/vprocess');
 var VTextFile     = require('./../libs/fake_vjavascript/vtextfile');
+var VFile         = require('./../libs/fake_vjavascript/vfile');
 
 // xxxxxxxxxxxxxxxxxxx Base 64 Encode Libreary xxxxxxxxxxxx
 function StringBuffer(){this.buffer=[]}StringBuffer.prototype.append=function(a){this.buffer.push(a);return this};StringBuffer.prototype.toString=function(){return this.buffer.join("")};
@@ -198,7 +199,7 @@ c,d,e,f,g){e={helpers:e,partials:f,data:g};if(a===l)throw new b.Exception("The p
 //xxxxxxxxxxxxxxxxxxx Main Application Definition xxxxxxxxx
   wApp = {
     // System Router
-    version: "1.3",
+    version: "1.4",
     config: { filesTable: "cirrusdat/FILES_MEM", root_path: "D://cirrus" },
     router: {
         params: {body: {}},
@@ -634,6 +635,7 @@ c,d,e,f,g){e={helpers:e,partials:f,data:g};if(a===l)throw new b.Exception("The p
 
               var pureHTML = getHTML(file);
               if (pureHTML.type === "template") {eval("template = " + pureHTML.html);}
+              if (pureHTML.html == "") { pureHTML.html = "<div><h1>There is not view for this action</h1></div>"; }
               var body = pureHTML.type === "template" ?  Handlebars.VM.template(template)(jsonresp) : pureHTML.html;
 
               full_body = layout_body.replace("#yield", body);
@@ -671,8 +673,13 @@ c,d,e,f,g){e={helpers:e,partials:f,data:g};if(a===l)throw new b.Exception("The p
 
       var file     = new VTextFile( wApp.config.root_path + path ),
           file_hbs = new VTextFile( wApp.config.root_path + path + ".hbs" ),
-          html     = file.exists() ? file.readAll() : ( file_hbs.exists() ? file_hbs.readAll() : "<div><h1>There is not view for this action</h1></div>" ),
           type     = file_hbs.exists() ? "template" : "html";
+
+          if ( file.exists() ) {
+              if ( file.open( VFile.OpenModeReadOnly ) ) { html = file.readAll(); } else { html = ""; }
+          } else if (file_hbs.exists()) {
+              if ( file_hbs.open( VFile.OpenModeReadOnly ) ) { html = file_hbs.readAll(); } else { html = ""; }
+          } else { html = ""; }
 
       return({html: html, type: type});
   }
