@@ -25,6 +25,9 @@ function VTextFile(path) {
                   var html = file[this.path];
                   return(html !== undefined);
     };
+    this.open   = function(mode) {
+                  return true;
+    };
 }
 
 module.exports = VTextFile;

@@ -54,7 +54,7 @@ describe("Response Object", function(){
     var httpGet = "GET /shops/44/show?x=foo HTTP/1.1"
     var request = wApp.request(httpGet);
     var response = wApp.response(request);
-    expect(response).toEqual("HTTP/1.0 404 NOT FOUND")
+    expect(response).toEqual("HTTP/1.0 404 NOT FOUND");
   });
 
   it("should calculate the proper Content-length", function() {
@@ -229,6 +229,19 @@ describe("Handling standar html request", function(){
     expect(response.split("\r\n\r\n")[1]).toEqual(resp);
   });
 
+  it("should give a 404 where js isn't on disk", function(){
+    var httpGet = "GET /public/javascripts/no_js_file.js HTTP/1.1\r\nAccept: text/css"
+    var request = wApp.request(httpGet);
+    var response = wApp.response(request);
+    expect(response).toEqual("HTTP/1.0 404 NOT FOUND")
+  });
+
+  it("should give a 404 where css isn't on disk", function(){
+    var httpGet = "GET /public/css/no_js_file.css HTTP/1.1\r\nAccept: text/css"
+    var request = wApp.request(httpGet);
+    var response = wApp.response(request);
+    expect(response).toEqual("HTTP/1.0 404 NOT FOUND")
+  });
 
   it("should redirect to another page when needed", function(){
     wApp.usersController = {
@@ -244,13 +257,10 @@ describe("Handling standar html request", function(){
 });
 
 describe("Rendering process", function(){
-
-  it("Should render an exiting process", function(){
-  });
-
-  it("Should render a 500 error if process doesn't exists", function(){});
-  it("should set vars to the process before executing", function(){});
-  it("should give an empty string if result var doesn't exists", function(){});
+    it("Should render an exiting process", function(){});
+    it("Should render a 500 error if process doesn't exists", function(){});
+    it("should set vars to the process before executing", function(){});
+    it("should give an empty string if result var doesn't exists", function(){});
 });
 
 describe("Rendering XML", function(){
@@ -268,17 +278,17 @@ describe("Rendering XML", function(){
     });
 
    it("Should render an xml response on xml Accept", function() {
-      var httpGet = "GET /render_xml HTTP/1.1\r\nAccept: text/xml"
-      var request = wApp.request(httpGet);
-      var response = wApp.response(request);
-      expect(response.split("\r\n\r\n")[1]).toEqual("<xml version='1.0'><node1 var=1></node1></xml>");
+        var httpGet = "GET /render_xml HTTP/1.1\r\nAccept: text/xml"
+        var request = wApp.request(httpGet);
+        var response = wApp.response(request);
+        expect(response.split("\r\n\r\n")[1]).toEqual("<xml version='1.0'><node1 var=1></node1></xml>");
    });
 
    it("should render xml response on xml extension", function(){
-      var httpGet = "GET /render_xml.xml HTTP/1.1\r\nAccept: text/html"
-      var request = wApp.request(httpGet);
-      var response = wApp.response(request);
-      expect(response.split("\r\n\r\n")[1]).toEqual("<xml version='1.0'><node1 var=1></node1></xml>");
+        var httpGet = "GET /render_xml.xml HTTP/1.1\r\nAccept: text/html"
+        var request = wApp.request(httpGet);
+        var response = wApp.response(request);
+        expect(response.split("\r\n\r\n")[1]).toEqual("<xml version='1.0'><node1 var=1></node1></xml>");
    });
 
    it("should render the proper message when no xml info is given", function(){
@@ -291,5 +301,4 @@ describe("Rendering XML", function(){
         var response = wApp.response(request);
         expect(response.split("\r\n\r\n")[1]).toEqual("<?xml version='1.0' encoding='UTF-8'?><error version='1.0'>The JSON object should have an xml key</error>");
    });
-
 })

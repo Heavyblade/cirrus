@@ -16,3 +16,4 @@ var VRegister     = require('./../libs/fake_vjavascript/vregister');
 var VRegisterList = require('./../libs/fake_vjavascript/vregister_list');
 var VProcess      = require('./../libs/fake_vjavascript/vprocess');
 var VTextFile     = require('./../libs/fake_vjavascript/vtextfile');
+var VFile         = require('./../libs/fake_vjavascript/vfile');
