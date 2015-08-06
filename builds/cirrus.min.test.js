@@ -387,7 +387,15 @@ c,d,e,f,g){e={helpers:e,partials:f,data:g};if(a===l)throw new b.Exception("The p
           if (body[1] == "_method" && decodeURIComponent(body[2]).match(/^(PUT|DELETE)$/i)) {
               req.verb = decodeURIComponent(body[2]).toUpperCase();
           } else {
-              req.bodyDecoded[body[1]] = wApp.getType(decodeURIComponent(body[2]));
+              var actual = req.bodyDecoded[body[1]],
+                  newVal = wApp.getType(decodeURIComponent(body[2]));
+
+              if (actual == undefined) {
+                  req.bodyDecoded[body[1]] = newVal;
+              } else {
+                  if ( typeof(actual) != "object" ) { req.bodyDecoded[body[1]] = [actual]; }
+                  req.bodyDecoded[body[1]].push(newVal);
+              }
           }
         }
       }

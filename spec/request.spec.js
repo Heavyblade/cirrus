@@ -39,7 +39,7 @@ describe("Request Object", function(){
   });
 
   it("should be able to handle change HTTP method via _method param", function() {
-    var httpGet = "POST /some/path/toresource?foo=bar&hello=world HTTP/1.0\r\nContent-Type: application/x-www-form-urlencoded\r\nConnection: Keep-Alive\r\n\r\n_method=put\r\n" 
+    var httpGet = "POST /some/path/toresource?foo=bar&hello=world HTTP/1.0\r\nContent-Type: application/x-www-form-urlencoded\r\nConnection: Keep-Alive\r\n\r\n_method=put\r\n"
     var request = wApp.request(httpGet);
     expect(request.verb).toEqual("PUT");
   });
@@ -55,7 +55,7 @@ describe("Request Object", function(){
   });
 
   it("should be able to handle HTTP post with body", function () {
-    var httpGet = "POST /some/path/toresource?foo=bar&hello=world HTTP/1.0\r\nContent-Type: application/x-www-form-urlencoded\r\nConnection: Keep-Alive\r\n\r\nname=john&lastname=doe\r\n" 
+    var httpGet = "POST /some/path/toresource?foo=bar&hello=world HTTP/1.0\r\nContent-Type: application/x-www-form-urlencoded\r\nConnection: Keep-Alive\r\n\r\nname=john&lastname=doe\r\n"
     var request = wApp.request(httpGet);
     expect(request.body).toEqual("name=john&lastname=doe");
     expect(wApp.router.params.body.name).toEqual("john");
@@ -82,5 +82,12 @@ describe("Request Object", function(){
     expect(wApp.router.params.body).toEqual("<xml><node1>text</node2></xml>");
   });
 
-});
+  it("should handle array like params in body", function(){
+    var httpGet = "POST /some/path/toresource?foo=bar&hello=world HTTP/1.0\r\nContent-Type: application/x-www-form-urlencoded\r\nConnection: Keep-Alive\r\n\r\nname=john&lastname=doeperez&name=second\r\n";
+    var request = wApp.request(httpGet);
+    expect(request.body).toEqual("name=john&lastname=doeperez&name=second");
+    expect(wApp.router.params.body.name).toEqual(["john","second"]);
+    expect(wApp.router.params.body.lastname).toEqual("doeperez");
+  });
 
+});
