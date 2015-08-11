@@ -29,7 +29,7 @@ describe("Data Type matching for params", function(){
   it("should identify a boolean", function(){
       var param = "true";
       expect(wApp.getType(param)).toEqual(true);
-      
+
       var param = "false";
       expect(wApp.getType(param)).toEqual(false);
   });
@@ -49,6 +49,10 @@ describe("Data Type matching for params", function(){
 
      var date1 = "1-5-2014";
      var asDate = new Date(2014, 4, 1);
+     expect(wApp.getType(date1)).toEqual(asDate);
+
+     var date1 = "11/08/2015";
+     var asDate = new Date(2015,7,11);
      expect(wApp.getType(date1)).toEqual(asDate);
   });
 
@@ -82,7 +86,7 @@ describe("Data Type matching for params", function(){
       var asDate = new Date(2014, 4, 26, 2, 25, 7);
       expect(wApp.getType(param)).toEqual(asDate);
   });
-  
+
   it("should parce an ISO date 24 hours", function(){
       var param = "2014-05-26T20:25:07.850Z";
       var asDate = new Date(2014, 4, 26, 20, 25, 7);
