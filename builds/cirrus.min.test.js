@@ -457,14 +457,14 @@ c,d,e,f,g){e={helpers:e,partials:f,data:g};if(a===l)throw new b.Exception("The p
           var params1 = str.split("/");
           var params2 = str.split("-");
           var params = params1.length > 1 ? params1 : params2;
-          var date = new Date(parseInt(params[2]), (parseInt(params[1])-1), parseInt(params[0]));
+          var date = new Date(parseInt(params[2],10), (parseInt(params[1],10)-1), parseInt(params[0],10));
           return(date);
       }
       if (str.match(isPureDateymd)) {
           var params1 = str.split("/");
           var params2 = str.split("-");
           var params = params1.length > 1 ? params1 : params2;
-          var date = new Date(parseInt(params[0]), (parseInt(params[1])-1), parseInt(params[2]));
+          var date = new Date(parseInt(params[0],10), (parseInt(params[1],10)-1), parseInt(params[2],10));
           return(date);
       }
       if (str.match(isDateTime)) {
@@ -472,19 +472,19 @@ c,d,e,f,g){e={helpers:e,partials:f,data:g};if(a===l)throw new b.Exception("The p
           var dayParts = params[0].split("/");
           var hourParts = params[1].split(":");
           var hora = params[2].match(/am/i) ? parseInt(hourParts[0]) :(parseInt(hourParts[0]) + 12);
-          var date = new Date(parseInt(dayParts[2]), (parseInt(dayParts[0])-1), parseInt(dayParts[1]), hora, parseInt(hourParts[1]), parseInt(hourParts[2]));
+          var date = new Date(parseInt(dayParts[2],10), (parseInt(dayParts[0],10)-1), parseInt(dayParts[1],10), hora, parseInt(hourParts[1],10), parseInt(hourParts[2],10));
           return(date);
       }
 
       if(str.match(isDateTimeUTC)) {
           var months = {"Jan": 1, "Feb": 2, "Mar": 3, "Apr": 4, "May": 5, "Jun": 6, "Jul": 7, "Aug": 8, "Sep": 9, "Oct": 10, "Nov": 11, "Dec": 12};
           var params = str.split(",")[1].split(" ");
-          var day = parseInt(params[0]);
+          var day = parseInt(params[0],10);
           var month = months[params[1]];
-          var year = parseInt(params[2]);
-          var hour = parseInt(parmas[3].split(":")[0]);
-          var minute = parseInt(parmas[3].split(":")[1]);
-          var second = parseInt(parmas[3].split(":")[2]);
+          var year = parseInt(params[2],10);
+          var hour = parseInt(parmas[3].split(":")[0],10);
+          var minute = parseInt(parmas[3].split(":")[1],10);
+          var second = parseInt(parmas[3].split(":")[2],10);
 
           var date = new Date(year, month, day, hour, minute, second);
           return(date);
@@ -494,12 +494,12 @@ c,d,e,f,g){e={helpers:e,partials:f,data:g};if(a===l)throw new b.Exception("The p
           var params = str.split("T");
           var params1 = params[0];
           var params2 = params[1].split(".")[0];
-          var year = parseInt(params1.split("-")[0]);
-          var month = parseInt(params1.split("-")[1]) - 1 ;
-          var day = parseInt(params1.split("-")[2]);
-          var hour = parseInt(params2.split(":")[0]);
-          var minute = parseInt(params2.split(":")[1]);
-          var second = parseInt(params2.split(":")[2]);
+          var year = parseInt(params1.split("-")[0],10);
+          var month = parseInt(params1.split("-")[1],10) - 1 ;
+          var day = parseInt(params1.split("-")[2],10);
+          var hour = parseInt(params2.split(":")[0],10);
+          var minute = parseInt(params2.split(":")[1],10);
+          var second = parseInt(params2.split(":")[2],10);
 
           var date = new Date(year, month, day, hour, minute, second);
           return(date);
