@@ -209,12 +209,13 @@
       try{
           var req = http_parser(http_request);
           wApp.router.params = req.decodeParams;
+          if (req.bodyDecoded !== undefined) { wApp.router.params.body = req.bodyDecoded; }
 
           // body json
-          if ( req.headers["Content-Type"] === "application/json" && req.body){ wApp.router.params.body = JSON.parse(req.body); }
+          if ( req.headers["Content-Type"] !== undefined && req.headers["Content-Type"].match(/application\/json/i) && req.body){ wApp.router.params.body = JSON.parse(req.body); }
 
           // body XML
-          else if ( req.headers["Content-Type"] === "text/xml" && req.body){ wApp.router.params.body = req.body; }
+          else if ( req.headers["Content-Type"] !== undefined && req.headers["Content-Type"].match(/text\/xml/i) && req.body){ wApp.router.params.body = req.body; }
 
           else{ wApp.router.params.body = req.bodyDecoded; }
 
