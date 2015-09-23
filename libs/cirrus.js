@@ -59,7 +59,7 @@
                 if (requestParams) {
                   var requestVars = url.match(rutaRegExp);
                   requestVars.shift();
-                  var z = requestParams.length;
+                  z = requestParams.length;
                   while(z--) { var param = requestParams[z]; this.params[param.replace(":", "")]=decodeURIComponent(requestVars[requestParams.indexOf(param)]);}
                 }
                 // if match returns "controller#method"
@@ -178,7 +178,7 @@
       while(header = header_regx.exec(headers)) { req.headers[header[1]] = header[2];}
 
       // Get the Query String
-      var params = req.encodeParams
+      var params = req.encodeParams;
       if(req.encodeParams) { while(param = body_params_regx.exec(params)) {req.decodeParams[param[1]] = wApp.getType(decodeURIComponent(param[2]).replace(/\+/g, " "));} }
 
       // Body params if any
@@ -192,7 +192,7 @@
               var actual = req.bodyDecoded[body[1]],
                   newVal = wApp.getType(decodeURIComponent(body[2]));
 
-              if (actual == undefined) {
+              if (actual === undefined) {
                   req.bodyDecoded[body[1]] = newVal;
               } else {
                   if ( typeof(actual) != "object" ) { req.bodyDecoded[body[1]] = [actual]; }
@@ -425,6 +425,7 @@
     },
     html: function(jsonresp, wapp, controller, action) {
           var verb = "HTTP/1.0 200 OK",
+              layout_body,
               full_body;
           if (typeof(jsonresp) == "object") {
               var layout = jsonresp.layout || "application";
@@ -436,17 +437,17 @@
 
               if(jsonresp.layout !== false) {
                   var layoutHTML = getHTML("/layouts/" + layout);
-                  if (layoutHTML.type === "template") {eval("layout_temp = " + layoutHTML.html)}
+                  if (layoutHTML.type === "template") {eval("layout_temp = " + layoutHTML.html);}
 
-                  var layout_body = layoutHTML.type === "template" ?  Handlebars.VM.template(layout_temp)(jsonresp) : layoutHTML.html;
+                  layout_body = layoutHTML.type === "template" ?  Handlebars.VM.template(layout_temp)(jsonresp) : layoutHTML.html;
               } else {
                   // Render without a layout
-                  var layout_body = "#yield";
+                  layout_body = "#yield";
               }
 
               var pureHTML = getHTML(file);
               if (pureHTML.type === "template") {eval("template = " + pureHTML.html);}
-              if (pureHTML.html == "") { pureHTML.html = "<div><h1>There is not view for this action</h1></div>"; }
+              if (pureHTML.html === "") { pureHTML.html = "<div><h1>There is not view for this action</h1></div>"; }
               var body = pureHTML.type === "template" ?  Handlebars.VM.template(template)(jsonresp) : pureHTML.html;
 
               full_body = layout_body.replace("#yield", body);
@@ -479,7 +480,7 @@
       importClass( "VTextFile" );
       importClass( "VFile" );
 
-      var extension = path.split(".")[path.split(".").length-1].match(/(css|js|html)/i) == null ? ".html" : "";
+      var extension = path.split(".")[path.split(".").length-1].match(/(css|js|html)/i) === null ? ".html" : "";
       path += extension;
 
       var file     = new VTextFile( wApp.config.root_path + path ),
