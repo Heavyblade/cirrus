@@ -437,18 +437,18 @@
 
               if(jsonresp.layout !== false) {
                   var layoutHTML = getHTML("/layouts/" + layout);
-                  if (layoutHTML.type === "template") {eval("layout_temp = " + layoutHTML.html);}
+                  if (layoutHTML.type === "template") { layout_temp = Handlebars.compile(layoutHTML.html); }
 
-                  layout_body = layoutHTML.type === "template" ?  Handlebars.VM.template(layout_temp)(jsonresp) : layoutHTML.html;
+                  layout_body = layoutHTML.type === "template" ? layout_temp(jsonresp) : layoutHTML.html;
               } else {
                   // Render without a layout
                   layout_body = "#yield";
               }
 
               var pureHTML = getHTML(file);
-              if (pureHTML.type === "template") {eval("template = " + pureHTML.html);}
+              if (pureHTML.type === "template") { var template = Handlebars.compile(pureHTML.html); }
               if (pureHTML.html === "") { pureHTML.html = "<div><h1>There is not view for this action</h1></div>"; }
-              var body = pureHTML.type === "template" ?  Handlebars.VM.template(template)(jsonresp) : pureHTML.html;
+              var body = pureHTML.type === "template" ?  template(jsonresp) : pureHTML.html;
 
               full_body = layout_body.replace("#yield", body);
           } else {

@@ -9,9 +9,9 @@ function VTextFile(path) {
                   var file = jf.readFileSync("./spec/fixtures/hd_files.json");
                   var html = file[this.path];
 
-                  if ( this.path.split(".")[this.path.split(".").length-1] == "hbs" ) {
-                      html.content = Handlebars.precompile(html.content).toString();
-                  }
+                  // if ( this.path.split(".")[this.path.split(".").length-1] == "hbs" ) {
+                  //     html.content = Handlebars.precompile(html.content).toString();
+                  // }
 
                   if (html != undefined) {
                       return(html.content);
