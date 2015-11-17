@@ -573,7 +573,9 @@ e[0]=a;b.log.apply(b,e)})};k.exports=b["default"]},function(k,b,e){b.__esModule=
           isDateTimeUTC = /^\w*, \d* \w* \d{2,4} \d{1,2}:\d{1,2}:\d{1,2} \w\w\w$/,
 
           // ISO string => "2014-05-26T02:25:07.850Z"
-          isDateTimeISO = /^\d{2,4}-\d{1,2}-\d{1,2}T\d{1,2}:\d{1,2}:\d{1,2}\.\d*Z$/;
+          isDateTimeISO = /^\d{2,4}-\d{1,2}-\d{1,2}T\d{1,2}:\d{1,2}:\d{1,2}\.\d*Z$/,
+          params1, params2, params, date, year, month, day, minute, second;
+
 
       if (str.match(isInteger) && str.length < 14) {return(parseInt(str, 10));}
       if (str.match(isCurrencyComma)) {return(parseFloat(str.replace(/\./g, "").replace(",", ".")));}
@@ -582,54 +584,53 @@ e[0]=a;b.log.apply(b,e)})};k.exports=b["default"]},function(k,b,e){b.__esModule=
       if (str.match(isPointFloat)) {return(parseFloat(str));}
       if (str.match(isBool)) {return(str == "true" ? true : false);}
       if (str.match(isPureDatedmy)) {
-          var params1 = str.split("/");
-          var params2 = str.split("-");
-          var params = params1.length > 1 ? params1 : params2;
-          var date = new Date(parseInt(params[2],10), (parseInt(params[1],10)-1), parseInt(params[0],10));
+          params1 = str.split("/");
+          params2 = str.split("-");
+          params = params1.length > 1 ? params1 : params2;
+          date = new Date(parseInt(params[2],10), (parseInt(params[1],10)-1), parseInt(params[0],10));
           return(date);
       }
       if (str.match(isPureDateymd)) {
-          var params1 = str.split("/");
-          var params2 = str.split("-");
-          var params = params1.length > 1 ? params1 : params2;
-          var date = new Date(parseInt(params[0],10), (parseInt(params[1],10)-1), parseInt(params[2],10));
+          params1 = str.split("/");
+          params2 = str.split("-");
+          params = params1.length > 1 ? params1 : params2;
+          date = new Date(parseInt(params[0],10), (parseInt(params[1],10)-1), parseInt(params[2],10));
           return(date);
       }
       if (str.match(isDateTime)) {
-          var params = str.split(" ");
+          params = str.split(" ");
           var dayParts = params[0].split("/");
           var hourParts = params[1].split(":");
           var hora = params[2].match(/am/i) ? parseInt(hourParts[0]) :(parseInt(hourParts[0]) + 12);
-          var date = new Date(parseInt(dayParts[2],10), (parseInt(dayParts[0],10)-1), parseInt(dayParts[1],10), hora, parseInt(hourParts[1],10), parseInt(hourParts[2],10));
+          date = new Date(parseInt(dayParts[2],10), (parseInt(dayParts[0],10)-1), parseInt(dayParts[1],10), hora, parseInt(hourParts[1],10), parseInt(hourParts[2],10));
           return(date);
       }
 
       if(str.match(isDateTimeUTC)) {
           var months = {"Jan": 1, "Feb": 2, "Mar": 3, "Apr": 4, "May": 5, "Jun": 6, "Jul": 7, "Aug": 8, "Sep": 9, "Oct": 10, "Nov": 11, "Dec": 12};
-          var params = str.split(",")[1].split(" ");
-          var day = parseInt(params[0],10);
-          var month = months[params[1]];
-          var year = parseInt(params[2],10);
-          var hour = parseInt(parmas[3].split(":")[0],10);
-          var minute = parseInt(parmas[3].split(":")[1],10);
-          var second = parseInt(parmas[3].split(":")[2],10);
+              params = str.split(",")[1].split(" ");
+              day = parseInt(params[0],10);
+              month = months[params[1]];
+              year = parseInt(params[2],10);
+              hour = parseInt(parmas[3].split(":")[0],10);
+              minute = parseInt(parmas[3].split(":")[1],10);
+              second = parseInt(parmas[3].split(":")[2],10);
 
-          var date = new Date(year, month, day, hour, minute, second);
+              date = new Date(year, month, day, hour, minute, second);
           return(date);
       }
 
       if(str.match(isDateTimeISO)) {
-          var params = str.split("T");
-          var params1 = params[0];
-          var params2 = params[1].split(".")[0];
-          var year = parseInt(params1.split("-")[0],10);
-          var month = parseInt(params1.split("-")[1],10) - 1 ;
-          var day = parseInt(params1.split("-")[2],10);
-          var hour = parseInt(params2.split(":")[0],10);
-          var minute = parseInt(params2.split(":")[1],10);
-          var second = parseInt(params2.split(":")[2],10);
-
-          var date = new Date(year, month, day, hour, minute, second);
+              params = str.split("T");
+              params1 = params[0];
+              params2 = params[1].split(".")[0];
+              year = parseInt(params1.split("-")[0],10);
+              month = parseInt(params1.split("-")[1],10) - 1 ;
+              day = parseInt(params1.split("-")[2],10);
+              hour = parseInt(params2.split(":")[0],10);
+              minute = parseInt(params2.split(":")[1],10);
+              second = parseInt(params2.split(":")[2],10);
+              date = new Date(year, month, day, hour, minute, second);
           return(date);
       }
 
@@ -753,8 +754,9 @@ e[0]=a;b.log.apply(b,e)})};k.exports=b["default"]},function(k,b,e){b.__esModule=
               layout_body,
               full_body;
           if (typeof(jsonresp) == "object") {
-              var layout = jsonresp.layout || "application";
-              var file = "/views/" + controller.replace("Controller", "") + "/" + action;
+              var layout = jsonresp.layout || "application",
+                  file   = "/views/" + controller.replace("Controller", "") + "/" + action,
+                  template;
               jsonresp.controller = controller;
               jsonresp.action = action;
               jsonresp.session = wApp.session.session;
@@ -771,7 +773,7 @@ e[0]=a;b.log.apply(b,e)})};k.exports=b["default"]},function(k,b,e){b.__esModule=
               }
 
               var pureHTML = getHTML(file);
-              if (pureHTML.type === "template") { var template = Handlebars.compile(pureHTML.html); }
+              if (pureHTML.type === "template") { template = Handlebars.compile(pureHTML.html); }
               if (pureHTML.html === "") { pureHTML.html = "<div><h1>There is not view for this action</h1></div>"; }
               var body = pureHTML.type === "template" ?  template(jsonresp) : pureHTML.html;
 
