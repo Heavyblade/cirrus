@@ -1,6 +1,6 @@
 ## Version 1.4
 
-* Lectura de archivos y templates desde disco
+* **Lectura de templates y assets directamente de disco y no tablas V7**
 * Fix para bug combierte strings de numeros a hex.
 * Añadida capacidad de renderizar XML.
 * Añadida capacidad de renderiza xml directo del controller.
@@ -12,7 +12,6 @@
 * Soporte para métodos PUT y DELETE en forms HTML via parametro _method
 * Fix de bug que impide jsons de más de 1 nivel en session
 * Añadido de manejo de cache para headers de assets
-* **Lectura de templates y assets directamente de disco y no tablas V7**
 
 ## Pendiente
 
