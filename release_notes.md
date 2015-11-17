@@ -12,6 +12,7 @@
 * Soporte para métodos PUT y DELETE en forms HTML via parametro _method
 * Fix de bug que impide jsons de más de 1 nivel en session
 * Añadido de manejo de cache para headers de assets
+* **Lectura de templates y assets directamente de disco y no tablas V7**
 
 ## Pendiente
 
