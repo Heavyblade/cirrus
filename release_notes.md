@@ -16,3 +16,4 @@
 ## Pendiente
 
 * Enriquecer filtros para controllers
+* Aprovechar 4 plano de v7 para logError
