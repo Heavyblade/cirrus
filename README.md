@@ -1,10 +1,10 @@
 # HTTP-Server para la plataforma Velneo V7
 
-Cirrus.js es una implementación en JavaScript del protocolo HTTP corriendo directamente sobre el objecto TCP/IP de Velneo V7, Que permite servir paginas HTML, JSON, Javascript y Css directamente desde una app Velneo v7.
+Cirrus.js es una implementación en JavaScript del protocolo HTTP corriendo directamente sobre el objecto TCP/IP de Velneo V7, Que permite servir paginas HTML, JSON, Javascript y CSS directamente desde una app Velneo v7.
 
 ### Para que se usa ?
 
-El propósito es abrir las aplicaciones desarrolladas sobre v7 para que puedan ser aprovechadas en entornos web, logrando de esta forma funcionalidades como pedidos online afectando directamente la app, crear aplicaciones mobile con jQuery Mobile, listar el catalogo de productos, solicitud de citas online e inmuerables posibilidades gracias a que puedes desarrollar webs y API's de acceso a tus datos que pueden ser consumidas mediante paginas html o webservices.
+El propósito es abrir las aplicaciones desarrolladas sobre v7 para que puedan ser aprovechadas en entornos web, logrando de esta forma funcionalidades como pedidos online afectando directamente la app, crear aplicaciones mobile con jQuery Mobile, listar el catálogo de productos, solicitud de citas online e inmuerables posibilidades gracias a que puedes desarrollar webs y API's de acceso a tus datos que pueden ser consumidas mediante páginas html o webservices.
 
 ### Indice
 
@@ -51,7 +51,7 @@ Inicio objecto TCP en el puerto 4000 y pruebo:
 
 #### y el front end HTTP server ?
 
-Si vas a desarrollar una AppWeb o un sitio web que vas a necesitar un servidor web que se encargue de la concurrencia, assets, caché y demas, para ello puedes usar Apache o Nginx y configurar proxys inversos o load balancers de tal forma que sean capaces de servir archivos estáticos cuando existan o que redirija peticiones http hacia el vServer cuando se pidan datos dinámicos.
+Si vas a desarrollar una AppWeb o un sitio web que vas a necesitar un servidor web que se encargue de la concurrencia, assets, caché y demás, para ello puedes usar Apache o Nginx y configurar proxys inversos o load balancers de tal forma que sean capaces de servir archivos estáticos cuando existan o que redirija peticiones http hacia el vServer cuando se pidan datos dinámicos.
 
 #### es Cirrus.js equivalente a vModApache ?
 
@@ -63,7 +63,7 @@ No, Cirrus.js corre directamente sobre las conexiones que permite el objeto TCP 
 
 #### es Cirrus.js multiplataforma ?
 
-Si claro, al correr directamente sobre el objeto TCP de v7 correra en cualquier plataforma donde el vServer tenga capacidad de ejecutarse.
+Si claro, al correr directamente sobre el objeto TCP de v7 correrá en cualquier plataforma donde el vServer tenga capacidad de ejecutarse.
 
 ### Quieres contribuir ?
 
