@@ -312,11 +312,7 @@
       return(str);
     }
 // xxxxxxxxxxxxxxxxxxxx Response Object xxxxxxxxxxxxxxxxxxx
-  var BasicHeaders =[ "Server: Velneo v7",
-                      "transfer-coding: chunked",
-                      "Keep-Alive: timeout=5, max=94",
-                      "Connection: Keep-Alive"
-                    ];
+  var BasicHeaders =[ "Server: Velneo v7" ];
 
   function isAsset(request) {
     return(request.extension === "js" || request.extension === "css");

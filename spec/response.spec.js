@@ -38,7 +38,7 @@ describe("Response Object", function(){
     var httpGet = "GET /users/44/show?x=foo HTTP/1.1"
     var request = wApp.request(httpGet);
     var response = wApp.response(request);
-    expect(response.split(CRLF)[7]).toEqual("Content-Type: application/json; charset=utf-8")
+    expect(response.split(CRLF)[4]).toEqual("Content-Type: application/json; charset=utf-8")
   });
 
   it("should able to handle JSONP request from JQuery", function(){
@@ -46,7 +46,7 @@ describe("Response Object", function(){
     var request = wApp.request(httpGet);
     var response = wApp.response(request);
     expected_resp = "jQuery11224324(" + JSON.stringify({hello: "world", id: "44", x: wApp.router.params.x }) + ")";
-    expect(response.split(CRLF)[7]).toEqual("Content-Type: application/javascript; charset=utf-8")
+    expect(response.split(CRLF)[4]).toEqual("Content-Type: application/javascript; charset=utf-8")
     expect(response.split("\n\r\n")[1]).toEqual(expected_resp);
   });
 
@@ -251,7 +251,7 @@ describe("Handling standar html request", function(){
     var request = wApp.request(httpGet);
     var response = wApp.response(request);
     expect(response.split("\r\n\r\n")[0].split("\r\n")[0]).toEqual("HTTP/1.0 302 Found");
-    expect(response.split("\r\n\r\n")[0].split("\r\n")[7]).toEqual("location: /another_page");
+    expect(response.split("\r\n\r\n")[0].split("\r\n")[4]).toEqual("location: /another_page");
   });
 
 });

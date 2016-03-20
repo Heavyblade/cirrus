@@ -113,8 +113,6 @@ describe("Cookies handling", function(){
   });
 
   it("should be able to add the flash objects to the session", function() {
-      
-    
   });
 
   describe("Setting the cookie header", function(){
@@ -145,10 +143,10 @@ describe("Cookies handling", function(){
       var httpGet = "GET /users/23/show HTTP/1.0\r\nContent-Type: application/json\r\nConnection: Keep-Alive\r\n\r\n"
       var request = wApp.request(httpGet);
       var response = wApp.response(request)
-      var base = response.split(CRLF)[8].split(": ")[1].split(";")[0].split(wApp.session.cookie_name + "=")[1]
+      var base = response.split(CRLF)[5].split(": ")[1].split(";")[0].split(wApp.session.cookie_name + "=")[1]
       var session = JSON.parse(decodeURIComponent(Base64.decode(base)));
 
-      expect(response.split(CRLF)[8].split(": ")[0]).toEqual("set-Cookie")
+      expect(response.split(CRLF)[5].split(": ")[0]).toEqual("set-Cookie")
       expect(session.username).toEqual("Hello John")
     })
 
@@ -164,11 +162,11 @@ describe("Cookies handling", function(){
       var httpGet = "GET /users/23/show HTTP/1.0\r\nContent-Type: application/json\r\nConnection: Keep-Alive\r\n\r\n"
       var response = wApp.response(wApp.request(httpGet))
 
-      base = response.split(CRLF)[8].split(": ")[1].split(";")[0].split(wApp.session.cookie_name + "=")[1]
+      base = response.split(CRLF)[5].split(": ")[1].split(";")[0].split(wApp.session.cookie_name + "=")[1]
       var session = JSON.parse(decodeURIComponent(Base64.decode(base)));
       var keys = Object.keys(session).length
 
-      var cookie = response.split(CRLF)[8].split(": ")[1]
+      var cookie = response.split(CRLF)[5].split(": ")[1]
       var path = cookie.split(";")[1].split("=")[1]
       expect("/my_path").toEqual(path)
       expect(keys).toEqual(1)
@@ -188,11 +186,11 @@ describe("Cookies handling", function(){
       var response = wApp.response(wApp.request(httpGet))
 
       // Get the session from cookie
-      base = response.split(CRLF)[8].split(": ")[1].split(";")[0].split(wApp.session.cookie_name + "=")[1]
+      base = response.split(CRLF)[5].split(": ")[1].split(";")[0].split(wApp.session.cookie_name + "=")[1]
       var session = JSON.parse(decodeURIComponent(Base64.decode(base)));
       var keys = Object.keys(session).length
 
-      var cookie = response.split(CRLF)[8].split(": ")[1]
+      var cookie = response.split(CRLF)[5].split(": ")[1]
       var date = cookie.split(";")[1].split("=")[1]
       expect("Mon, 31 Dec 2012 00:00:00 GMT").toEqual(date)
       expect(keys).toEqual(1);
