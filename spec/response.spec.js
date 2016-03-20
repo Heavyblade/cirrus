@@ -1,16 +1,16 @@
-theRoot = {}
+theRoot = {};
 
 describe("Response Object", function(){
 
   beforeEach(function(){
       wApp.router.routes = [];
       wApp.router.rexRoutes = [];
-      wApp.router.params = {}
+      wApp.router.params = {};
       theRoot.vars = {};
       // Setting up an Application to test
-      wApp.usersController = { show: function(params){return({hello: "world", id: wApp.router.params.userid, x: wApp.router.params.x})} }
+      wApp.usersController = { show: function(params){return({hello: "world", id: wApp.router.params.userid, x: wApp.router.params.x});} };
       wApp.router.addRoutes({"GET /users/:userid/show": "usersController#show"});
-      CRLF = "\r\n"
+      CRLF = "\r\n";
   });
 
 
@@ -278,14 +278,14 @@ describe("Rendering XML", function(){
     });
 
    it("Should render an xml response on xml Accept", function() {
-        var httpGet = "GET /render_xml HTTP/1.1\r\nAccept: text/xml"
+        var httpGet = "GET /render_xml HTTP/1.1\r\nAccept: text/xml";
         var request = wApp.request(httpGet);
         var response = wApp.response(request);
         expect(response.split("\r\n\r\n")[1]).toEqual("<xml version='1.0'><node1 var=1></node1></xml>");
    });
 
    it("should render xml response on xml extension", function(){
-        var httpGet = "GET /render_xml.xml HTTP/1.1\r\nAccept: text/html"
+        var httpGet = "GET /render_xml.xml HTTP/1.1\r\nAccept: text/html";
         var request = wApp.request(httpGet);
         var response = wApp.response(request);
         expect(response.split("\r\n\r\n")[1]).toEqual("<xml version='1.0'><node1 var=1></node1></xml>");
@@ -293,12 +293,12 @@ describe("Rendering XML", function(){
 
    it("should render the proper message when no xml info is given", function(){
         wApp.standarController = {
-          render: function(params){return({other: "<xml version='1.0'><node1 var=1></node1></xml>"})}
-        }
+          render: function(params){return({other: "<xml version='1.0'><node1 var=1></node1></xml>"});}
+        };
 
-        var httpGet = "GET /render_xml.xml HTTP/1.1\r\nAccept: text/html"
+        var httpGet = "GET /render_xml.xml HTTP/1.1\r\nAccept: text/html";
         var request = wApp.request(httpGet);
         var response = wApp.response(request);
         expect(response.split("\r\n\r\n")[1]).toEqual("<?xml version='1.0' encoding='UTF-8'?><error version='1.0'>The JSON object should have an xml key</error>");
    });
-})
+});
