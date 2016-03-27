@@ -637,7 +637,7 @@ e[0]=a;b.log.apply(b,e)})};k.exports=b["default"]},function(k,b,e){b.__esModule=
       return(str);
     }
 // xxxxxxxxxxxxxxxxxxxx Response Object xxxxxxxxxxxxxxxxxxx
-  var BasicHeaders =[ "Server: Velneo v7"];
+  var BasicHeaders =[ "Server: Velneo v7" ];
 
   function isAsset(request) {
     return(request.extension === "js" || request.extension === "css");

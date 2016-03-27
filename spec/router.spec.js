@@ -61,7 +61,7 @@ describe("Router Component", function(){
     expect(wApp.router.params.id).toEqual("23");
     expect(wApp.router.params.userid).toEqual("42");
   });
-  
+
   it("should able to add alpha numeric vars to params scope", function(){
     wApp.router.addRoutes({"GET /some/:cosa": "controller1#action1"});
     var routing = wApp.router.pointRequest("GET /some/cristian");
@@ -113,7 +113,7 @@ describe("Router Component", function(){
     expect(router[5]).toEqual("PUT /users/:id");
     expect(router[6]).toEqual("DELETE /users/:id");
   });
-  
+
   it("Should respect REST routes when adding some email", function(){
     wApp.router.addRoutes({"resource users": "users"});
     expect(wApp.router.pointRequest("GET /users/10")).toEqual("usersController#show");
@@ -195,4 +195,10 @@ describe("Router Component", function(){
     var process = wApp.router.pointRequest("GET /some_url.bus/");
     expect(process).toEqual("box/query");
   });
+
+  it("should be able to handle two consecutives params", function() {
+    wApp.router.addRoutes({"GET /api/v1/:param1/:params2": "someController#index"});
+    var cont = wApp.router.pointRequest("GET /api/v1/hello/world");
+    expect(cont).toEqual("someController#index");
+  })
 });
