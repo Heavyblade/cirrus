@@ -325,7 +325,6 @@ e[0]=a;b.log.apply(b,e)})};k.exports=b["default"]},function(k,b,e){b.__esModule=
 
 //xxxxxxxxxxxxxxxxxxx Main Application Definition xxxxxxxxx
   wApp = {
-    // System Router
     version: "1.4",
     config: { filesTable: "cirrusdat/FILES_MEM", root_path: "D://cirrus" },
     router: {
@@ -647,13 +646,19 @@ e[0]=a;b.log.apply(b,e)})};k.exports=b["default"]},function(k,b,e){b.__esModule=
     try {
           // Comprobamos que si se ha producido un error en el parseo de la petición
           if (request.name == "SyntaxError") throw request;
-
-          if (request.extension === "js" || request.extension === "css" ) {
+          var types = {
+            "js":   "application/javascript",
+            "css":  "text/css",
+            "woff": "application/font-woff",
+            "ttf":  "application/font-sfnt",
+            "svg":  "image/svg+xml",
+            "eot":  "application/vnd.ms-fontobject",
+          }
+          if ( types[request.extension] !== undefined ) {
               // Assetss request handling
               var record = getHTML(request.url);
               if(record.html !== "") {
-                var asset_type = (request.url.substr(request.url.length - 3) === "css") ? "text/css" : "application/javascript";
-                return(renderResponseAssets(record, asset_type));
+                return(renderResponseAssets(record, types[request.extension]));
               } else {
                 return("HTTP/1.0 404 NOT FOUND");
               }
@@ -803,7 +808,7 @@ e[0]=a;b.log.apply(b,e)})};k.exports=b["default"]},function(k,b,e){b.__esModule=
       importClass( "VTextFile" );
       importClass( "VFile" );
 
-      var extension = path.split(".")[path.split(".").length-1].match(/(css|js|html)/i) === null ? ".html" : "";
+      var extension = path.split(".")[path.split(".").length-1].match(/(css|js|html|woff|ttf|svg|eot)/i) === null ? ".html" : "";
       path += extension;
 
       var file     = new VTextFile( wApp.config.root_path + path ),
