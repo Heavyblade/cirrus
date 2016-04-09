@@ -370,6 +370,7 @@ e[0]=a;b.log.apply(b,e)})};k.exports=b["default"]},function(k,b,e){b.__esModule=
         },
         pointRequest: function (url) {
             var z = this.rexRoutes.length;
+            
             for(i=0; i < z; i++) {
               var rutaRegExp  = this.rexRoutes[i],
                    match      = url.match(rutaRegExp);
@@ -541,7 +542,7 @@ e[0]=a;b.log.apply(b,e)})};k.exports=b["default"]},function(k,b,e){b.__esModule=
           // body XML
           else if ( req.headers["Content-Type"] !== undefined && req.headers["Content-Type"].match(/text\/xml/i) && req.body){ wApp.router.params.body = req.body; }
 
-          else{ wApp.router.params.body = req.bodyDecoded; }
+          else { wApp.router.params.body = req.bodyDecoded; }
 
           // Set Cookie
           if(req.headers.Cookie !== undefined) { wApp.session.getFromHeader(req.headers.Cookie); }
@@ -638,10 +639,6 @@ e[0]=a;b.log.apply(b,e)})};k.exports=b["default"]},function(k,b,e){b.__esModule=
 // xxxxxxxxxxxxxxxxxxxx Response Object xxxxxxxxxxxxxxxxxxx
   var BasicHeaders =[ "Server: Velneo v7" ];
 
-  function isAsset(request) {
-    return(request.extension === "js" || request.extension === "css");
-  }
-
   function Response(request) {
     try {
           // Comprobamos que si se ha producido un error en el parseo de la petición
@@ -687,7 +684,13 @@ e[0]=a;b.log.apply(b,e)})};k.exports=b["default"]},function(k,b,e){b.__esModule=
                 var controllerAction = actions.split("#");
                 return(renderResponse(controllerAction[0], controllerAction[1], wApp, (request.extension || request.headers.Accept)));
               } else {
-                return("HTTP/1.0 404 NOT FOUND");
+                var orphanHTML = getHTML("/views" + request.url);
+                if (orphanHTML.html !== "") {
+                  return(renderResponseAssets(orphanHTML, "text/html; charset=utf-8"));
+                } else {
+                  return("HTTP/1.0 404 NOT FOUND");
+                }
+
               }
           }
     } catch(e) {

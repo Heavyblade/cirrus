@@ -254,6 +254,14 @@ describe("Handling standar html request", function(){
     expect(response.split("\r\n\r\n")[0].split("\r\n")[4]).toEqual("location: /another_page");
   });
 
+  it("should be able to render a raw html even if action controller isn't there", function(){
+    var httpGet   = "GET /users/hello HTTP/1.1\r\nAccept: text/html",
+        request   = wApp.request(httpGet),
+        response  = wApp.response(request);
+
+    expect(response.split("\r\n\r\n")[1]).toEqual("<div><h1>Hello World</h1></div>");
+  });
+
 });
 
 describe("Rendering process", function(){

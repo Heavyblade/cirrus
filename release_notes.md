@@ -10,6 +10,7 @@
 * inclusion de before filters en controllers
 * Inclusión de funcionalidad Flash
 * Soporte para métodos PUT y DELETE en forms HTML via parametro _method
+* Manejo arrays en los parametros
 * Fix de bug que impide jsons de más de 1 nivel en session
 * Añadido de manejo de cache para headers de assets
 
