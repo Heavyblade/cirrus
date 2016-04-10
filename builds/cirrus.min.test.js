@@ -370,7 +370,7 @@ e[0]=a;b.log.apply(b,e)})};k.exports=b["default"]},function(k,b,e){b.__esModule=
         },
         pointRequest: function (url) {
             var z = this.rexRoutes.length;
-            
+
             for(i=0; i < z; i++) {
               var rutaRegExp  = this.rexRoutes[i],
                    match      = url.match(rutaRegExp);
@@ -686,7 +686,12 @@ e[0]=a;b.log.apply(b,e)})};k.exports=b["default"]},function(k,b,e){b.__esModule=
               } else {
                 var orphanHTML = getHTML("/views" + request.url);
                 if (orphanHTML.html !== "") {
-                  return(renderResponseAssets(orphanHTML, "text/html; charset=utf-8"));
+
+                    var layoutHTML = getHTML("/layouts/application"),
+                        layoutBody = (layoutHTML.html === "" ? "#yield" : layoutHTML.html),
+                        full_body  = layoutBody.replace("#yield", orphanHTML.html);
+
+                    return(renderResponseAssets({html: full_body}, "text/html; charset=utf-8"));
                 } else {
                   return("HTTP/1.0 404 NOT FOUND");
                 }

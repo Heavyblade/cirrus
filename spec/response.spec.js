@@ -259,7 +259,7 @@ describe("Handling standar html request", function(){
         request   = wApp.request(httpGet),
         response  = wApp.response(request);
 
-    expect(response.split("\r\n\r\n")[1]).toEqual("<div><h1>Hello World</h1></div>");
+    expect(response.split("\r\n\r\n")[1]).toEqual("<html><head></head><body><div><h1>Hello World</h1></div></body></html>");
   });
 
 });
