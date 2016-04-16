@@ -84,37 +84,42 @@ function renderQuery(queryId, params) {
 
   if (query.exec()) {
      var jsonResp = JSON.stringify(vRegisterListToJSON(query.result(), fields));
-  }
-  var headers = [("Date: " + (new Date()).toGMTString()),("Content-Length: " + jsonResp.length)];
-  headers = headers.concat(BasicHeaders).concat(["Content-Type: application/json; charset=utf-8"]);
+     var headers = [("Date: " + (new Date()).toGMTString()),("Content-Length: " + jsonResp.length)];
+     headers = headers.concat(BasicHeaders).concat(["Content-Type: application/json; charset=utf-8"]);
 
-  var fullResponse = verb + CRLF + headers.join(CRLF) + CRLF + CRLF + jsonResp;
-  return(fullResponse);
+     var fullResponse = verb + CRLF + headers.join(CRLF) + CRLF + CRLF + jsonResp;
+     return(fullResponse);
+  }
 }
 
 function vRegisterListToJSON(vregisterlist, neededFields) {
-    var table = vregisterlist.tableInfo();
-    var nFields = nFields2 = table.fieldCount();
-    var i = vregisterlist.size();
-    var result = [];
-
-    var fields = [];
+    var table   = vregisterlist.tableInfo(),
+        nFields = table.fieldCount(),
+        i       = vregisterlist.size(),
+        result  = [],
+        fields  = [],
+        type    = 0,
+        fieldType;
 
     // Selecting fields to be mapped
     if (neededFields === undefined) {
-      while(nFields--) { fields.push({fieldName: table.fieldId(nFields), fieldType: table.fieldType(nFields)}); }
+        while(nFields--) {
+            fieldType = parseInt(table.fieldType(nFields), 10);
+            type = (fieldType === 11 ? parseInt("11" + table.fieldObjectType(nFields)) : fieldType);
+            fields.push({fieldName: table.fieldId(nFields), fieldType: type});
+        }
     } else {
       neededFields = neededFields.toUpperCase().split(",");
-      while(nFields--) { 
+      while(nFields--) {
         if ( neededFields.indexOf(table.fieldId(nFields)) > -1 ) { fields.push({fieldName: table.fieldId(nFields), fieldType: table.fieldType(nFields)}); }
        }
     }
 
-    var nFields = fields.length;
+    nFields = fields.length;
     while(i--) {
-      var record = vregisterlist.readAt(i);
-      var z = nFields;
-      var recordJSON = {};
+      var record     = vregisterlist.readAt(i),
+          z          = nFields,
+          recordJSON = {};
       while(z--) {
           recordJSON[fields[z].fieldName] = mapField(fields[z].fieldType, fields[z].fieldName, record);
       }
@@ -152,7 +157,7 @@ function mapField(type, fieldName, record) {
        result = record.fieldToDate(fieldName);
        break;
     case 8:
-       result = record.fieldToTime(fieldName);
+       result = record.fieldToDateTime(fieldName);
        break;
     case 9:
        result = record.fieldToDateTime(fieldName);
@@ -163,6 +168,12 @@ function mapField(type, fieldName, record) {
     case 11:
        result = "";
        break;
+    case 111:
+       result = record.fieldToString(fieldName);
+       break;
+    case 112:
+      result = record.fieldToString(fieldName);
+      break;
     case 12:
        result = "";
        break;
