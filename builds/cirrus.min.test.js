@@ -515,7 +515,21 @@ e[0]=a;b.log.apply(b,e)})};k.exports=b["default"]},function(k,b,e){b.__esModule=
 
       // Get the Query String
       var params = req.encodeParams;
-      if(req.encodeParams) { while(param = body_params_regx.exec(params)) {req.decodeParams[param[1]] = wApp.getType(decodeURIComponent(param[2]).replace(/\+/g, " "));} }
+      if(req.encodeParams) {
+        var value, key, current;
+        while(param = body_params_regx.exec(params)) {
+          key    = param[1];
+          value  = wApp.getType(decodeURIComponent(param[2]).replace(/\+/g, " "));
+          current = req.decodeParams[key];
+
+          if ( current === undefined ) {
+              req.decodeParams[key] = value;
+          } else {
+              if ( typeof(current) !== "object" ) { req.decodeParams[key] = [current]; }
+              req.decodeParams[key].push(value);
+          }
+        }
+      }
 
       // Body params if any
       if(split_request.length == 2) {

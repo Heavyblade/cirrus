@@ -90,4 +90,11 @@ describe("Request Object", function(){
     expect(wApp.router.params.body.lastname).toEqual("doeperez");
   });
 
+  it("Should handle array items on the params query string", function(){
+    var httpGet = "GET /some/path/toresource?foo=bar&hello=world&foo=bar2 HTTP/1.0\r\nContent-Type: application/x-www-form-urlencoded\r\nConnection: Keep-Alive\r\n";
+    var request = wApp.request(httpGet);
+    expect(wApp.router.params.foo).toEqual(["bar","bar2"]);
+    expect(wApp.router.params.hello).toEqual("world");
+  });
+
 });
