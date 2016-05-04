@@ -182,8 +182,8 @@
       if(req.encodeParams) {
         var value, key, current;
         while(param = body_params_regx.exec(params)) {
-          key    = param[1];
-          value  = wApp.getType(decodeURIComponent(param[2]).replace(/\+/g, " "));
+          key     = decodeURIComponent(param[1]).replace("[]", "");
+          value   = wApp.getType(decodeURIComponent(param[2]).replace(/\+/g, " "));
           current = req.decodeParams[key];
 
           if ( current === undefined ) {
