@@ -1,66 +1,66 @@
 function renderProcess(processId, params) {
-  importClass("VProcess");
-  var process = new VProcess(theRoot);
-  var fields = params.fields;
-  process.setProcess(processId);
+    importClass("VProcess");
+    var process = new VProcess(theRoot);
+    var fields = params.fields;
+    process.setProcess(processId);
 
-  var CRLF = "\r\n";
-  var verb = "HTTP/1.0 200 OK";
-  delete(params.body);
-  delete(params.fields);
-  var keysList = Object.keys(params);
-  var i = keysList.length;
+    var CRLF = "\r\n";
+    var verb = "HTTP/1.0 200 OK";
+    delete(params.body);
+    delete(params.fields);
+    var keysList = Object.keys(params);
+    var i = keysList.length;
 
-  while(i--) { process.setVar(keysList[i].toUpperCase(),  wApp.getType(params[keysList[i]]) );}
+    while(i--) { process.setVar(keysList[i].toUpperCase(),  wApp.getType(params[keysList[i]]) );}
 
-  process.exec();
+    process.exec();
 
-  var result = process.varToString("RESULT");
+    var result = process.varToString("RESULT");
 
-  // If the var result is empty try to render the output
-  if (result === "") {
-      var pResult = process.result();
-      if ((process.objectInfo().outputType() === 2) && (pResult.size() > 0)) {
-          result = JSON.stringify(vRegisterListToJSON(pResult, fields));
-      } else if (process.objectInfo().outputType() === 1) {
-          var list = new VRegisterList(theRoot);
-          list.setTable(pResult.tableInfo().idRef());
-          list.append(pResult);
-          result = JSON.stringify(vRegisterListToJSON(list, fields));
-      }
-  }
+    // If the var result is empty try to render the output
+    if (result === "") {
+        var pResult = process.result();
+        if ((process.objectInfo().outputType() === 2) && (pResult.size() > 0)) {
+            result = JSON.stringify(vRegisterListToJSON(pResult, fields));
+        } else if (process.objectInfo().outputType() === 1) {
+            var list = new VRegisterList(theRoot);
+            list.setTable(pResult.tableInfo().idRef());
+            list.append(pResult);
+            result = JSON.stringify(vRegisterListToJSON(list, fields));
+        }
+    }
 
-  var headers = [("Date: " + (new Date()).toGMTString()),("Content-Length: " + result.length)];
-  headers = headers.concat(BasicHeaders).concat(["Content-Type: text/html; charset=utf-8"]);
+    var headers = [("Date: " + (new Date()).toGMTString()),("Content-Length: " + result.length)];
+    headers = headers.concat(BasicHeaders).concat(["Content-Type: text/html; charset=utf-8"]);
 
-  var fullResponse = verb + CRLF + headers.join(CRLF) + CRLF + CRLF + result;
-  return(fullResponse);
+    var fullResponse = verb + CRLF + headers.join(CRLF) + CRLF + CRLF + result;
+    return(fullResponse);
 }
 
 function renderQuery(queryId, params) {
-  importClass("VQuery");
-  var query = new VQuery(theRoot);
-  var fields = params.fields;
-  query.setQuery(queryId);
+    importClass("VQuery");
+    var query = new VQuery(theRoot);
+    var fields = params.fields;
+    query.setQuery(queryId);
 
-  var CRLF = "\r\n";
-  var verb = "HTTP/1.0 200 OK";
+    var CRLF = "\r\n";
+    var verb = "HTTP/1.0 200 OK";
 
-  delete(params.body);
-  delete(params.fields);
-  var keysList = Object.keys(params);
-  var i = keysList.length;
+    delete(params.body);
+    delete(params.fields);
+    var keysList = Object.keys(params);
+    var i = keysList.length;
 
-  while(i--) { query.setVar(keysList[i].toUpperCase(),  wApp.getType(params[keysList[i]]));}
+    while(i--) { query.setVar(keysList[i].toUpperCase(),  wApp.getType(params[keysList[i]]));}
 
-  if (query.exec()) {
-     var jsonResp = JSON.stringify(vRegisterListToJSON(query.result(), fields));
-     var headers = [("Date: " + (new Date()).toGMTString()),("Content-Length: " + jsonResp.length)];
-     headers = headers.concat(BasicHeaders).concat(["Content-Type: application/json; charset=utf-8"]);
+    if (query.exec()) {
+       var jsonResp = JSON.stringify(vRegisterListToJSON(query.result(), fields));
+       var headers = [("Date: " + (new Date()).toGMTString()),("Content-Length: " + jsonResp.length)];
+       headers = headers.concat(BasicHeaders).concat(["Content-Type: application/json; charset=utf-8"]);
 
-     var fullResponse = verb + CRLF + headers.join(CRLF) + CRLF + CRLF + jsonResp;
-     return(fullResponse);
-  }
+       var fullResponse = verb + CRLF + headers.join(CRLF) + CRLF + CRLF + jsonResp;
+       return(fullResponse);
+    }
 }
 
 function vRegisterListToJSON(vregisterlist, neededFields) {

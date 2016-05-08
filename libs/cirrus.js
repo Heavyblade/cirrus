@@ -187,7 +187,7 @@
           current = req.decodeParams[key];
 
           if ( current === undefined ) {
-              req.decodeParams[key] = value;
+              req.decodeParams[key] = decodeURIComponent(param[1]).match(/^.*\[\]$/) ? [value] : value;
           } else {
               if ( typeof(current) !== "object" ) { req.decodeParams[key] = [current]; }
               req.decodeParams[key].push(value);
