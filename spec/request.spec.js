@@ -61,6 +61,12 @@ describe("Request Object", function(){
     expect(wApp.router.params.body.name).toEqual("john");
   });
 
+  it("should be able to handle HTTP post with arrays in the body", function () {
+    var httpGet = "POST /some/path/toresource?foo=bar&hello=world HTTP/1.0\r\nContent-Type: application/x-www-form-urlencoded\r\nConnection: Keep-Alive\r\n\r\nids%5B%5D=1&ids%5B%5D=2&tableId=quizAdminDat%2FENCUESTAS\r\n"
+    var request = wApp.request(httpGet);
+    expect(wApp.router.params.body.ids).toEqual([1,2]);
+  });
+
   it("should be able to handle HTTP post with body on JSON format", function () {
     var httpGet = "POST /some/path/toresource?foo=bar&hello=world HTTP/1.0\r\nContent-Type: application/json\r\nConnection: Keep-Alive\r\n\r\n{\"name\":\"john\",\"lastname\":\"doe\"}\r\n";
     var request = wApp.request(httpGet);
