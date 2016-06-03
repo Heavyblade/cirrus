@@ -203,14 +203,15 @@
           if (body[1] == "_method" && decodeURIComponent(body[2]).match(/^(PUT|DELETE)$/i)) {
               req.verb = decodeURIComponent(body[2]).toUpperCase();
           } else {
-              var actual = req.bodyDecoded[body[1]],
+              var decKey = decodeURIComponent(body[1]),
+                  actual = req.bodyDecoded[decKey],
                   newVal = wApp.getType(decodeURIComponent(body[2]));
 
               if (actual === undefined) {
-                  req.bodyDecoded[body[1]] = newVal;
+                  req.bodyDecoded[decKey] = newVal;
               } else {
-                  if ( typeof(actual) != "object" ) { req.bodyDecoded[body[1]] = [actual]; }
-                  req.bodyDecoded[body[1]].push(newVal);
+                  if ( typeof(actual) != "object" ) { req.bodyDecoded[decKey] = [actual]; }
+                  req.bodyDecoded[decKey].push(newVal);
               }
           }
         }
