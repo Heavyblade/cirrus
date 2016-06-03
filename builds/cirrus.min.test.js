@@ -539,7 +539,7 @@ e[0]=a;b.log.apply(b,e)})};k.exports=b["default"]},function(k,b,e){b.__esModule=
           if (body[1] == "_method" && decodeURIComponent(body[2]).match(/^(PUT|DELETE)$/i)) {
               req.verb = decodeURIComponent(body[2]).toUpperCase();
           } else {
-              var decKey = decodeURIComponent(body[1]),
+              var decKey = decodeURIComponent(body[1]).replace("[]", ""),
                   actual = req.bodyDecoded[decKey],
                   newVal = wApp.getType(decodeURIComponent(body[2]));
 
