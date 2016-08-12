@@ -140,6 +140,18 @@
       }
     },
     params: function(){return(this.router.params);},
+    responseHeaders: {
+      headers: {},
+      set: function(name, value) { this.headers[name] = value; },
+      buildForHTTP: function() {
+          var keys   = Object.keys(this.headers),
+              i      = keys.length,
+              result = [];
+
+          for( z=0; z < i; z++ ) { result.push(keys[z] + ": " + this.headers[keys[z]]); }
+          return result;
+      }
+    },
     request: Request,
     response: Response,
     logError: logError,
@@ -340,7 +352,7 @@
             "ttf":  "application/font-sfnt",
             "svg":  "image/svg+xml",
             "eot":  "application/vnd.ms-fontobject",
-          }
+          };
           if ( types[request.extension] !== undefined ) {
               // Assetss request handling
               var record = getHTML(request.url);
@@ -372,7 +384,7 @@
               var actions = wApp.router.pointRequest(request.verb + " " + request.url.split(".")[0]);
               if(actions != "NOT FOUND") {
                 var controllerAction = actions.split("#");
-                return(renderResponse(controllerAction[0], controllerAction[1], wApp, (request.extension || request.headers.Accept)));
+                return(renderResponse(controllerAction[0], controllerAction[1], wApp, request));
               } else {
                 var orphanHTML = getHTML("/views" + request.url);
                 if (orphanHTML.html !== "") {
@@ -415,10 +427,17 @@
       return(fullResponse);
   }
 
-  function renderResponse(controller, action, wapp, type) {
-      var CRLF = "\r\n";
+  function renderResponse(controller, action, wapp, request) {
+      var CRLF = "\r\n",
+          type = (request.extension || request.headers.Accept);
 
-      if ( wapp[controller].before !== undefined ) {
+      if (wapp[controller].authentication !== undefined && typeof(wapp[controller].before) == "object" ) {
+         if ( (wapp[controller].authentication.actions || []).indexOf(action) > -1 || wapp[controller].authentication.all ) {
+
+         }
+      }
+
+      if ( wapp[controller].before !== undefined && typeof(wapp[controller].before) == "function" ) {
           wapp.router.params = wapp[controller].before(wapp.router.params);
       }
 
@@ -431,7 +450,7 @@
       var rendered = Engine[format[0]](jsonresp, wapp, controller, action);
 
       var headers = [("Date: " + (new Date()).toGMTString()),("Content-Length: " + (rendered.body ? rendered.body.length: "0"))];
-      headers = headers.concat(BasicHeaders).concat(rendered.headers);
+      headers = headers.concat(BasicHeaders).concat(rendered.headers).concat(wapp.responseHeaders.buildForHTTP());
 
       if (wApp.session.changed) {headers.push(wApp.session.setInHeader());}
       var fullResponse = rendered.verb + CRLF + headers.join(CRLF) + CRLF + CRLF + rendered.body;
