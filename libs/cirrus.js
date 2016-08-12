@@ -431,9 +431,10 @@
       var CRLF = "\r\n",
           type = (request.extension || request.headers.Accept);
 
-      if (wapp[controller].authentication !== undefined && typeof(wapp[controller].before) == "object" ) {
+      if (wapp[controller].authentication !== undefined && typeof(wapp[controller].authentication) == "object" ) {
          if ( (wapp[controller].authentication.actions || []).indexOf(action) > -1 || wapp[controller].authentication.all ) {
-
+            if ( request.headers.Authorization == undefined )   { return(renderUnauthorized()); }
+            if ( !isAuthorized(controller, request) )           { return(renderUnauthorized()); }
          }
       }
 
