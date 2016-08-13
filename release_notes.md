@@ -11,6 +11,7 @@
 * Inclusión de funcionalidad Flash
 * Soporte para métodos PUT y DELETE en forms HTML via parametro _method
 * capacidad de set custom headers en el response
+* Basic authentication
 * Manejo arrays en los parametros
 * Fix de bug que impide jsons de más de 1 nivel en session
 * Añadido de manejo de cache para headers de assets

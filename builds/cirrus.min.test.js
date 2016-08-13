@@ -763,14 +763,28 @@ e[0]=a;b.log.apply(b,e)})};k.exports=b["default"]},function(k,b,e){b.__esModule=
       return(fullResponse);
   }
 
+  function renderUnauthorized() {
+    var CRLF     = "\r\n",
+        jsonresp = unescape(encodeURIComponent(JSON.stringify({message: "Unauthorized"}))),
+        headers  = BasicHeaders.concat(["WWW-Authenticate: Basic realm=\"cirrus\""]);
+
+    var resp = "HTTP/1.0 401 Unauthorized" + CRLF + headers.join(CRLF) + CRLF + CRLF + jsonresp;
+    return(resp);
+  }
+
+  function isAuthorized(controller, request) {
+     var userAndPassword = Base64.decode(request.headers.Authorization.split(" ")[1]).split(":");
+     return(controller.authentication.username == userAndPassword[0] && controller.authentication.password == userAndPassword[1]);
+  }
+
   function renderResponse(controller, action, wapp, request) {
       var CRLF = "\r\n",
-          type = (request.extension || request.headers.Accept);
+          type = (request.extension || request.headers.Accept),
+          needsAuthentication = wapp[controller].authentication !== undefined && typeof(wapp[controller].authentication) == "object",
+          actionRequired = ((wapp[controller].authentication || {}).actions || []).indexOf(action) > -1 || (wapp[controller].authentication ||{}).all;
 
-      if (wapp[controller].authentication !== undefined && typeof(wapp[controller].before) == "object" ) {
-         if ( (wapp[controller].authentication.actions || []).indexOf(action) > -1 || wapp[controller].authentication.all ) {
-
-         }
+      if ( needsAuthentication && actionRequired ) {
+            if ( request.headers.Authorization === undefined || isAuthorized(wapp[controller], request) === false )   { return(renderUnauthorized()); }
       }
 
       if ( wapp[controller].before !== undefined && typeof(wapp[controller].before) == "function" ) {

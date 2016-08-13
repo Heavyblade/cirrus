@@ -1,4 +1,13 @@
 theRoot = {};
+// xxxxxxxxxxxxxxxxxxx Base 64 Encode Libreary xxxxxxxxxxxx
+function StringBuffer(){this.buffer=[]}StringBuffer.prototype.append=function(a){this.buffer.push(a);return this};StringBuffer.prototype.toString=function(){return this.buffer.join("")};
+var Base64={codex:"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",encode:function(a){for(var c=new StringBuffer,a=new Utf8EncodeEnumerator(a);a.moveNext();){var b=a.current;a.moveNext();var d=a.current;a.moveNext();var e=a.current,h=b>>2,b=(b&3)<<4|d>>4,g=(d&15)<<2|e>>6,f=e&63;isNaN(d)?g=f=64:isNaN(e)&&(f=64);c.append(this.codex.charAt(h)+this.codex.charAt(b)+this.codex.charAt(g)+this.codex.charAt(f))}return c.toString()},decode:function(a){for(var c=new StringBuffer,a=new Base64DecodeEnumerator(a);a.moveNext();){var b=
+a.current;if(128>b)c.append(String.fromCharCode(b));else if(191<b&&224>b){a.moveNext();var d=a.current;c.append(String.fromCharCode((b&31)<<6|d&63))}else a.moveNext(),d=a.current,a.moveNext(),c.append(String.fromCharCode((b&15)<<12|(d&63)<<6|a.current&63))}return c.toString()}};function Utf8EncodeEnumerator(a){this._input=a;this._index=-1;this._buffer=[]}
+Utf8EncodeEnumerator.prototype={current:Number.NaN,moveNext:function(){if(0<this._buffer.length)return this.current=this._buffer.shift(),!0;if(this._index>=this._input.length-1)return this.current=Number.NaN,!1;var a=this._input.charCodeAt(++this._index);13==a&&10==this._input.charCodeAt(this._index+1)&&(a=10,this._index+=2);128>a?this.current=a:(127<a&&2048>a?this.current=a>>6|192:(this.current=a>>12|224,this._buffer.push(a>>6&63|128)),this._buffer.push(a&63|128));return!0}};
+function Base64DecodeEnumerator(a){this._input=a;this._index=-1;this._buffer=[]}
+Base64DecodeEnumerator.prototype={current:64,moveNext:function(){if(0<this._buffer.length)return this.current=this._buffer.shift(),!0;if(this._index>=this._input.length-1)return this.current=64,!1;var a=Base64.codex.indexOf(this._input.charAt(++this._index)),c=Base64.codex.indexOf(this._input.charAt(++this._index)),b=Base64.codex.indexOf(this._input.charAt(++this._index)),d=Base64.codex.indexOf(this._input.charAt(++this._index)),e=(b&3)<<6|d;this.current=a<<2|c>>4;64!=b&&this._buffer.push((c&15)<<
+4|b>>2);64!=d&&this._buffer.push(e);return!0}};
+
 
 describe("Response Object", function(){
 
@@ -134,6 +143,41 @@ describe("Response Object", function(){
       expect(response.split("\r\n\r\n")[0].split("\r\n")[6]).toEqual("Custom2: hello-world2");
   });
 
+  it("should response with Unauthorized response for a required Authorization end-point", function(){
+      wApp.usersController.show = function(params){ return({hello: "world"}); };
+      wApp.usersController.authentication = {all: true, username: "pedro", password: "abc123"};
+
+      var httpGet  = "GET /users/44/show.json HTTP/1.1";
+      var request  = wApp.request(httpGet);
+      var response = wApp.response(request);
+
+      expect(response.split("\r\n\r\n")[0].split("\r\n")[0]).toEqual("HTTP/1.0 401 Unauthorized");
+  });
+
+  it("should allow request with valid authentication", function(){
+      wApp.usersController.show = function(params){ return({hello: "world"}); };
+      wApp.usersController.authentication = {all: true, username: "pedro", password: "abc123"};
+
+      var header   = "Authorization: Basic " + Base64.encode("pedro:abc123"),
+          httpGet  = "GET /users/44/show.json HTTP/1.1\r\n" + header,
+          request  = wApp.request(httpGet),
+          response = wApp.response(request);
+
+      expect(response.split("\r\n\r\n")[0].split("\r\n")[0]).toEqual("HTTP/1.0 200 OK");
+      expect(response.split("\r\n\r\n")[1]).toEqual(JSON.stringify({hello: "world"}));
+  });
+
+  it("should block access for wrong Authentication params", function(){
+      wApp.usersController.show = function(params){ return({hello: "world"}); };
+      wApp.usersController.authentication = {all: true, username: "pedro", password: "xxxx"};
+
+      var header   = "Authorization: Basic " + Base64.encode("pedro:abc123"),
+          httpGet  = "GET /users/44/show.json HTTP/1.1\r\n" + header,
+          request  = wApp.request(httpGet),
+          response = wApp.response(request);
+
+      expect(response.split("\r\n\r\n")[0].split("\r\n")[0]).toEqual("HTTP/1.0 401 Unauthorized");
+  })
 });
 
 describe("Handling HTML templates", function() {
