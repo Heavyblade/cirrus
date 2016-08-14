@@ -80,7 +80,7 @@ function vRegisterListToJSON(vregisterlist, neededFields) {
             fields.push({fieldName: table.fieldId(nFields), fieldType: type});
         }
     } else {
-      neededFields = neededFields.toUpperCase().split(",");
+      neededFields = typeof(neededFields) == "string" ? neededFields.toUpperCase().split(",") : neededFields;
       while(nFields--) {
         if ( neededFields.indexOf(table.fieldId(nFields)) > -1 ) { fields.push({fieldName: table.fieldId(nFields), fieldType: table.fieldType(nFields)}); }
        }
