@@ -177,7 +177,36 @@ describe("Response Object", function(){
           response = wApp.response(request);
 
       expect(response.split("\r\n\r\n")[0].split("\r\n")[0]).toEqual("HTTP/1.0 401 Unauthorized");
-  })
+  });
+
+  it("should only should athenticate specific points", function(){
+      wApp.usersController.show = function(params) { return({hello: "world"}); };
+      wApp.usersController.talk = function(params) { return({hello: "world"}); };
+      wApp.usersController.authentication = {actions: ["show"], username: "pedro", password: "xxxx"};
+
+      var request  = wApp.request("GET /users/44/show.json HTTP/1.1\r\n"),
+          response = wApp.response(request);
+
+      expect(response.split("\r\n\r\n")[0].split("\r\n")[0]).toEqual("HTTP/1.0 401 Unauthorized");
+
+      wApp.router.addRoutes({"GET /users/:userid/talk": "usersController#talk"});
+      request  = wApp.request("GET /users/44/talk HTTP/1.1\r\n");
+      response = wApp.response(request);
+
+      expect(response.split("\r\n\r\n")[0].split("\r\n")[0]).toEqual("HTTP/1.0 200 OK");
+  });
+
+  it("should allow to set the namespace for authentication", function(){
+        wApp.usersController.show = function(params){ return({hello: "world"}); };
+        wApp.usersController.authentication = {all: true, username: "pedro", password: "abc123", namespace: "test"};
+
+        var httpGet  = "GET /users/44/show.json HTTP/1.1";
+        var request  = wApp.request(httpGet);
+        var response = wApp.response(request);
+
+        expect(response.split("\r\n\r\n")[0].split("\r\n")[0]).toEqual("HTTP/1.0 401 Unauthorized");
+        expect(response.split("\r\n\r\n")[0].split("\r\n")[2]).toEqual("WWW-Authenticate: Basic realm=\"test\"");
+  });
 });
 
 describe("Handling HTML templates", function() {
