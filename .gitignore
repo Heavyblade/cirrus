@@ -6,12 +6,14 @@ lib-cov
 *.out
 *.pid
 *.gz
- 
+
 pids
 logs
 results
- 
+
 node_modules
 npm-debug.log
 cirrus_test.js
 include.html
+.sass-cache/*/*.*
+_site/

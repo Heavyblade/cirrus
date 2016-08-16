@@ -111,7 +111,11 @@ function vRegisterListToJSON(vregisterlist, neededFields) {
     } else {
       neededFields = typeof(neededFields) == "string" ? neededFields.toUpperCase().split(",") : neededFields;
       while(nFields--) {
-        if ( neededFields.indexOf(table.fieldId(nFields)) > -1 ) { fields.push({fieldName: table.fieldId(nFields), fieldType: table.fieldType(nFields)}); }
+        if ( neededFields.indexOf(table.fieldId(nFields)) > -1 ) {
+          fieldType = parseInt(table.fieldType(nFields), 10);
+          type = (fieldType === 11 ? parseInt("11" + table.fieldObjectType(nFields)) : fieldType);
+          fields.push({fieldName: table.fieldId(nFields), fieldType: type});
+        }
        }
     }
 
