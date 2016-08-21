@@ -696,7 +696,7 @@ e[0]=a;b.log.apply(b,e)})};k.exports=b["default"]},function(k,b,e){b.__esModule=
               // Assetss request handling
               var record = getHTML(request.url);
               if(record.html !== "") {
-                return(renderResponseAssets(record, types[request.extension]));
+                return(renderResponseAssets(record, types[request.extension], wApp));
               } else {
                 return("HTTP/1.0 404 NOT FOUND");
               }
@@ -732,7 +732,7 @@ e[0]=a;b.log.apply(b,e)})};k.exports=b["default"]},function(k,b,e){b.__esModule=
                         layoutBody = (layoutHTML.html === "" ? "#yield" : layoutHTML.html),
                         full_body  = layoutBody.replace("#yield", orphanHTML.html);
 
-                    return(renderResponseAssets({html: full_body}, "text/html; charset=utf-8"));
+                    return(renderResponseAssets({html: full_body}, "text/html; charset=utf-8", wApp));
                 } else {
                   return("HTTP/1.0 404 NOT FOUND");
                 }
@@ -751,10 +751,10 @@ e[0]=a;b.log.apply(b,e)})};k.exports=b["default"]},function(k,b,e){b.__esModule=
     }
   }
 
-  function renderResponseAssets(record, type) {
+  function renderResponseAssets(record, type, wapp) {
       var CRLF    = "\r\n",
           verb    = "HTTP/1.0 200 OK",
-          string  = record.html,
+          string  = wapp.isWindows() ? record.html : unescape(encodeURIComponent(record.html)), // Encode to UFT-8
           headers = [("Date: " + (new Date()).toGMTString()),("Content-Length: " + string.length)];
       if (record.useCache) {
           headers.push("Cache-Control: max-age=" + record.maxAge);
