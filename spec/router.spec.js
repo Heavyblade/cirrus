@@ -1,4 +1,5 @@
 wApp = require("./../builds/cirrus.min.test.js");
+wApp.isWindows = function() { return(true); }
 
 describe("Router Component", function(){
 

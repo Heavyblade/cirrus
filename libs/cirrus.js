@@ -1,6 +1,7 @@
 //xxxxxxxxxxxxxxxxxxx Main Application Definition xxxxxxxxx
   wApp = {
     version: "1.4",
+    isWindows: function() { return(theApp.sysInfo().getOsString().match(/win/i)); },
     config: { filesTable: "cirrusdat/FILES_MEM", root_path: "D://cirrus" },
     router: {
         params: {body: {}},
@@ -475,7 +476,7 @@
           delete(jsonresp.responseCode);
           var jsonp = wapp.router.params.callback;
           jsonresp = jsonp ? (jsonp + "(" + JSON.stringify(jsonresp) + ")") : JSON.stringify(jsonresp);
-          jsonresp = unescape(encodeURIComponent(jsonresp)); // Encode to UFT-8
+          jsonresp = wapp.isWindows() ? jsonresp : unescape(encodeURIComponent(jsonresp)); // Encode to UFT-8
           var headers = [("Content-Type: application/" + (jsonp ? "javascript" : "json")  + "; charset=utf-8")];
           return({verb: verb, body: jsonresp, headers: headers});
     },
@@ -512,15 +513,15 @@
               full_body = jsonresp;
           }
           var headers = ["Content-Type: text/html; charset=utf-8"];
-          return({verb: verb, body: unescape(encodeURIComponent(full_body)), headers: headers});
+          return({verb: verb, body: (wapp.isWindows() ? full_body : unescape(encodeURIComponent(full_body))), headers: headers});
     },
-    xml: function(jsonresp) {
+    xml: function(jsonresp, wapp) {
           var verb    = "HTTP/1.0 200 OK",
               headers = ["Content-Type: text/xml; charset=UTF-8"],
               xmlResp;
 
           if (jsonresp.xml) {
-              xmlResp = unescape(encodeURIComponent(jsonresp.xml));
+              xmlResp = (wapp.isWindows() ? jsonresp.xml : unescape(encodeURIComponent(jsonresp.xml)));
           } else {
               xmlResp = "<?xml version='1.0' encoding='UTF-8'?><error version='1.0'>The JSON object should have an xml key</error>";
           }

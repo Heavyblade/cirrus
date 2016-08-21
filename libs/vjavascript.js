@@ -1,6 +1,6 @@
 theRoot = {
   varToString: function(variable) {
-    return(this.vars[variable] == undefined ? "" : this.vars[variable]);
+    return(this.vars[variable] === undefined ? "" : this.vars[variable]);
   },
   vars: {},
   setVar: function(variable, value) {
