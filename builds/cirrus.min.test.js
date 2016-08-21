@@ -852,7 +852,7 @@ e[0]=a;b.log.apply(b,e)})};k.exports=b["default"]},function(k,b,e){b.__esModule=
               full_body = jsonresp;
           }
           var headers = ["Content-Type: text/html; charset=utf-8"];
-          return({verb: verb, body: full_body, headers: headers});
+          return({verb: verb, body: unescape(encodeURIComponent(full_body)), headers: headers});
     },
     xml: function(jsonresp) {
           var verb    = "HTTP/1.0 200 OK",
@@ -860,7 +860,7 @@ e[0]=a;b.log.apply(b,e)})};k.exports=b["default"]},function(k,b,e){b.__esModule=
               xmlResp;
 
           if (jsonresp.xml) {
-              xmlResp = jsonresp.xml;
+              xmlResp = unescape(encodeURIComponent(jsonresp.xml));
           } else {
               xmlResp = "<?xml version='1.0' encoding='UTF-8'?><error version='1.0'>The JSON object should have an xml key</error>";
           }
