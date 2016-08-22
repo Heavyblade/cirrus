@@ -155,7 +155,7 @@ header {
     min-height: auto;
     @include background-cover;
     background-position: center;
-    background-image: url('../img/background.jpg');
+    background-image: url('../img/cirrus_bg.png');
     text-align: center;
     color: white;
     .header-content {
@@ -348,3 +348,4 @@ img::-moz-selection {
 body {
     -webkit-tap-highlight-color: $theme-dark;
 }
+#cirrusDatList { text-align: left;}
