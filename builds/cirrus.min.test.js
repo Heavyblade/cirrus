@@ -816,7 +816,7 @@ e[0]=a;b.log.apply(b,e)})};k.exports=b["default"]},function(k,b,e){b.__esModule=
           delete(jsonresp.responseCode);
           var jsonp = wapp.router.params.callback;
           jsonresp = jsonp ? (jsonp + "(" + JSON.stringify(jsonresp) + ")") : JSON.stringify(jsonresp);
-          jsonresp = wapp.isWindows() ? jsonresp : unescape(encodeURIComponent(jsonresp)); // Encode to UFT-8
+          jsonresp = unescape(encodeURIComponent(jsonresp)); // Encode to UFT-8
           var headers = [("Content-Type: application/" + (jsonp ? "javascript" : "json")  + "; charset=utf-8")];
           return({verb: verb, body: jsonresp, headers: headers});
     },
