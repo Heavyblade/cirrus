@@ -443,7 +443,7 @@
   function renderResponse(controller, action, wapp, request) {
       var CRLF = "\r\n",
           type = (request.extension || request.headers.Accept),
-          needsAuthentication = wapp[controller].authentication !== undefined && typeof(wapp[controller].authentication) == "object",
+          needsAuthentication = wapp[controller].authentication !== undefined && typeof(wapp[controller].authentication) == "object" &&  wapp[controller].authentication.username !== "" && wapp[controller].authentication.password !== "",
           actionRequired = ((wapp[controller].authentication || {}).actions || []).indexOf(action) > -1 || (wapp[controller].authentication ||{}).all;
 
       if ( needsAuthentication && actionRequired ) {
