@@ -754,7 +754,7 @@ e[0]=a;b.log.apply(b,e)})};k.exports=b["default"]},function(k,b,e){b.__esModule=
   function renderResponseAssets(record, type, wapp) {
       var CRLF    = "\r\n",
           verb    = "HTTP/1.0 200 OK",
-          string  = wapp.isWindows() ? record.html : unescape(encodeURIComponent(record.html)), // Encode to UFT-8
+          string  = unescape(encodeURIComponent(record.html)), // Encode to UFT-8
           headers = [("Date: " + (new Date()).toGMTString()),("Content-Length: " + string.length)];
       if (record.useCache) {
           headers.push("Cache-Control: max-age=" + record.maxAge);
@@ -816,7 +816,7 @@ e[0]=a;b.log.apply(b,e)})};k.exports=b["default"]},function(k,b,e){b.__esModule=
           delete(jsonresp.responseCode);
           var jsonp = wapp.router.params.callback;
           jsonresp = jsonp ? (jsonp + "(" + JSON.stringify(jsonresp) + ")") : JSON.stringify(jsonresp);
-          jsonresp = wapp.isWindows() ? jsonresp : unescape(encodeURIComponent(jsonresp)); // Encode to UFT-8
+          jsonresp = unescape(encodeURIComponent(jsonresp)); // Encode to UFT-8
           var headers = [("Content-Type: application/" + (jsonp ? "javascript" : "json")  + "; charset=utf-8")];
           return({verb: verb, body: jsonresp, headers: headers});
     },
