@@ -25,10 +25,11 @@ function renderProcess(processId, params) {
     process.exec();
 
     var result = process.varToString("RESULT");
-
+    var ContentType = "Content-Type: text/html; charset=utf-8";
     // If the var result is empty try to render the output
     if (result === "") {
         var pResult = process.result();
+        ContentType = "Content-Type: application/json";
         if ((process.objectInfo().outputType() === 2) && (pResult.size() > 0)) {
             result = JSON.stringify(vRegisterListToJSON(pResult, fields));
         } else if (process.objectInfo().outputType() === 1) {
@@ -40,7 +41,7 @@ function renderProcess(processId, params) {
     }
 
     var headers = [("Date: " + (new Date()).toGMTString()),("Content-Length: " + result.length)];
-    headers = headers.concat(BasicHeaders).concat(["Content-Type: text/html; charset=utf-8"]);
+    headers = headers.concat(BasicHeaders).concat([ContentType]);
 
     var fullResponse = verb + CRLF + headers.join(CRLF) + CRLF + CRLF + result;
     return(fullResponse);
