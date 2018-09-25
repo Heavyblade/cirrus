@@ -14,10 +14,10 @@ function renderProcess(processId, params) {
     while(i--) {
 
         if ( keysList[i].toUpperCase().match(/^[A-Z0-9_]*$/) ) {
-            if ( params.body[keysList[i]] instanceof Date ) {
-                process.setVar(keysList[i], params.body[keysList[i]].toISOString().split("T")[0] );
+            if ( params[keysList[i]] instanceof Date ) {
+                process.setVar(keysList[i], params[keysList[i]].toISOString().split("T")[0] );
             } else {
-                process.setVar(keysList[i].toUpperCase(), params.body[keysList[i]] );
+                process.setVar(keysList[i].toUpperCase(), params[keysList[i]] );
             }
         }
     }
