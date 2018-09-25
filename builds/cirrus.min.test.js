@@ -40,7 +40,16 @@ function renderProcess(processId, params) {
     var keysList = Object.keys(params);
     var i = keysList.length;
 
-    while(i--) { process.setVar(keysList[i].toUpperCase(),  wApp.getType(params[keysList[i]]) );}
+    while(i--) {
+
+        if ( keysList[i].toUpperCase().match(/^[A-Z0-9_]*$/) ) {
+            if ( params.body[keysList[i]] instanceof Date ) {
+                process.setVar(keysList[i], params.body[keysList[i]].toISOString().split("T")[0] );
+            } else {
+                process.setVar(keysList[i].toUpperCase(), params.body[keysList[i]] );
+            }
+        }
+    }
 
     process.exec();
 
@@ -795,7 +804,7 @@ e[0]=a;b.log.apply(b,e)})};k.exports=b["default"]},function(k,b,e){b.__esModule=
       }
 
       var redirect_before = wapp.router.params.redirect_to !== undefined,
-          jsonresp = redirect_before ? wapp.router.params : wapp[controller][action](wapp.router.params);
+          jsonresp = redirect_before ? wapp.router.params : wapp[controller][action](wapp.router.params, request);
 
       type = type || "json";
       if (jsonresp.redirect_to) {type = "redirect";} //Check for redirection
