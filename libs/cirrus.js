@@ -338,7 +338,10 @@
       return(str);
     }
 // xxxxxxxxxxxxxxxxxxxx Response Object xxxxxxxxxxxxxxxxxxx
-  var BasicHeaders =[ "Server: Velneo v7" ];
+  var BasicHeaders =[ "Server: Velneo v7",
+                      "Access-Control-Allow-Origin: *",
+                      "Access-Control-Allow-Headers: DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type",
+                      "Access-Control-Allow-Methods: GET, POST, PUT, HEAD, OPTIONS, DELETE" ];
 
   function Response(request) {
     try {

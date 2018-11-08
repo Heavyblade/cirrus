@@ -47,7 +47,7 @@ describe("Response Object", function(){
     var httpGet = "GET /users/44/show?x=foo HTTP/1.1";
     var request = wApp.request(httpGet);
     var response = wApp.response(request);
-    expect(response.split(CRLF)[4]).toEqual("Content-Type: application/json; charset=utf-8");
+    expect(response.split(CRLF)[7]).toEqual("Content-Type: application/json; charset=utf-8");
   });
 
   it("should able to handle JSONP request from JQuery", function(){
@@ -55,7 +55,7 @@ describe("Response Object", function(){
     var request = wApp.request(httpGet);
     var response = wApp.response(request);
     expected_resp = "jQuery11224324(" + JSON.stringify({hello: "world", id: "44", x: wApp.router.params.x }) + ")";
-    expect(response.split(CRLF)[4]).toEqual("Content-Type: application/javascript; charset=utf-8");
+    expect(response.split(CRLF)[7]).toEqual("Content-Type: application/javascript; charset=utf-8");
     expect(response.split("\n\r\n")[1]).toEqual(expected_resp);
   });
 
@@ -139,8 +139,8 @@ describe("Response Object", function(){
       var request = wApp.request(httpGet);
       var response = wApp.response(request);
 
-      expect(response.split("\r\n\r\n")[0].split("\r\n")[5]).toEqual("Custom: hello-world");
-      expect(response.split("\r\n\r\n")[0].split("\r\n")[6]).toEqual("Custom2: hello-world2");
+      expect(response.split("\r\n\r\n")[0].split("\r\n")[8]).toEqual("Custom: hello-world");
+      expect(response.split("\r\n\r\n")[0].split("\r\n")[9]).toEqual("Custom2: hello-world2");
   });
 
   it("should response with Unauthorized response for a required Authorization end-point", function(){
@@ -205,7 +205,7 @@ describe("Response Object", function(){
         var response = wApp.response(request);
 
         expect(response.split("\r\n\r\n")[0].split("\r\n")[0]).toEqual("HTTP/1.0 401 Unauthorized");
-        expect(response.split("\r\n\r\n")[0].split("\r\n")[2]).toEqual("WWW-Authenticate: Basic realm=\"test\"");
+        expect(response.split("\r\n\r\n")[0].split("\r\n")[5]).toEqual("WWW-Authenticate: Basic realm=\"test\"");
   });
 });
 
@@ -339,7 +339,7 @@ describe("Handling standar html request", function(){
     var request = wApp.request(httpGet);
     var response = wApp.response(request);
     expect(response.split("\r\n\r\n")[0].split("\r\n")[0]).toEqual("HTTP/1.0 302 Found");
-    expect(response.split("\r\n\r\n")[0].split("\r\n")[4]).toEqual("location: /another_page");
+    expect(response.split("\r\n\r\n")[0].split("\r\n")[7]).toEqual("location: /another_page");
   });
 
   it("should be able to render a raw html even if action controller isn't there", function(){
