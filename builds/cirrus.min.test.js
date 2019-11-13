@@ -27,7 +27,7 @@ function Base64DecodeEnumerator(a){this._input=a;this._index=-1;this._buffer=[]}
 Base64DecodeEnumerator.prototype={current:64,moveNext:function(){if(0<this._buffer.length)return this.current=this._buffer.shift(),!0;if(this._index>=this._input.length-1)return this.current=64,!1;var a=Base64.codex.indexOf(this._input.charAt(++this._index)),c=Base64.codex.indexOf(this._input.charAt(++this._index)),b=Base64.codex.indexOf(this._input.charAt(++this._index)),d=Base64.codex.indexOf(this._input.charAt(++this._index)),e=(b&3)<<6|d;this.current=a<<2|c>>4;64!=b&&this._buffer.push((c&15)<<
 4|b>>2);64!=d&&this._buffer.push(e);return!0}};
 
-function renderProcess(processId, params) {
+function renderProcess(processId, params, wapp) {
     importClass("VProcess");
     var process = new VProcess(theRoot);
     var fields = params.fields;
@@ -72,7 +72,7 @@ function renderProcess(processId, params) {
     var headers = [("Date: " + (new Date()).toGMTString()),("Content-Length: " + result.length)];
     headers = headers.concat(BasicHeaders).concat([ContentType]);
 
-    var fullResponse = verb + CRLF + headers.join(CRLF) + CRLF + CRLF + result;
+    var fullResponse = verb + CRLF + headers.join(CRLF) + CRLF + CRLF + (wapp.isWindows() ? result : unescape(encodeURIComponent(result)));
     return(fullResponse);
 }
 
@@ -716,7 +716,7 @@ e[0]=a;b.log.apply(b,e)})};k.exports=b["default"]},function(k,b,e){b.__esModule=
           } else if(request.extension === "pro") {
               // process maping handling
               var process = wApp.router.pointRequest(request.verb + " " + request.url);
-              return( process != "NOT FOUND" ? renderProcess(process, wApp.router.params) : "HTTP/1.0 404 NOT FOUND" );
+              return( process != "NOT FOUND" ? renderProcess(process, wApp.router.params, wApp) : "HTTP/1.0 404 NOT FOUND" );
 
           } else if(request.extension === "bus") {
               // query maping handling

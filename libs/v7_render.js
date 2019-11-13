@@ -1,4 +1,4 @@
-function renderProcess(processId, params) {
+function renderProcess(processId, params, wapp) {
     importClass("VProcess");
     var process = new VProcess(theRoot);
     var fields = params.fields;
@@ -43,7 +43,7 @@ function renderProcess(processId, params) {
     var headers = [("Date: " + (new Date()).toGMTString()),("Content-Length: " + result.length)];
     headers = headers.concat(BasicHeaders).concat([ContentType]);
 
-    var fullResponse = verb + CRLF + headers.join(CRLF) + CRLF + CRLF + result;
+    var fullResponse = verb + CRLF + headers.join(CRLF) + CRLF + CRLF + (wapp.isWindows() ? result : unescape(encodeURIComponent(result)));
     return(fullResponse);
 }
 

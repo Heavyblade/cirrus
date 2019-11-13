@@ -366,7 +366,7 @@
           } else if(request.extension === "pro") {
               // process maping handling
               var process = wApp.router.pointRequest(request.verb + " " + request.url);
-              return( process != "NOT FOUND" ? renderProcess(process, wApp.router.params) : "HTTP/1.0 404 NOT FOUND" );
+              return( process != "NOT FOUND" ? renderProcess(process, wApp.router.params, wApp) : "HTTP/1.0 404 NOT FOUND" );
 
           } else if(request.extension === "bus") {
               // query maping handling

@@ -87,13 +87,13 @@ describe("Mapping v7 objects", function(){
   });
 
   it("should render a json string with the result variable when render a process", function(){
-      var result = wApp.renderProcess("MY_PROCESS", {});
+      var result = wApp.renderProcess("MY_PROCESS", {}, wApp);
       var body = result.split("\r\n\r\n")[1];
       expect(body).toEqual(JSON.stringify({hello: "world"}));
   });
  
   it("should try to render a JSON array string if the out put is an vRegisterList object", function(){
-      var result = wApp.renderProcess("MY_PROCESS", {});
+      var result = wApp.renderProcess("MY_PROCESS", {}, wApp);
       var body = result.split("\r\n\r\n")[1];
       expect(body).toEqual(JSON.stringify({hello: "world"}));
   });
