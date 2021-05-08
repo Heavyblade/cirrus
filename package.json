@@ -12,7 +12,7 @@
     "jasmine-node": "1.14.1",
     "benchmark": "1.0.0",
     "node-minify": "1.0.1",
-    "handlebars": "4.5.3"
+    "handlebars": "4.7.7"
   },
   "engines": {
     "node": "0.10.x",
