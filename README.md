@@ -71,6 +71,16 @@ Para contribuir a Cirrus.js, clona el repositorio, verifica que todos los specs 
 
 Dispones además dentro de la suite de Jasmine.js de un apartado donde puedes tester el performance de tus cambios o adiciones utilizando para ello la librería Benchmark.js.
 
+### Desarrollo local moderno
+
+```bash
+npm install
+npm run build
+npm run test
+```
+
+El comando `npm run build` ejecuta Vite y genera los bundles en `builds/` listos para usarse tanto en pruebas (`cirrus.min.test.js`) como en el runtime principal (`cirrus.min.js`).
+
 ## Licencia
 
 Cirrus.js es liberado bajo las directivas de la licencia MIT

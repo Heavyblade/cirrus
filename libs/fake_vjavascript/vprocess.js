@@ -1,4 +1,4 @@
-VProcess = function(theRoot) {
+var VProcess = function(theRoot) {
   this.vars = {};
 
   this.setProcess = function(id_process){

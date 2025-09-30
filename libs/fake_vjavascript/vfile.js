@@ -1,4 +1,4 @@
-VFile = {
+var VFile = {
         OpenModeReadOnly: true
 }
 

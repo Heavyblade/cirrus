@@ -1,3 +1,7 @@
+## Unreleased
+
+* Replace the Grunt/Node-minify build pipeline with Vite, generating browser and Node bundles via `npm run build`.
+
 ## Version 1.4
 
 * **Lectura de templates y assets directamente de disco y no tablas V7**

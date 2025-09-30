@@ -180,3 +180,12 @@ function mapField(type, fieldName, record) {
   }
   return(result);
 }
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    renderProcess: renderProcess,
+    renderQuery: renderQuery,
+    vRegisterListToJSON: vRegisterListToJSON,
+    mapField: mapField
+  };
+}

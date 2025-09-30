@@ -1,5 +1,12 @@
 //xxxxxxxxxxxxxxxxxxx Main Application Definition xxxxxxxxx
-  wApp = {
+var renderUtils = require('./v7_render.js');
+var renderProcess = renderUtils.renderProcess;
+var renderQuery = renderUtils.renderQuery;
+var vRegisterListToJSON = renderUtils.vRegisterListToJSON;
+var mapField = renderUtils.mapField;
+var Base64 = require('./base64.js');
+
+var wApp = {
     version: "1.4",
     isWindows: function() { return(theApp.sysInfo().getOsString().match(/win/i)); },
     config: { filesTable: "cirrusdat/FILES_MEM", root_path: "D://cirrus" },
@@ -339,9 +346,12 @@
     }
 // xxxxxxxxxxxxxxxxxxxx Response Object xxxxxxxxxxxxxxxxxxx
   var BasicHeaders =[ "Server: Velneo v7",
-                      "Access-Control-Allow-Origin: *",
-                      "Access-Control-Allow-Headers: DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type",
-                      "Access-Control-Allow-Methods: GET, POST, PUT, HEAD, OPTIONS, DELETE" ];
+                     "Access-Control-Allow-Origin: *",
+                     "Access-Control-Allow-Headers: DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type",
+                     "Access-Control-Allow-Methods: GET, POST, PUT, HEAD, OPTIONS, DELETE" ];
+  if (typeof global !== 'undefined') {
+    global.BasicHeaders = BasicHeaders;
+  }
 
   function Response(request) {
     try {
