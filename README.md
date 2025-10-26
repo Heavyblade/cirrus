@@ -71,6 +71,18 @@ Para contribuir a Cirrus.js, clona el repositorio, verifica que todos los specs 
 
 Dispones además dentro de la suite de Jasmine.js de un apartado donde puedes tester el performance de tus cambios o adiciones utilizando para ello la librería Benchmark.js.
 
+## Construir el bundle
+
+El runtime de Velneo consume un único archivo concatenado sin soporte para `require` o `import`.  
+Para regenerar ese bundle ahora se utiliza Vite:
+
+```bash
+npm install
+npm run build
+```
+
+El comando escribe `builds/cirrus.min.js` para producción (sin `module.exports`) y `builds/cirrus.min.test.js` para la suite de pruebas en Node.js.
+
 ## Licencia
 
 Cirrus.js es liberado bajo las directivas de la licencia MIT

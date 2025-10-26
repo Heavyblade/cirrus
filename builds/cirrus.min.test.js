@@ -18,6 +18,7 @@ var VProcess      = require('./../libs/fake_vjavascript/vprocess');
 var VTextFile     = require('./../libs/fake_vjavascript/vtextfile');
 var VFile         = require('./../libs/fake_vjavascript/vfile');
 
+;
 // xxxxxxxxxxxxxxxxxxx Base 64 Encode Libreary xxxxxxxxxxxx
 function StringBuffer(){this.buffer=[]}StringBuffer.prototype.append=function(a){this.buffer.push(a);return this};StringBuffer.prototype.toString=function(){return this.buffer.join("")};
 var Base64={codex:"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",encode:function(a){for(var c=new StringBuffer,a=new Utf8EncodeEnumerator(a);a.moveNext();){var b=a.current;a.moveNext();var d=a.current;a.moveNext();var e=a.current,h=b>>2,b=(b&3)<<4|d>>4,g=(d&15)<<2|e>>6,f=e&63;isNaN(d)?g=f=64:isNaN(e)&&(f=64);c.append(this.codex.charAt(h)+this.codex.charAt(b)+this.codex.charAt(g)+this.codex.charAt(f))}return c.toString()},decode:function(a){for(var c=new StringBuffer,a=new Base64DecodeEnumerator(a);a.moveNext();){var b=
@@ -27,6 +28,7 @@ function Base64DecodeEnumerator(a){this._input=a;this._index=-1;this._buffer=[]}
 Base64DecodeEnumerator.prototype={current:64,moveNext:function(){if(0<this._buffer.length)return this.current=this._buffer.shift(),!0;if(this._index>=this._input.length-1)return this.current=64,!1;var a=Base64.codex.indexOf(this._input.charAt(++this._index)),c=Base64.codex.indexOf(this._input.charAt(++this._index)),b=Base64.codex.indexOf(this._input.charAt(++this._index)),d=Base64.codex.indexOf(this._input.charAt(++this._index)),e=(b&3)<<6|d;this.current=a<<2|c>>4;64!=b&&this._buffer.push((c&15)<<
 4|b>>2);64!=d&&this._buffer.push(e);return!0}};
 
+;
 function renderProcess(processId, params, wapp) {
     importClass("VProcess");
     var process = new VProcess(theRoot);
@@ -210,6 +212,7 @@ function mapField(type, fieldName, record) {
   return(result);
 }
 
+;
 (function(k,b){Handlebars=b()})(this,function(){return function(k){function b(m){if(e[m])return e[m].exports;var p=e[m]={exports:{},id:m,loaded:!1};k[m].call(p.exports,p,p.exports,b);p.loaded=!0;return p.exports}var e={};b.m=k;b.c=e;b.p="";return b(0)}([function(k,b,e){function m(){var h=c();h.compile=function(c,a){return d.compile(c,a,h)};h.precompile=function(c,a){return d.precompile(c,a,h)};h.AST=f["default"];h.Compiler=d.Compiler;h.JavaScriptCompiler=g["default"];h.Parser=n.parser;h.parse=n.parse;
 return h}var p=e(8)["default"];b.__esModule=!0;var l=e(1),l=p(l),a=e(2),f=p(a),n=e(3),d=e(4),a=e(5),g=p(a),a=e(6),a=p(a);e=e(7);var p=p(e),c=l["default"].create,l=m();l.create=m;p["default"](l);l.Visitor=a["default"];l["default"]=l;b["default"]=l;k.exports=b["default"]},function(k,b,e){function m(){var h=new f.HandlebarsEnvironment;g.extend(h,f);h.SafeString=n["default"];h.Exception=d["default"];h.Utils=g;h.escapeExpression=g.escapeExpression;h.VM=c;h.template=function(a){return c.template(a,h)};
 return h}var p=e(9)["default"],l=e(8)["default"];b.__esModule=!0;var a=e(10),f=p(a),a=e(11),n=l(a),a=e(12),d=l(a),a=e(13),g=p(a),a=e(14),c=p(a);e=e(7);l=l(e);e=m();e.create=m;l["default"](e);e["default"]=e;b["default"]=e;k.exports=b["default"]},function(k,b,e){b.__esModule=!0;var m={helpers:{helperExpression:function(b){return"SubExpression"===b.type||("MustacheStatement"===b.type||"BlockStatement"===b.type)&&!!(b.params&&b.params.length||b.hash)},scopedId:function(b){return/^\.|this\b/.test(b.original)},
@@ -348,6 +351,7 @@ k.first=0===c,k.last=!!d,x&&(k.contextPath=x+b)),m+=e(a[b],{data:k,blockParams:p
 e[0]=a;b.log.apply(b,e)})};k.exports=b["default"]},function(k,b,e){b.__esModule=!0;b["default"]=function(b){b.registerHelper("lookup",function(b,e){return b&&b[e]})};k.exports=b["default"]},function(k,b,e){b.__esModule=!0;var m=e(13);b["default"]=function(b){b.registerHelper("with",function(b,a){m.isFunction(b)&&(b=b.call(this));var e=a.fn;if(m.isEmpty(b))return a.inverse(this);var k=a.data;a.data&&a.ids&&(k=m.createFrame(a.data),k.contextPath=m.appendContextPath(a.data.contextPath,a.ids[0]));return e(b,
 {data:k,blockParams:m.blockParams([b],[k&&k.contextPath])})})};k.exports=b["default"]},function(k,b,e){b.__esModule=!0;var m=e(13);b["default"]=function(b){b.registerDecorator("inline",function(b,a,e,k){var d=b;a.partials||(a.partials={},d=function(d,c){var h=e.partials;e.partials=m.extend({},h,a.partials);var k=b(d,c);e.partials=h;return k});a.partials[k.args[0]]=k.fn;return d})};k.exports=b["default"]}])});
 
+;
 //xxxxxxxxxxxxxxxxxxx Main Application Definition xxxxxxxxx
   wApp = {
     version: "1.4",
