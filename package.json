@@ -2,20 +2,20 @@
   "name": "cirrus",
   "version": "1.0.1",
   "dependencies": {
-    "net": "x.x.x",
-    "jsonfile": "0.0.1"
+    "jsonfile": "^6.2.0"
   },
   "devDependencies": {
-    "jasmine-node": "1.14.1",
-    "benchmark": "1.0.0",
-    "handlebars": "4.7.7",
-    "vite": "^4.5.0"
+    "jasmine": "^5.5.0",
+    "benchmark": "^2.1.4",
+    "handlebars": "^4.7.8",
+    "vite": "^7.1.12"
   },
   "scripts": {
-    "build": "vite build"
+    "build": "vite build",
+    "test": "jasmine"
   },
   "engines": {
-    "node": ">=14.18.0",
-    "npm": ">=6.14.0"
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
   }
 }
