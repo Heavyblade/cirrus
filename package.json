@@ -1,9 +1,7 @@
 {
   "name": "cirrus",
   "version": "1.0.1",
-  "dependencies": {
-    "net": "x.x.x"
-  },
+  "dependencies": {},
   "scripts": {
     "build": "rollup -c",
     "build_test": "rollup -c rollup.config_test.mjs",

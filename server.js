@@ -1,5 +1,5 @@
 var wApp = require("./builds/cirrus.min.test.js");
-var net = require('net');
+var net = require('node:net');
 
 // xxxxxxxxxxxxxxxxxxxxxxx Application xxxxxxxxxxxxxxxxxxxxxxx
 wApp.usersController = {
