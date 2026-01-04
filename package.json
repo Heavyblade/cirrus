@@ -2,17 +2,23 @@
   "name": "cirrus",
   "version": "1.0.1",
   "dependencies": {
-    "net": "x.x.x",
-    "jsonfile": "0.0.1"
+    "jsonfile": "0.0.1",
+    "net": "x.x.x"
+  },
+  "scripts": {
+    "build": "rollup -c",
+    "build_test": "rollup -c rollup.config_test.mjs",
+    "test": "jasmine-node spec"
   },
   "devDependencies": {
+    "@rollup/plugin-terser": "^0.4.4",
+    "benchmark": "1.0.0",
     "grunt": "~0.4.1",
     "grunt-contrib-jshint": "~0.1.1",
     "grunt-contrib-uglify": "0.2.0",
+    "handlebars": "4.5.3",
     "jasmine-node": "1.14.1",
-    "benchmark": "1.0.0",
-    "node-minify": "1.0.1",
-    "handlebars": "4.5.3"
+    "node-minify": "1.0.1"
   },
   "engines": {
     "node": "0.10.x",

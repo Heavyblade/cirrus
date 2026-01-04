@@ -1,4 +1,4 @@
-function renderProcess(processId, params, wapp) {
+export function renderProcess(processId, params, wapp) {
     importClass("VProcess");
     var process = new VProcess(theRoot);
     var fields = params.fields;
@@ -47,7 +47,7 @@ function renderProcess(processId, params, wapp) {
     return(fullResponse);
 }
 
-function renderQuery(queryId, params) {
+export function renderQuery(queryId, params) {
     importClass("VQuery");
     var query = new VQuery(theRoot);
     var fields = params.fields;
@@ -73,7 +73,7 @@ function renderQuery(queryId, params) {
     }
 }
 
-function vRegisterListToJSON(vregisterlist, neededFields) {
+export function vRegisterListToJSON(vregisterlist, neededFields) {
     var table   = vregisterlist.tableInfo(),
         nFields = table.fieldCount(),
         i       = vregisterlist.size(),
@@ -113,7 +113,7 @@ function vRegisterListToJSON(vregisterlist, neededFields) {
     return(result);
 }
 
-function mapField(type, fieldName, record) {
+export function mapField(type, fieldName, record) {
   var intType = parseInt(type);
   var result;
   switch (intType) {
@@ -180,3 +180,11 @@ function mapField(type, fieldName, record) {
   }
   return(result);
 }
+
+export const BasicHeaders = [
+  "Server: Velneo v7",
+  "Access-Control-Allow-Origin: *",
+  "Access-Control-Allow-Headers: DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type",
+  "Access-Control-Allow-Methods: GET, POST, PUT, HEAD, OPTIONS, DELETE"
+];
+

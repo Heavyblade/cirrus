@@ -1,3 +1,5 @@
+import { BasicHeaders, vRegisterListToJSON, renderProcess, renderQuery, mapField } from './v7_render.js'
+
 //xxxxxxxxxxxxxxxxxxx Main Application Definition xxxxxxxxx
   wApp = {
     version: "1.4",
@@ -337,11 +339,6 @@
 
       return(str);
     }
-// xxxxxxxxxxxxxxxxxxxx Response Object xxxxxxxxxxxxxxxxxxx
-  var BasicHeaders =[ "Server: Velneo v7",
-                      "Access-Control-Allow-Origin: *",
-                      "Access-Control-Allow-Headers: DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type",
-                      "Access-Control-Allow-Methods: GET, POST, PUT, HEAD, OPTIONS, DELETE" ];
 
   function Response(request) {
     try {
