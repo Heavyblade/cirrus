@@ -1,12 +1,11 @@
-var jf = require('jsonfile'),
-    fs = require('fs'),
+var fs = require('fs'),
     Handlebars = require('./../handlebars');
 
 
 function VTextFile(path) {
     this.path    = path;
     this.readAll = function() {
-                  var file = jf.readFileSync("./spec/fixtures/hd_files.json");
+                  var file = JSON.parse(fs.readFileSync("./spec/fixtures/hd_files.json"));
                   var html = file[this.path];
 
                   if (html != undefined) {
@@ -17,7 +16,7 @@ function VTextFile(path) {
 
     };
     this.exists  = function() {
-                  var file = jf.readFileSync("./spec/fixtures/hd_files.json");
+                  var file = JSON.parse(fs.readFileSync("./spec/fixtures/hd_files.json"));
                   var html = file[this.path];
                   return(html !== undefined);
     };

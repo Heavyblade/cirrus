@@ -1,5 +1,5 @@
 var VRegister = require("./vregister");
-var jf = require('jsonfile')
+
 var Handlebars = require("./../handlebars")
 var fs = require('fs');
 var theRoot = {}
@@ -9,7 +9,7 @@ function VRegisterList(theRoot) {
   this.setTable = function(table) { this.table = table }
   this.load = function(index, params) {
      this.records = []
-     var file = jf.readFileSync("./spec/fixtures/files.json")
+     var file = JSON.parse(fs.readFileSync("./spec/fixtures/files.json", 'utf8'))
      var base = file[params[0]]
      if (base != undefined) {
          var registro = new VRegister(theRoot);

@@ -2,7 +2,6 @@
   "name": "cirrus",
   "version": "1.0.1",
   "dependencies": {
-    "jsonfile": "0.0.1",
     "net": "x.x.x"
   },
   "scripts": {
