@@ -1,4 +1,5 @@
 import terser from '@rollup/plugin-terser';
+import typescript from '@rollup/plugin-typescript';
 import fs from 'fs';
 import path from 'path';
 
@@ -14,17 +15,18 @@ const combinedBanner = filesToPrepend
 
 // rollup.config.mjs
 export default {
-  input: 'libs/cirrus.js',
+  input: 'libs/cirrus.ts',
+  plugins: [typescript()],
   output: [
     {
       file: 'builds/cirrus.min.js',
       format: 'cjs',
-      plugins: [terser()]
+      plugins: [terser()],
     },
     {
       file: 'builds/cirrus.min.test.js',
       format: 'cjs',
-      banner: combinedBanner
+      banner: combinedBanner,
     }
   ],
 };
