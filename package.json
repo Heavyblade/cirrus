@@ -11,7 +11,7 @@
     "@rollup/plugin-typescript": "^12.3.0",
     "benchmark": "1.0.0",
     "handlebars": "^4.7.8",
-    "jasmine-node": "^1.16.0",
+    "jasmine-node": "^3.0.0",
     "tslib": "^2.8.1",
     "typescript": "^5.9.3"
   },
