@@ -12,6 +12,7 @@
     "benchmark": "1.0.0",
     "handlebars": "^4.7.8",
     "jasmine-node": "^3.0.0",
+    "rollup": "^4.59.0",
     "tslib": "^2.8.1",
     "typescript": "^5.9.3"
   },
