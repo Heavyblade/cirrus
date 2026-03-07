@@ -7,7 +7,7 @@
     "test": "jasmine-node spec"
   },
   "devDependencies": {
-    "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-terser": "^1.0.0",
     "@rollup/plugin-typescript": "^12.3.0",
     "benchmark": "1.0.0",
     "handlebars": "^4.7.8",
